@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0a0a0f">
+  <title>Cubby</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+
+<body>
+
+  <div id="home-screen" class="screen active">
+    <div class="greeting animate-in">
+      <h1 id="greeting-text">Good evening, Matt!</h1>
+      <p>What would you like to work on?</p>
+    </div>
+    <div id="rooms-container"></div>
+    <div class="logo animate-in delay-3"><span>CUBBY</span></div>
+  </div>
+  
+  <div id="room-screen" class="screen">
+    <div class="header animate-in">
+      <button class="back-btn" onclick="goHome()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18L9 12L15 6"/></svg>
+        back
+      </button>
+    </div>
+    <div id="room-title" class="room-title animate-in delay-1"></div>
+    <div id="cubbies-list" class="cubbies-list"></div>
+  </div>
+  
+  <div id="cubby-screen" class="screen">
+    <div class="cubby-header animate-in">
+      <button class="back-btn" onclick="goToRoom()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18L9 12L15 6"/></svg>
+        back
+      </button>
+      <button class="new-task-btn">
+        <span class="plus">+</span>
+        <span class="text">new task</span>
+      </button>
+    </div>
+
+    <div id="cubby-title" class="cubby-title animate-in delay-1"></div>
+
+    <div id="tasks-container" class="tasks-container"></div>
+  </div>
+
+
+  <script src="script.js"></script>
+  
+</body>
+</html>
