@@ -546,26 +546,36 @@
     }
     
     function editTask() {
+      // Save values before closeTaskMenu clears them
+      var taskId = activeMenuTaskId;
+      var isSubtask = activeMenuIsSubtask;
+      var parentId = activeMenuParentId;
       closeTaskMenu();
+      
       var taskText = '';
       var cubbyData = appData.cubbies[currentCubby.id];
       
-      if (activeMenuIsSubtask) {
+      if (isSubtask) {
         // Find subtask
         cubbyData.subcubbies.forEach(function(sub) {
-          var parentTask = sub.tasks.find(function(t) { return t.id === activeMenuParentId; });
+          var parentTask = sub.tasks.find(function(t) { return t.id === parentId; });
           if (parentTask) {
-            var subtask = parentTask.subtasks.find(function(st) { return st.id === activeMenuTaskId; });
+            var subtask = parentTask.subtasks.find(function(st) { return st.id === taskId; });
             if (subtask) taskText = subtask.text;
           }
         });
       } else {
         // Find task
         cubbyData.subcubbies.forEach(function(sub) {
-          var task = sub.tasks.find(function(t) { return t.id === activeMenuTaskId; });
+          var task = sub.tasks.find(function(t) { return t.id === taskId; });
           if (task) taskText = task.text;
         });
       }
+      
+      // Store for saveEditedTask to use
+      activeMenuTaskId = taskId;
+      activeMenuIsSubtask = isSubtask;
+      activeMenuParentId = parentId;
       
       openEditModal(taskText);
     }
@@ -583,21 +593,24 @@
     }
     
     function deleteTask() {
+      var taskId = activeMenuTaskId;
+      var isSubtask = activeMenuIsSubtask;
+      var parentId = activeMenuParentId;
       closeTaskMenu();
       var cubbyData = appData.cubbies[currentCubby.id];
       
-      if (activeMenuIsSubtask) {
+      if (isSubtask) {
         // Delete subtask
         cubbyData.subcubbies.forEach(function(sub) {
-          var parentTask = sub.tasks.find(function(t) { return t.id === activeMenuParentId; });
+          var parentTask = sub.tasks.find(function(t) { return t.id === parentId; });
           if (parentTask && parentTask.subtasks) {
-            parentTask.subtasks = parentTask.subtasks.filter(function(st) { return st.id !== activeMenuTaskId; });
+            parentTask.subtasks = parentTask.subtasks.filter(function(st) { return st.id !== taskId; });
           }
         });
       } else {
         // Delete task
         cubbyData.subcubbies.forEach(function(sub) {
-          sub.tasks = sub.tasks.filter(function(t) { return t.id !== activeMenuTaskId; });
+          sub.tasks = sub.tasks.filter(function(t) { return t.id !== taskId; });
         });
       }
       
@@ -606,22 +619,25 @@
     }
     
     function duplicateTask() {
+      var taskId = activeMenuTaskId;
+      var isSubtask = activeMenuIsSubtask;
+      var parentId = activeMenuParentId;
       closeTaskMenu();
       var cubbyData = appData.cubbies[currentCubby.id];
       
-      if (activeMenuIsSubtask) {
+      if (isSubtask) {
         // Duplicate subtask
         cubbyData.subcubbies.forEach(function(sub) {
-          var parentTask = sub.tasks.find(function(t) { return t.id === activeMenuParentId; });
+          var parentTask = sub.tasks.find(function(t) { return t.id === parentId; });
           if (parentTask && parentTask.subtasks) {
-            var subtask = parentTask.subtasks.find(function(st) { return st.id === activeMenuTaskId; });
+            var subtask = parentTask.subtasks.find(function(st) { return st.id === taskId; });
             if (subtask) {
               var newSubtask = {
                 id: 'st' + Date.now(),
                 text: subtask.text,
                 completed: false
               };
-              var index = parentTask.subtasks.findIndex(function(st) { return st.id === activeMenuTaskId; });
+              var index = parentTask.subtasks.findIndex(function(st) { return st.id === taskId; });
               parentTask.subtasks.splice(index + 1, 0, newSubtask);
             }
           }
@@ -629,7 +645,7 @@
       } else {
         // Duplicate task
         cubbyData.subcubbies.forEach(function(sub) {
-          var task = sub.tasks.find(function(t) { return t.id === activeMenuTaskId; });
+          var task = sub.tasks.find(function(t) { return t.id === taskId; });
           if (task) {
             var newTask = {
               id: 't' + Date.now(),
@@ -640,7 +656,7 @@
                 return { id: 'st' + Date.now() + Math.random().toString(36).substr(2, 5), text: st.text, completed: false };
               }) : []
             };
-            var index = sub.tasks.findIndex(function(t) { return t.id === activeMenuTaskId; });
+            var index = sub.tasks.findIndex(function(t) { return t.id === taskId; });
             sub.tasks.splice(index + 1, 0, newTask);
           }
         });
@@ -651,15 +667,18 @@
     }
     
     function moveTaskToTop() {
+      var taskId = activeMenuTaskId;
+      var isSubtask = activeMenuIsSubtask;
+      var parentId = activeMenuParentId;
       closeTaskMenu();
       var cubbyData = appData.cubbies[currentCubby.id];
       
-      if (activeMenuIsSubtask) {
+      if (isSubtask) {
         // Move subtask to top
         cubbyData.subcubbies.forEach(function(sub) {
-          var parentTask = sub.tasks.find(function(t) { return t.id === activeMenuParentId; });
+          var parentTask = sub.tasks.find(function(t) { return t.id === parentId; });
           if (parentTask && parentTask.subtasks) {
-            var index = parentTask.subtasks.findIndex(function(st) { return st.id === activeMenuTaskId; });
+            var index = parentTask.subtasks.findIndex(function(st) { return st.id === taskId; });
             if (index > 0) {
               var subtask = parentTask.subtasks.splice(index, 1)[0];
               parentTask.subtasks.unshift(subtask);
@@ -669,7 +688,7 @@
       } else {
         // Move task to top
         cubbyData.subcubbies.forEach(function(sub) {
-          var index = sub.tasks.findIndex(function(t) { return t.id === activeMenuTaskId; });
+          var index = sub.tasks.findIndex(function(t) { return t.id === taskId; });
           if (index > 0) {
             var task = sub.tasks.splice(index, 1)[0];
             sub.tasks.unshift(task);
@@ -682,15 +701,18 @@
     }
     
     function moveTaskToBottom() {
+      var taskId = activeMenuTaskId;
+      var isSubtask = activeMenuIsSubtask;
+      var parentId = activeMenuParentId;
       closeTaskMenu();
       var cubbyData = appData.cubbies[currentCubby.id];
       
-      if (activeMenuIsSubtask) {
+      if (isSubtask) {
         // Move subtask to bottom
         cubbyData.subcubbies.forEach(function(sub) {
-          var parentTask = sub.tasks.find(function(t) { return t.id === activeMenuParentId; });
+          var parentTask = sub.tasks.find(function(t) { return t.id === parentId; });
           if (parentTask && parentTask.subtasks) {
-            var index = parentTask.subtasks.findIndex(function(st) { return st.id === activeMenuTaskId; });
+            var index = parentTask.subtasks.findIndex(function(st) { return st.id === taskId; });
             if (index !== -1 && index < parentTask.subtasks.length - 1) {
               var subtask = parentTask.subtasks.splice(index, 1)[0];
               parentTask.subtasks.push(subtask);
@@ -700,7 +722,7 @@
       } else {
         // Move task to bottom
         cubbyData.subcubbies.forEach(function(sub) {
-          var index = sub.tasks.findIndex(function(t) { return t.id === activeMenuTaskId; });
+          var index = sub.tasks.findIndex(function(t) { return t.id === taskId; });
           if (index !== -1 && index < sub.tasks.length - 1) {
             var task = sub.tasks.splice(index, 1)[0];
             sub.tasks.push(task);
@@ -713,7 +735,17 @@
     }
     
     function openMoveTaskModal() {
+      // Save values before closeTaskMenu clears them
+      var taskId = activeMenuTaskId;
+      var isSubtask = activeMenuIsSubtask;
+      var parentId = activeMenuParentId;
       closeTaskMenu();
+      
+      // Restore for moveTaskTo to use
+      activeMenuTaskId = taskId;
+      activeMenuIsSubtask = isSubtask;
+      activeMenuParentId = parentId;
+      
       // Build list of all cubbies across all rooms
       var cubbiesList = [];
       appData.rooms.forEach(function(room) {
