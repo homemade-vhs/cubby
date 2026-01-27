@@ -199,13 +199,13 @@
         '<div class="checkbox ' + (task.completed ? 'checked' : '') + '" onclick="toggleTask(\'' + task.id + '\')">' +
         '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8L7 12L13 4" stroke="' + theme.bg + '" stroke-width="2.5" stroke-linecap="round"/></svg></div>' +
         '<span class="task-text ' + (task.completed ? 'completed' : '') + '">' + task.text + '</span>';
-      if (hasSubtasks) {
-        html += '<div class="expand-btn ' + (task.expanded ? 'expanded' : '') + '" onclick="toggleTaskExpand(\'' + task.id + '\')">' +
-          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6L15 12L9 18"/></svg></div>';
-      }
+      // Always show expand button for adding/viewing subtasks
+      html += '<div class="expand-btn ' + (task.expanded ? 'expanded' : '') + '" onclick="toggleTaskExpand(\'' + task.id + '\')">' +
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6L15 12L9 18"/></svg></div>';
       html += '<div class="more-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="18" r="1.5" fill="currentColor"/></svg></div></div>';
+      // Subtasks container (always rendered, visibility controlled by expanded state)
+      html += '<div class="subtasks-container ' + (task.expanded ? 'visible' : '') + '" data-parent-task="' + task.id + '">';
       if (hasSubtasks) {
-        html += '<div class="subtasks-container ' + (task.expanded ? 'visible' : '') + '" data-parent-task="' + task.id + '">';
         task.subtasks.forEach(function(st) {
           html += '<div class="task subtask ' + (st.completed ? 'completed-task' : '') + '" data-task-id="' + st.id + '" data-parent="' + task.id + '">' +
             '<div class="checkbox small ' + (st.completed ? 'checked' : '') + '" onclick="toggleSubtask(\'' + task.id + '\',\'' + st.id + '\')">' +
@@ -213,8 +213,10 @@
             '<span class="task-text ' + (st.completed ? 'completed' : '') + '">' + st.text + '</span>' +
             '<div class="more-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="18" r="1.5" fill="currentColor"/></svg></div></div>';
         });
-        html += '</div>';
       }
+      // Add subtask button
+      html += '<div class="add-subtask-btn" onclick="openSubtaskModal(\'' + task.id + '\')"><span class="plus">+</span><span class="text">add subtask</span></div>';
+      html += '</div>';
       return html;
     }
     
@@ -304,8 +306,10 @@
       });
     }
     
-    // MODAL FOR ADDING TASKS
+    // MODAL FOR ADDING TASKS AND SUBTASKS
     var modalSubcubbyId = null;
+    var modalParentTaskId = null;
+    var modalMode = 'task'; // 'task' or 'subtask'
     
     function createModal() {
       if (document.getElementById('task-modal')) return;
@@ -315,7 +319,7 @@
       modal.innerHTML = 
         '<div class="modal-backdrop" onclick="closeModal()"></div>' +
         '<div class="modal-content">' +
-          '<h2>New Task</h2>' +
+          '<h2 id="modal-title">New Task</h2>' +
           '<input type="text" id="task-input" placeholder="Enter task..." autocomplete="off">' +
           '<div class="modal-buttons">' +
             '<button class="modal-btn cancel" onclick="closeModal()">Cancel</button>' +
@@ -333,7 +337,25 @@
     
     function openModal(subcubbyId) {
       createModal();
+      modalMode = 'task';
       modalSubcubbyId = subcubbyId;
+      modalParentTaskId = null;
+      document.getElementById('modal-title').textContent = 'New Task';
+      document.getElementById('task-input').placeholder = 'Enter task...';
+      var modal = document.getElementById('task-modal');
+      modal.classList.add('active');
+      var input = document.getElementById('task-input');
+      input.value = '';
+      setTimeout(function() { input.focus(); }, 100);
+    }
+    
+    function openSubtaskModal(parentTaskId) {
+      createModal();
+      modalMode = 'subtask';
+      modalParentTaskId = parentTaskId;
+      modalSubcubbyId = null;
+      document.getElementById('modal-title').textContent = 'New Subtask';
+      document.getElementById('task-input').placeholder = 'Enter subtask...';
       var modal = document.getElementById('task-modal');
       modal.classList.add('active');
       var input = document.getElementById('task-input');
@@ -345,6 +367,7 @@
       var modal = document.getElementById('task-modal');
       if (modal) modal.classList.remove('active');
       modalSubcubbyId = null;
+      modalParentTaskId = null;
     }
     
     function confirmAddTask() {
@@ -352,7 +375,11 @@
       var text = input.value.trim();
       if (!text) return;
       
-      addTask(modalSubcubbyId, text);
+      if (modalMode === 'subtask') {
+        addSubtask(modalParentTaskId, text);
+      } else {
+        addTask(modalSubcubbyId, text);
+      }
       closeModal();
     }
     
@@ -379,6 +406,37 @@
       // Save and re-render
       saveData();
       renderCubby(currentCubby);
+    }
+    
+    function addSubtask(parentTaskId, text) {
+      var cubbyData = appData.cubbies[currentCubby.id];
+      cubbyData.subcubbies.forEach(function(sub) {
+        var task = sub.tasks.find(function(t) { return t.id === parentTaskId; });
+        if (task) {
+          // Generate unique ID
+          var newId = 'st' + Date.now();
+          
+          // Create new subtask
+          var newSubtask = {
+            id: newId,
+            text: text,
+            completed: false
+          };
+          
+          // Initialize subtasks array if needed
+          if (!task.subtasks) task.subtasks = [];
+          
+          // Add to end of subtasks list
+          task.subtasks.push(newSubtask);
+          
+          // Make sure task is expanded to show the new subtask
+          task.expanded = true;
+          
+          // Save and re-render
+          saveData();
+          renderCubby(currentCubby);
+        }
+      });
     }
     
     function openModalForFirstSubcubby() {

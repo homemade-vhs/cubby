@@ -92,3 +92,9 @@
     .modal-btn.cancel:active { background: rgba(255,255,255,0.1); }
     .modal-btn.confirm { background: #5B8EFF; border: none; color: #fff; }
     .modal-btn.confirm:active { background: #4a7de8; }
+    
+    /* Add subtask button */
+    .add-subtask-btn { display: flex; align-items: center; gap: 8px; padding: 8px 12px; margin-left: 32px; margin-top: 4px; background: transparent; border-radius: 8px; border: 1px dashed var(--cubby-border); cursor: pointer; opacity: 0.7; transition: opacity 0.2s ease; }
+    .add-subtask-btn:hover { opacity: 1; }
+    .add-subtask-btn .plus { color: var(--cubby-primary); font-size: 14px; font-weight: 600; }
+    .add-subtask-btn .text { color: var(--cubby-text-muted); font-size: 12px; font-weight: 500; }
