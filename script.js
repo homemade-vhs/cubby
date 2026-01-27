@@ -182,13 +182,18 @@
       cubbyData.subcubbies.forEach(function(sub, s) {
         var taskCount = sub.tasks.filter(function(t) { return !t.completed; }).length;
         html += '<div class="subcubby animate-in delay-' + (s + 1) + '" data-subcubby-id="' + sub.id + '">' +
-          '<div class="subcubby-header ' + (sub.expanded ? 'expanded' : 'collapsed') + '" onclick="toggleSubcubby(\'' + sub.id + '\')">' +
+          '<div class="subcubby-header ' + (sub.expanded ? 'expanded' : 'collapsed') + '">' +
+          '<div class="subcubby-header-left" onclick="toggleSubcubby(\'' + sub.id + '\')">' +
           '<svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 6L15 12L9 18"/></svg>' +
           '<h3>' + sub.name + '</h3><span class="count">' + taskCount + ' tasks</span></div>' +
+          '<div class="subcubby-more-btn" onclick="openSubcubbyMenu(event, \'' + sub.id + '\')">' +
+          '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="18" r="1.5" fill="currentColor"/></svg></div></div>' +
           '<div class="subcubby-tasks ' + (sub.expanded ? 'visible' : '') + '" data-subcubby-tasks="' + sub.id + '"><div class="subcubby-tasks-inner">';
         sub.tasks.forEach(function(task) { html += renderTask(task); });
         html += '<div class="add-task-btn" onclick="openModal(\'' + sub.id + '\')"><span class="plus">+</span><span class="text">new task</span></div></div></div></div>';
       });
+      // Add new subcubby button
+      html += '<div class="add-subcubby-btn" onclick="openNewSubcubbyModal()"><span class="plus">+</span><span class="text">new subcubby</span></div>';
       document.getElementById('tasks-container').innerHTML = html;
     }
     
@@ -379,10 +384,37 @@
         saveEditedTask(text);
       } else if (modalMode === 'subtask') {
         addSubtask(modalParentTaskId, text);
+      } else if (modalMode === 'editSubcubby') {
+        saveEditedSubcubby(text);
+      } else if (modalMode === 'newSubcubby') {
+        addNewSubcubby(text);
       } else {
         addTask(modalSubcubbyId, text);
       }
       closeModal();
+    }
+    
+    function saveEditedSubcubby(newName) {
+      var cubbyData = appData.cubbies[currentCubby.id];
+      var subcubby = cubbyData.subcubbies.find(function(s) { return s.id === activeSubcubbyId; });
+      if (subcubby) {
+        subcubby.name = newName;
+        saveData();
+        renderCubby(currentCubby);
+      }
+    }
+    
+    function addNewSubcubby(name) {
+      var cubbyData = appData.cubbies[currentCubby.id];
+      var newSubcubby = {
+        id: 'sub' + Date.now(),
+        name: name,
+        expanded: true,
+        tasks: []
+      };
+      cubbyData.subcubbies.push(newSubcubby);
+      saveData();
+      renderCubby(currentCubby);
     }
     
     function saveEditedTask(newText) {
@@ -837,6 +869,237 @@
       closeMoveModal();
       saveData();
       renderCubby(currentCubby);
+    }
+    
+    // SUBCUBBY MENU FUNCTIONS
+    var activeSubcubbyId = null;
+    
+    function openSubcubbyMenu(event, subcubbyId) {
+      event.stopPropagation();
+      closeSubcubbyMenu();
+      
+      activeSubcubbyId = subcubbyId;
+      
+      var moreBtn = event.currentTarget;
+      var rect = moreBtn.getBoundingClientRect();
+      
+      // Create backdrop
+      var backdrop = document.createElement('div');
+      backdrop.className = 'subcubby-menu-backdrop';
+      backdrop.onclick = closeSubcubbyMenu;
+      document.body.appendChild(backdrop);
+      
+      // Create menu
+      var menu = document.createElement('div');
+      menu.className = 'task-menu active';
+      menu.id = 'subcubby-menu';
+      menu.innerHTML = 
+        '<div class="task-menu-item" onclick="editSubcubby()">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>' +
+          '<span>Edit name</span></div>' +
+        '<div class="task-menu-item" onclick="duplicateSubcubby()">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>' +
+          '<span>Duplicate</span></div>' +
+        '<div class="task-menu-item" onclick="moveSubcubbyToTop()">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>' +
+          '<span>Move to top</span></div>' +
+        '<div class="task-menu-item" onclick="moveSubcubbyToBottom()">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M19 12l-7 7-7-7"/></svg>' +
+          '<span>Move to bottom</span></div>' +
+        '<div class="task-menu-item" onclick="openMoveSubcubbyModal()">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 9l-3 3 3 3"/><path d="M9 5l3-3 3 3"/><path d="M15 19l3 3 3-3"/><path d="M19 9l3 3-3 3"/><path d="M2 12h20"/><path d="M12 2v20"/></svg>' +
+          '<span>Move to cubby</span></div>' +
+        '<div class="task-menu-item delete" onclick="deleteSubcubby()">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' +
+          '<span>Delete</span></div>';
+      
+      document.body.appendChild(menu);
+      
+      // Position menu
+      var menuHeight = menu.offsetHeight;
+      var spaceBelow = window.innerHeight - rect.bottom;
+      
+      if (spaceBelow < menuHeight && rect.top > spaceBelow) {
+        menu.style.top = (rect.top - menuHeight - 4) + 'px';
+      } else {
+        menu.style.top = (rect.bottom + 4) + 'px';
+      }
+      menu.style.right = (window.innerWidth - rect.right) + 'px';
+    }
+    
+    function closeSubcubbyMenu() {
+      var backdrop = document.querySelector('.subcubby-menu-backdrop');
+      if (backdrop) backdrop.remove();
+      var menu = document.getElementById('subcubby-menu');
+      if (menu) menu.remove();
+    }
+    
+    function editSubcubby() {
+      var subcubbyId = activeSubcubbyId;
+      closeSubcubbyMenu();
+      
+      var cubbyData = appData.cubbies[currentCubby.id];
+      var subcubby = cubbyData.subcubbies.find(function(s) { return s.id === subcubbyId; });
+      if (!subcubby) return;
+      
+      // Store for save function
+      activeSubcubbyId = subcubbyId;
+      
+      // Open edit modal
+      createModal();
+      modalMode = 'editSubcubby';
+      document.getElementById('modal-title').textContent = 'Edit Subcubby';
+      document.getElementById('task-input').placeholder = 'Enter name...';
+      var modal = document.getElementById('task-modal');
+      modal.classList.add('active');
+      var input = document.getElementById('task-input');
+      input.value = subcubby.name;
+      setTimeout(function() { input.focus(); input.select(); }, 100);
+    }
+    
+    function duplicateSubcubby() {
+      var subcubbyId = activeSubcubbyId;
+      closeSubcubbyMenu();
+      
+      var cubbyData = appData.cubbies[currentCubby.id];
+      var index = cubbyData.subcubbies.findIndex(function(s) { return s.id === subcubbyId; });
+      if (index === -1) return;
+      
+      var original = cubbyData.subcubbies[index];
+      var newSubcubby = {
+        id: 'sub' + Date.now(),
+        name: original.name + ' (copy)',
+        expanded: true,
+        tasks: original.tasks.map(function(t) {
+          return {
+            id: 't' + Date.now() + Math.random().toString(36).substr(2, 5),
+            text: t.text,
+            completed: false,
+            expanded: false,
+            subtasks: t.subtasks ? t.subtasks.map(function(st) {
+              return { id: 'st' + Date.now() + Math.random().toString(36).substr(2, 5), text: st.text, completed: false };
+            }) : []
+          };
+        })
+      };
+      
+      cubbyData.subcubbies.splice(index + 1, 0, newSubcubby);
+      saveData();
+      renderCubby(currentCubby);
+    }
+    
+    function moveSubcubbyToTop() {
+      var subcubbyId = activeSubcubbyId;
+      closeSubcubbyMenu();
+      
+      var cubbyData = appData.cubbies[currentCubby.id];
+      var index = cubbyData.subcubbies.findIndex(function(s) { return s.id === subcubbyId; });
+      if (index > 0) {
+        var subcubby = cubbyData.subcubbies.splice(index, 1)[0];
+        cubbyData.subcubbies.unshift(subcubby);
+        saveData();
+        renderCubby(currentCubby);
+      }
+    }
+    
+    function moveSubcubbyToBottom() {
+      var subcubbyId = activeSubcubbyId;
+      closeSubcubbyMenu();
+      
+      var cubbyData = appData.cubbies[currentCubby.id];
+      var index = cubbyData.subcubbies.findIndex(function(s) { return s.id === subcubbyId; });
+      if (index !== -1 && index < cubbyData.subcubbies.length - 1) {
+        var subcubby = cubbyData.subcubbies.splice(index, 1)[0];
+        cubbyData.subcubbies.push(subcubby);
+        saveData();
+        renderCubby(currentCubby);
+      }
+    }
+    
+    function deleteSubcubby() {
+      var subcubbyId = activeSubcubbyId;
+      closeSubcubbyMenu();
+      
+      var cubbyData = appData.cubbies[currentCubby.id];
+      cubbyData.subcubbies = cubbyData.subcubbies.filter(function(s) { return s.id !== subcubbyId; });
+      saveData();
+      renderCubby(currentCubby);
+    }
+    
+    function openMoveSubcubbyModal() {
+      var subcubbyId = activeSubcubbyId;
+      closeSubcubbyMenu();
+      activeSubcubbyId = subcubbyId;
+      
+      // Build list of all cubbies (not subcubbies)
+      var cubbiesList = [];
+      appData.rooms.forEach(function(room) {
+        room.cubbies.forEach(function(cubbyRef) {
+          // Don't include current cubby
+          if (cubbyRef.id !== currentCubby.id) {
+            cubbiesList.push({
+              roomName: room.name,
+              cubbyName: cubbyRef.name,
+              cubbyId: cubbyRef.id
+            });
+          }
+        });
+      });
+      
+      var existingModal = document.getElementById('move-modal');
+      if (existingModal) existingModal.remove();
+      
+      var modal = document.createElement('div');
+      modal.id = 'move-modal';
+      modal.className = 'modal active';
+      
+      var optionsHtml = cubbiesList.length > 0 ? cubbiesList.map(function(c) {
+        return '<div class="move-option" onclick="moveSubcubbyTo(\'' + c.cubbyId + '\')">' +
+          '<span class="move-path">' + c.roomName + '</span>' +
+          '<span class="move-subcubby">' + c.cubbyName + '</span></div>';
+      }).join('') : '<p style="color:rgba(255,255,255,0.5);text-align:center;padding:20px;">No other cubbies available</p>';
+      
+      modal.innerHTML = 
+        '<div class="modal-backdrop" onclick="closeMoveModal()"></div>' +
+        '<div class="modal-content move-modal-content">' +
+          '<h2>Move subcubby to...</h2>' +
+          '<div class="move-options">' + optionsHtml + '</div>' +
+          '<div class="modal-buttons">' +
+            '<button class="modal-btn cancel" onclick="closeMoveModal()">Cancel</button>' +
+          '</div>' +
+        '</div>';
+      
+      document.body.appendChild(modal);
+    }
+    
+    function moveSubcubbyTo(targetCubbyId) {
+      var subcubbyId = activeSubcubbyId;
+      
+      var cubbyData = appData.cubbies[currentCubby.id];
+      var index = cubbyData.subcubbies.findIndex(function(s) { return s.id === subcubbyId; });
+      if (index === -1) return;
+      
+      var subcubby = cubbyData.subcubbies.splice(index, 1)[0];
+      
+      var targetCubbyData = appData.cubbies[targetCubbyId];
+      if (!targetCubbyData.subcubbies) targetCubbyData.subcubbies = [];
+      targetCubbyData.subcubbies.push(subcubby);
+      
+      closeMoveModal();
+      saveData();
+      renderCubby(currentCubby);
+    }
+    
+    function openNewSubcubbyModal() {
+      createModal();
+      modalMode = 'newSubcubby';
+      document.getElementById('modal-title').textContent = 'New Subcubby';
+      document.getElementById('task-input').placeholder = 'Enter name...';
+      var modal = document.getElementById('task-modal');
+      modal.classList.add('active');
+      var input = document.getElementById('task-input');
+      input.value = '';
+      setTimeout(function() { input.focus(); }, 100);
     }
     
     renderHome();
