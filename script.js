@@ -202,7 +202,7 @@
       // Always show expand button for adding/viewing subtasks
       html += '<div class="expand-btn ' + (task.expanded ? 'expanded' : '') + '" onclick="toggleTaskExpand(\'' + task.id + '\')">' +
         '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6L15 12L9 18"/></svg></div>';
-      html += '<div class="more-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="18" r="1.5" fill="currentColor"/></svg></div></div>';
+      html += '<div class="more-btn" onclick="openTaskMenu(event, \'' + task.id + '\', false)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="18" r="1.5" fill="currentColor"/></svg></div></div>';
       // Subtasks container (always rendered, visibility controlled by expanded state)
       html += '<div class="subtasks-container ' + (task.expanded ? 'visible' : '') + '" data-parent-task="' + task.id + '">';
       if (hasSubtasks) {
@@ -211,7 +211,7 @@
             '<div class="checkbox small ' + (st.completed ? 'checked' : '') + '" onclick="toggleSubtask(\'' + task.id + '\',\'' + st.id + '\')">' +
             '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8L7 12L13 4" stroke="' + theme.bg + '" stroke-width="2.5" stroke-linecap="round"/></svg></div>' +
             '<span class="task-text ' + (st.completed ? 'completed' : '') + '">' + st.text + '</span>' +
-            '<div class="more-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="18" r="1.5" fill="currentColor"/></svg></div></div>';
+            '<div class="more-btn" onclick="openTaskMenu(event, \'' + st.id + '\', true, \'' + task.id + '\')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="18" r="1.5" fill="currentColor"/></svg></div></div>';
         });
       }
       // Add subtask button
@@ -375,12 +375,38 @@
       var text = input.value.trim();
       if (!text) return;
       
-      if (modalMode === 'subtask') {
+      if (modalMode === 'edit') {
+        saveEditedTask(text);
+      } else if (modalMode === 'subtask') {
         addSubtask(modalParentTaskId, text);
       } else {
         addTask(modalSubcubbyId, text);
       }
       closeModal();
+    }
+    
+    function saveEditedTask(newText) {
+      var cubbyData = appData.cubbies[currentCubby.id];
+      
+      if (activeMenuIsSubtask) {
+        // Edit subtask
+        cubbyData.subcubbies.forEach(function(sub) {
+          var parentTask = sub.tasks.find(function(t) { return t.id === activeMenuParentId; });
+          if (parentTask && parentTask.subtasks) {
+            var subtask = parentTask.subtasks.find(function(st) { return st.id === activeMenuTaskId; });
+            if (subtask) subtask.text = newText;
+          }
+        });
+      } else {
+        // Edit task
+        cubbyData.subcubbies.forEach(function(sub) {
+          var task = sub.tasks.find(function(t) { return t.id === activeMenuTaskId; });
+          if (task) task.text = newText;
+        });
+      }
+      
+      saveData();
+      renderCubby(currentCubby);
     }
     
     function addTask(subcubbyId, text) {
@@ -445,6 +471,326 @@
       if (cubbyData && cubbyData.subcubbies.length > 0) {
         openModal(cubbyData.subcubbies[0].id);
       }
+    }
+    
+    // KEBAB MENU FUNCTIONS
+    var activeMenuTaskId = null;
+    var activeMenuIsSubtask = false;
+    var activeMenuParentId = null;
+    
+    function openTaskMenu(event, taskId, isSubtask, parentTaskId) {
+      event.stopPropagation();
+      closeTaskMenu();
+      
+      activeMenuTaskId = taskId;
+      activeMenuIsSubtask = isSubtask || false;
+      activeMenuParentId = parentTaskId || null;
+      
+      var moreBtn = event.currentTarget;
+      var taskEl = moreBtn.closest('.task');
+      
+      // Create backdrop
+      var backdrop = document.createElement('div');
+      backdrop.className = 'task-menu-backdrop';
+      backdrop.onclick = closeTaskMenu;
+      document.body.appendChild(backdrop);
+      
+      // Create menu
+      var menu = document.createElement('div');
+      menu.className = 'task-menu active';
+      menu.innerHTML = 
+        '<div class="task-menu-item" onclick="editTask()">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>' +
+          '<span>Edit</span></div>' +
+        '<div class="task-menu-item" onclick="duplicateTask()">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>' +
+          '<span>Duplicate</span></div>' +
+        '<div class="task-menu-item" onclick="moveTaskToTop()">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>' +
+          '<span>Move to top</span></div>' +
+        '<div class="task-menu-item" onclick="moveTaskToBottom()">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M19 12l-7 7-7-7"/></svg>' +
+          '<span>Move to bottom</span></div>' +
+        '<div class="task-menu-item" onclick="openMoveTaskModal()">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 9l-3 3 3 3"/><path d="M9 5l3-3 3 3"/><path d="M15 19l3 3 3-3"/><path d="M19 9l3 3-3 3"/><path d="M2 12h20"/><path d="M12 2v20"/></svg>' +
+          '<span>Move to cubby</span></div>' +
+        '<div class="task-menu-item delete" onclick="deleteTask()">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' +
+          '<span>Delete</span></div>';
+      
+      moreBtn.appendChild(menu);
+    }
+    
+    function closeTaskMenu() {
+      var backdrop = document.querySelector('.task-menu-backdrop');
+      if (backdrop) backdrop.remove();
+      var menu = document.querySelector('.task-menu');
+      if (menu) menu.remove();
+      activeMenuTaskId = null;
+      activeMenuIsSubtask = false;
+      activeMenuParentId = null;
+    }
+    
+    function editTask() {
+      closeTaskMenu();
+      var taskText = '';
+      var cubbyData = appData.cubbies[currentCubby.id];
+      
+      if (activeMenuIsSubtask) {
+        // Find subtask
+        cubbyData.subcubbies.forEach(function(sub) {
+          var parentTask = sub.tasks.find(function(t) { return t.id === activeMenuParentId; });
+          if (parentTask) {
+            var subtask = parentTask.subtasks.find(function(st) { return st.id === activeMenuTaskId; });
+            if (subtask) taskText = subtask.text;
+          }
+        });
+      } else {
+        // Find task
+        cubbyData.subcubbies.forEach(function(sub) {
+          var task = sub.tasks.find(function(t) { return t.id === activeMenuTaskId; });
+          if (task) taskText = task.text;
+        });
+      }
+      
+      openEditModal(taskText);
+    }
+    
+    function openEditModal(currentText) {
+      createModal();
+      modalMode = 'edit';
+      document.getElementById('modal-title').textContent = 'Edit Task';
+      document.getElementById('task-input').placeholder = 'Enter task...';
+      var modal = document.getElementById('task-modal');
+      modal.classList.add('active');
+      var input = document.getElementById('task-input');
+      input.value = currentText;
+      setTimeout(function() { input.focus(); input.select(); }, 100);
+    }
+    
+    function deleteTask() {
+      closeTaskMenu();
+      var cubbyData = appData.cubbies[currentCubby.id];
+      
+      if (activeMenuIsSubtask) {
+        // Delete subtask
+        cubbyData.subcubbies.forEach(function(sub) {
+          var parentTask = sub.tasks.find(function(t) { return t.id === activeMenuParentId; });
+          if (parentTask && parentTask.subtasks) {
+            parentTask.subtasks = parentTask.subtasks.filter(function(st) { return st.id !== activeMenuTaskId; });
+          }
+        });
+      } else {
+        // Delete task
+        cubbyData.subcubbies.forEach(function(sub) {
+          sub.tasks = sub.tasks.filter(function(t) { return t.id !== activeMenuTaskId; });
+        });
+      }
+      
+      saveData();
+      renderCubby(currentCubby);
+    }
+    
+    function duplicateTask() {
+      closeTaskMenu();
+      var cubbyData = appData.cubbies[currentCubby.id];
+      
+      if (activeMenuIsSubtask) {
+        // Duplicate subtask
+        cubbyData.subcubbies.forEach(function(sub) {
+          var parentTask = sub.tasks.find(function(t) { return t.id === activeMenuParentId; });
+          if (parentTask && parentTask.subtasks) {
+            var subtask = parentTask.subtasks.find(function(st) { return st.id === activeMenuTaskId; });
+            if (subtask) {
+              var newSubtask = {
+                id: 'st' + Date.now(),
+                text: subtask.text,
+                completed: false
+              };
+              var index = parentTask.subtasks.findIndex(function(st) { return st.id === activeMenuTaskId; });
+              parentTask.subtasks.splice(index + 1, 0, newSubtask);
+            }
+          }
+        });
+      } else {
+        // Duplicate task
+        cubbyData.subcubbies.forEach(function(sub) {
+          var task = sub.tasks.find(function(t) { return t.id === activeMenuTaskId; });
+          if (task) {
+            var newTask = {
+              id: 't' + Date.now(),
+              text: task.text,
+              completed: false,
+              expanded: false,
+              subtasks: task.subtasks ? task.subtasks.map(function(st) {
+                return { id: 'st' + Date.now() + Math.random().toString(36).substr(2, 5), text: st.text, completed: false };
+              }) : []
+            };
+            var index = sub.tasks.findIndex(function(t) { return t.id === activeMenuTaskId; });
+            sub.tasks.splice(index + 1, 0, newTask);
+          }
+        });
+      }
+      
+      saveData();
+      renderCubby(currentCubby);
+    }
+    
+    function moveTaskToTop() {
+      closeTaskMenu();
+      var cubbyData = appData.cubbies[currentCubby.id];
+      
+      if (activeMenuIsSubtask) {
+        // Move subtask to top
+        cubbyData.subcubbies.forEach(function(sub) {
+          var parentTask = sub.tasks.find(function(t) { return t.id === activeMenuParentId; });
+          if (parentTask && parentTask.subtasks) {
+            var index = parentTask.subtasks.findIndex(function(st) { return st.id === activeMenuTaskId; });
+            if (index > 0) {
+              var subtask = parentTask.subtasks.splice(index, 1)[0];
+              parentTask.subtasks.unshift(subtask);
+            }
+          }
+        });
+      } else {
+        // Move task to top
+        cubbyData.subcubbies.forEach(function(sub) {
+          var index = sub.tasks.findIndex(function(t) { return t.id === activeMenuTaskId; });
+          if (index > 0) {
+            var task = sub.tasks.splice(index, 1)[0];
+            sub.tasks.unshift(task);
+          }
+        });
+      }
+      
+      saveData();
+      renderCubby(currentCubby);
+    }
+    
+    function moveTaskToBottom() {
+      closeTaskMenu();
+      var cubbyData = appData.cubbies[currentCubby.id];
+      
+      if (activeMenuIsSubtask) {
+        // Move subtask to bottom
+        cubbyData.subcubbies.forEach(function(sub) {
+          var parentTask = sub.tasks.find(function(t) { return t.id === activeMenuParentId; });
+          if (parentTask && parentTask.subtasks) {
+            var index = parentTask.subtasks.findIndex(function(st) { return st.id === activeMenuTaskId; });
+            if (index !== -1 && index < parentTask.subtasks.length - 1) {
+              var subtask = parentTask.subtasks.splice(index, 1)[0];
+              parentTask.subtasks.push(subtask);
+            }
+          }
+        });
+      } else {
+        // Move task to bottom
+        cubbyData.subcubbies.forEach(function(sub) {
+          var index = sub.tasks.findIndex(function(t) { return t.id === activeMenuTaskId; });
+          if (index !== -1 && index < sub.tasks.length - 1) {
+            var task = sub.tasks.splice(index, 1)[0];
+            sub.tasks.push(task);
+          }
+        });
+      }
+      
+      saveData();
+      renderCubby(currentCubby);
+    }
+    
+    function openMoveTaskModal() {
+      closeTaskMenu();
+      // Build list of all cubbies across all rooms
+      var cubbiesList = [];
+      appData.rooms.forEach(function(room) {
+        room.cubbies.forEach(function(cubbyRef) {
+          var cubbyData = appData.cubbies[cubbyRef.id];
+          if (cubbyData) {
+            cubbyData.subcubbies.forEach(function(sub) {
+              cubbiesList.push({
+                roomName: room.name,
+                cubbyName: cubbyRef.name,
+                cubbyId: cubbyRef.id,
+                subcubbyName: sub.name,
+                subcubbyId: sub.id
+              });
+            });
+          }
+        });
+      });
+      
+      // Create move modal
+      var existingModal = document.getElementById('move-modal');
+      if (existingModal) existingModal.remove();
+      
+      var modal = document.createElement('div');
+      modal.id = 'move-modal';
+      modal.className = 'modal active';
+      
+      var optionsHtml = cubbiesList.map(function(c) {
+        return '<div class="move-option" onclick="moveTaskTo(\'' + c.cubbyId + '\', \'' + c.subcubbyId + '\')">' +
+          '<span class="move-path">' + c.roomName + ' → ' + c.cubbyName + '</span>' +
+          '<span class="move-subcubby">' + c.subcubbyName + '</span></div>';
+      }).join('');
+      
+      modal.innerHTML = 
+        '<div class="modal-backdrop" onclick="closeMoveModal()"></div>' +
+        '<div class="modal-content move-modal-content">' +
+          '<h2>Move to...</h2>' +
+          '<div class="move-options">' + optionsHtml + '</div>' +
+          '<div class="modal-buttons">' +
+            '<button class="modal-btn cancel" onclick="closeMoveModal()">Cancel</button>' +
+          '</div>' +
+        '</div>';
+      
+      document.body.appendChild(modal);
+    }
+    
+    function closeMoveModal() {
+      var modal = document.getElementById('move-modal');
+      if (modal) modal.remove();
+    }
+    
+    function moveTaskTo(targetCubbyId, targetSubcubbyId) {
+      var cubbyData = appData.cubbies[currentCubby.id];
+      var taskToMove = null;
+      var sourceSubcubbyId = null;
+      
+      if (activeMenuIsSubtask) {
+        // Find and remove subtask, convert to task
+        cubbyData.subcubbies.forEach(function(sub) {
+          var parentTask = sub.tasks.find(function(t) { return t.id === activeMenuParentId; });
+          if (parentTask && parentTask.subtasks) {
+            var subtaskIndex = parentTask.subtasks.findIndex(function(st) { return st.id === activeMenuTaskId; });
+            if (subtaskIndex !== -1) {
+              var subtask = parentTask.subtasks.splice(subtaskIndex, 1)[0];
+              taskToMove = { id: subtask.id, text: subtask.text, completed: subtask.completed, expanded: false, subtasks: [] };
+            }
+          }
+        });
+      } else {
+        // Find and remove task
+        cubbyData.subcubbies.forEach(function(sub) {
+          var taskIndex = sub.tasks.findIndex(function(t) { return t.id === activeMenuTaskId; });
+          if (taskIndex !== -1) {
+            taskToMove = sub.tasks.splice(taskIndex, 1)[0];
+            sourceSubcubbyId = sub.id;
+          }
+        });
+      }
+      
+      if (taskToMove) {
+        // Add to target
+        var targetCubbyData = appData.cubbies[targetCubbyId];
+        var targetSubcubby = targetCubbyData.subcubbies.find(function(s) { return s.id === targetSubcubbyId; });
+        if (targetSubcubby) {
+          targetSubcubby.tasks.unshift(taskToMove);
+        }
+      }
+      
+      closeMoveModal();
+      saveData();
+      renderCubby(currentCubby);
     }
     
     renderHome();
