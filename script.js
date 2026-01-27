@@ -166,7 +166,7 @@
       var html = '';
       room.cubbies.forEach(function(cubby, i) {
         var theme = colorThemes[cubby.color];
-        html += '<div class="cubby-card animate-in delay-' + (i + 1) + '" style="background:' + theme.card + ';border:2px solid ' + theme.border + ';box-shadow:0 0 20px ' + theme.glow + ';">' +
+        html += '<div class="cubby-card animate-in delay-' + (i + 1) + '" style="background:' + theme.card + ';border:2px solid ' + theme.border + ';">' +
           '<div class="cubby-card-main" onclick="selectCubby(\'' + cubby.id + '\')">' +
           '<span class="name" style="color:' + theme.text + '">' + cubby.name + '</span>' +
           '<span class="arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="' + theme.textMuted + '" stroke-width="2"><path d="M9 6L15 12L9 18"/></svg></span></div>' +
