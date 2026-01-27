@@ -187,7 +187,7 @@
           '<h3>' + sub.name + '</h3><span class="count">' + taskCount + ' tasks</span></div>' +
           '<div class="subcubby-tasks ' + (sub.expanded ? 'visible' : '') + '" data-subcubby-tasks="' + sub.id + '"><div class="subcubby-tasks-inner">';
         sub.tasks.forEach(function(task) { html += renderTask(task); });
-        html += '<div class="add-task-btn"><span class="plus">+</span><span class="text">new task</span></div></div></div></div>';
+        html += '<div class="add-task-btn" onclick="openModal(\'' + sub.id + '\')"><span class="plus">+</span><span class="text">new task</span></div></div></div></div>';
       });
       document.getElementById('tasks-container').innerHTML = html;
     }
@@ -302,6 +302,91 @@
           saveData();
         }
       });
+    }
+    
+    // MODAL FOR ADDING TASKS
+    var modalSubcubbyId = null;
+    
+    function createModal() {
+      if (document.getElementById('task-modal')) return;
+      var modal = document.createElement('div');
+      modal.id = 'task-modal';
+      modal.className = 'modal';
+      modal.innerHTML = 
+        '<div class="modal-backdrop" onclick="closeModal()"></div>' +
+        '<div class="modal-content">' +
+          '<h2>New Task</h2>' +
+          '<input type="text" id="task-input" placeholder="Enter task..." autocomplete="off">' +
+          '<div class="modal-buttons">' +
+            '<button class="modal-btn cancel" onclick="closeModal()">Cancel</button>' +
+            '<button class="modal-btn confirm" onclick="confirmAddTask()">Add</button>' +
+          '</div>' +
+        '</div>';
+      document.body.appendChild(modal);
+      
+      // Handle Enter key
+      document.getElementById('task-input').addEventListener('keyup', function(e) {
+        if (e.key === 'Enter') confirmAddTask();
+        if (e.key === 'Escape') closeModal();
+      });
+    }
+    
+    function openModal(subcubbyId) {
+      createModal();
+      modalSubcubbyId = subcubbyId;
+      var modal = document.getElementById('task-modal');
+      modal.classList.add('active');
+      var input = document.getElementById('task-input');
+      input.value = '';
+      setTimeout(function() { input.focus(); }, 100);
+    }
+    
+    function closeModal() {
+      var modal = document.getElementById('task-modal');
+      if (modal) modal.classList.remove('active');
+      modalSubcubbyId = null;
+    }
+    
+    function confirmAddTask() {
+      var input = document.getElementById('task-input');
+      var text = input.value.trim();
+      if (!text) return;
+      
+      addTask(modalSubcubbyId, text);
+      closeModal();
+    }
+    
+    function addTask(subcubbyId, text) {
+      var cubbyData = appData.cubbies[currentCubby.id];
+      var subcubby = cubbyData.subcubbies.find(function(s) { return s.id === subcubbyId; });
+      if (!subcubby) return;
+      
+      // Generate unique ID
+      var newId = 't' + Date.now();
+      
+      // Create new task
+      var newTask = {
+        id: newId,
+        text: text,
+        completed: false,
+        expanded: false,
+        subtasks: []
+      };
+      
+      // Add to beginning of task list
+      subcubby.tasks.unshift(newTask);
+      
+      // Save and re-render
+      saveData();
+      renderCubby(currentCubby);
+    }
+    
+    function openModalForFirstSubcubby() {
+      // Used by header "new task" button - adds to first subcubby
+      var cubbyData = appData.cubbies[currentCubby.id];
+      if (cubbyData && cubbyData.subcubbies.length > 0) {
+        openModal(cubbyData.subcubbies[0].id);
+      }
     }
     
     renderHome();
