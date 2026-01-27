@@ -154,7 +154,8 @@
       document.getElementById('greeting-text').textContent = getGreeting(appData.user.name);
       var html = '';
       appData.rooms.forEach(function(room, i) {
-        html += '<div class="room-card animate-in delay-' + (i + 1) + '">' +
+        html += '<div class="room-card animate-in delay-' + (i + 1) + '" data-room-id="' + room.id + '" draggable="true">' +
+          '<div class="room-drag-handle" data-drag-type="room"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="2"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="18" r="2"/><circle cx="15" cy="18" r="2"/></svg></div>' +
           '<div class="room-card-main" onclick="selectRoom(\'' + room.id + '\')">' +
           '<div class="info"><h2>' + room.name + '</h2><p>' + room.cubbies.length + ' cubbies</p></div>' +
           '<span class="arrow"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6L15 12L9 18"/></svg></span></div>' +
@@ -171,7 +172,8 @@
       var html = '';
       room.cubbies.forEach(function(cubby, i) {
         var theme = colorThemes[cubby.color];
-        html += '<div class="cubby-card animate-in delay-' + (i + 1) + '" style="background:' + theme.card + ';border:2px solid ' + theme.border + ';">' +
+        html += '<div class="cubby-card animate-in delay-' + (i + 1) + '" data-cubby-id="' + cubby.id + '" draggable="true" style="background:' + theme.card + ';border:2px solid ' + theme.border + ';">' +
+          '<div class="cubby-drag-handle" data-drag-type="cubby" style="color:' + theme.textMuted + '"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="2"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="18" r="2"/><circle cx="15" cy="18" r="2"/></svg></div>' +
           '<div class="cubby-card-main" onclick="selectCubby(\'' + cubby.id + '\')">' +
           '<span class="name" style="color:' + theme.text + '">' + cubby.name + '</span>' +
           '<span class="arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="' + theme.textMuted + '" stroke-width="2"><path d="M9 6L15 12L9 18"/></svg></span></div>' +
@@ -205,8 +207,9 @@
       var html = '';
       cubbyData.subcubbies.forEach(function(sub, s) {
         var taskCount = sub.tasks.filter(function(t) { return !t.completed; }).length;
-        html += '<div class="subcubby animate-in delay-' + (s + 1) + '" data-subcubby-id="' + sub.id + '">' +
+        html += '<div class="subcubby animate-in delay-' + (s + 1) + '" data-subcubby-id="' + sub.id + '" draggable="true">' +
           '<div class="subcubby-header ' + (sub.expanded ? 'expanded' : 'collapsed') + '">' +
+          '<div class="subcubby-drag-handle" data-drag-type="subcubby"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="2"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="18" r="2"/><circle cx="15" cy="18" r="2"/></svg></div>' +
           '<div class="subcubby-header-left" onclick="toggleSubcubby(\'' + sub.id + '\')">' +
           '<svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 6L15 12L9 18"/></svg>' +
           '<h3>' + sub.name + '</h3><span class="count">' + taskCount + ' tasks</span></div>' +
@@ -224,7 +227,8 @@
     function renderTask(task) {
       var hasSubtasks = task.subtasks && task.subtasks.length > 0;
       var theme = colorThemes[currentCubby.color];
-      var html = '<div class="task ' + (task.expanded ? 'expanded' : '') + (task.completed ? ' completed-task' : '') + '" data-task-id="' + task.id + '">' +
+      var html = '<div class="task ' + (task.expanded ? 'expanded' : '') + (task.completed ? ' completed-task' : '') + '" data-task-id="' + task.id + '" draggable="true">' +
+        '<div class="drag-handle" data-drag-type="task"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="2"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="18" r="2"/><circle cx="15" cy="18" r="2"/></svg></div>' +
         '<div class="checkbox ' + (task.completed ? 'checked' : '') + '" onclick="toggleTask(\'' + task.id + '\')">' +
         '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8L7 12L13 4" stroke="' + theme.bg + '" stroke-width="2.5" stroke-linecap="round"/></svg></div>' +
         '<span class="task-text ' + (task.completed ? 'completed' : '') + '">' + task.text + '</span>';
@@ -236,7 +240,8 @@
       html += '<div class="subtasks-container ' + (task.expanded ? 'visible' : '') + '" data-parent-task="' + task.id + '">';
       if (hasSubtasks) {
         task.subtasks.forEach(function(st) {
-          html += '<div class="task subtask ' + (st.completed ? 'completed-task' : '') + '" data-task-id="' + st.id + '" data-parent="' + task.id + '">' +
+          html += '<div class="task subtask ' + (st.completed ? 'completed-task' : '') + '" data-task-id="' + st.id + '" data-parent="' + task.id + '" draggable="true">' +
+            '<div class="drag-handle" data-drag-type="subtask"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="2"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="18" r="2"/><circle cx="15" cy="18" r="2"/></svg></div>' +
             '<div class="checkbox small ' + (st.completed ? 'checked' : '') + '" onclick="toggleSubtask(\'' + task.id + '\',\'' + st.id + '\')">' +
             '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8L7 12L13 4" stroke="' + theme.bg + '" stroke-width="2.5" stroke-linecap="round"/></svg></div>' +
             '<span class="task-text ' + (st.completed ? 'completed' : '') + '">' + st.text + '</span>' +
@@ -1589,4 +1594,305 @@
       setTimeout(function() { input.focus(); }, 100);
     }
     
+    // DRAG AND DROP FUNCTIONALITY
+    var dragState = {
+      dragging: false,
+      element: null,
+      type: null,
+      id: null,
+      parentId: null,
+      placeholder: null,
+      startY: 0,
+      startX: 0,
+      offsetY: 0,
+      clone: null
+    };
+    
+    function initDragAndDrop() {
+      document.addEventListener('mousedown', handleDragStart);
+      document.addEventListener('mousemove', handleDragMove);
+      document.addEventListener('mouseup', handleDragEnd);
+      
+      document.addEventListener('touchstart', handleTouchStart, { passive: false });
+      document.addEventListener('touchmove', handleTouchMove, { passive: false });
+      document.addEventListener('touchend', handleTouchEnd);
+    }
+    
+    function handleTouchStart(e) {
+      var handle = e.target.closest('[data-drag-type]');
+      if (!handle) return;
+      
+      e.preventDefault();
+      var touch = e.touches[0];
+      startDrag(handle, touch.clientX, touch.clientY);
+    }
+    
+    function handleTouchMove(e) {
+      if (!dragState.dragging) return;
+      e.preventDefault();
+      var touch = e.touches[0];
+      moveDrag(touch.clientX, touch.clientY);
+    }
+    
+    function handleTouchEnd(e) {
+      if (!dragState.dragging) return;
+      endDrag();
+    }
+    
+    function handleDragStart(e) {
+      var handle = e.target.closest('[data-drag-type]');
+      if (!handle) return;
+      
+      e.preventDefault();
+      startDrag(handle, e.clientX, e.clientY);
+    }
+    
+    function handleDragMove(e) {
+      if (!dragState.dragging) return;
+      e.preventDefault();
+      moveDrag(e.clientX, e.clientY);
+    }
+    
+    function handleDragEnd(e) {
+      if (!dragState.dragging) return;
+      endDrag();
+    }
+    
+    function startDrag(handle, clientX, clientY) {
+      var type = handle.dataset.dragType;
+      var element;
+      
+      if (type === 'task' || type === 'subtask') {
+        element = handle.closest('.task');
+      } else if (type === 'subcubby') {
+        element = handle.closest('.subcubby');
+      } else if (type === 'cubby') {
+        element = handle.closest('.cubby-card');
+      } else if (type === 'room') {
+        element = handle.closest('.room-card');
+      }
+      
+      if (!element) return;
+      
+      var rect = element.getBoundingClientRect();
+      
+      dragState.dragging = true;
+      dragState.element = element;
+      dragState.type = type;
+      dragState.startY = clientY;
+      dragState.startX = clientX;
+      dragState.offsetY = clientY - rect.top;
+      
+      // Get IDs
+      if (type === 'task') {
+        dragState.id = element.dataset.taskId;
+        dragState.parentId = null;
+      } else if (type === 'subtask') {
+        dragState.id = element.dataset.taskId;
+        dragState.parentId = element.dataset.parent;
+      } else if (type === 'subcubby') {
+        dragState.id = element.dataset.subcubbyId;
+      } else if (type === 'cubby') {
+        dragState.id = element.dataset.cubbyId;
+      } else if (type === 'room') {
+        dragState.id = element.dataset.roomId;
+      }
+      
+      // Create clone for visual feedback
+      dragState.clone = element.cloneNode(true);
+      dragState.clone.classList.add('drag-clone');
+      dragState.clone.style.width = rect.width + 'px';
+      dragState.clone.style.left = rect.left + 'px';
+      dragState.clone.style.top = rect.top + 'px';
+      document.body.appendChild(dragState.clone);
+      
+      // Create placeholder
+      dragState.placeholder = document.createElement('div');
+      dragState.placeholder.className = 'drag-placeholder';
+      dragState.placeholder.style.height = rect.height + 'px';
+      element.parentNode.insertBefore(dragState.placeholder, element);
+      
+      // Hide original
+      element.classList.add('drag-hidden');
+    }
+    
+    function moveDrag(clientX, clientY) {
+      if (!dragState.clone) return;
+      
+      // Move clone
+      dragState.clone.style.top = (clientY - dragState.offsetY) + 'px';
+      
+      // Find drop target
+      var dropTarget = findDropTarget(clientX, clientY);
+      if (dropTarget && dropTarget !== dragState.element) {
+        var targetRect = dropTarget.getBoundingClientRect();
+        var middle = targetRect.top + targetRect.height / 2;
+        
+        if (clientY < middle) {
+          dropTarget.parentNode.insertBefore(dragState.placeholder, dropTarget);
+        } else {
+          dropTarget.parentNode.insertBefore(dragState.placeholder, dropTarget.nextSibling);
+        }
+      }
+    }
+    
+    function findDropTarget(clientX, clientY) {
+      var type = dragState.type;
+      var selector;
+      
+      if (type === 'task') {
+        // Find the subcubby we're in
+        var subcubbyEl = dragState.element.closest('.subcubby-tasks-inner');
+        if (!subcubbyEl) return null;
+        selector = '.task:not(.subtask):not(.drag-hidden)';
+        var tasks = subcubbyEl.querySelectorAll(selector);
+        return findClosest(tasks, clientY);
+      } else if (type === 'subtask') {
+        var container = dragState.element.closest('.subtasks-container');
+        if (!container) return null;
+        selector = '.subtask:not(.drag-hidden)';
+        var subtasks = container.querySelectorAll(selector);
+        return findClosest(subtasks, clientY);
+      } else if (type === 'subcubby') {
+        selector = '.subcubby:not(.drag-hidden)';
+        var subcubbies = document.querySelectorAll(selector);
+        return findClosest(subcubbies, clientY);
+      } else if (type === 'cubby') {
+        selector = '.cubby-card:not(.drag-hidden)';
+        var cubbies = document.querySelectorAll(selector);
+        return findClosest(cubbies, clientY);
+      } else if (type === 'room') {
+        selector = '.room-card:not(.drag-hidden)';
+        var rooms = document.querySelectorAll(selector);
+        return findClosest(rooms, clientY);
+      }
+      
+      return null;
+    }
+    
+    function findClosest(elements, clientY) {
+      var closest = null;
+      var closestDist = Infinity;
+      
+      elements.forEach(function(el) {
+        var rect = el.getBoundingClientRect();
+        var center = rect.top + rect.height / 2;
+        var dist = Math.abs(clientY - center);
+        if (dist < closestDist) {
+          closestDist = dist;
+          closest = el;
+        }
+      });
+      
+      return closest;
+    }
+    
+    function endDrag() {
+      if (!dragState.dragging) return;
+      
+      // Find new position
+      var placeholder = dragState.placeholder;
+      var newIndex = 0;
+      var sibling = placeholder.previousElementSibling;
+      
+      while (sibling) {
+        if (!sibling.classList.contains('drag-placeholder') && !sibling.classList.contains('drag-hidden')) {
+          newIndex++;
+        }
+        sibling = sibling.previousElementSibling;
+      }
+      
+      // Apply reorder based on type
+      if (dragState.type === 'task') {
+        reorderTask(dragState.id, newIndex);
+      } else if (dragState.type === 'subtask') {
+        reorderSubtask(dragState.id, dragState.parentId, newIndex);
+      } else if (dragState.type === 'subcubby') {
+        reorderSubcubby(dragState.id, newIndex);
+      } else if (dragState.type === 'cubby') {
+        reorderCubby(dragState.id, newIndex);
+      } else if (dragState.type === 'room') {
+        reorderRoom(dragState.id, newIndex);
+      }
+      
+      // Cleanup
+      if (dragState.clone) dragState.clone.remove();
+      if (dragState.placeholder) dragState.placeholder.remove();
+      if (dragState.element) dragState.element.classList.remove('drag-hidden');
+      
+      dragState.dragging = false;
+      dragState.element = null;
+      dragState.clone = null;
+      dragState.placeholder = null;
+    }
+    
+    function reorderTask(taskId, newIndex) {
+      var cubbyData = appData.cubbies[currentCubby.id];
+      var task = null;
+      var sourceSubcubby = null;
+      
+      cubbyData.subcubbies.forEach(function(sub) {
+        var idx = sub.tasks.findIndex(function(t) { return t.id === taskId; });
+        if (idx !== -1) {
+          task = sub.tasks.splice(idx, 1)[0];
+          sourceSubcubby = sub;
+        }
+      });
+      
+      if (task && sourceSubcubby) {
+        sourceSubcubby.tasks.splice(newIndex, 0, task);
+        saveData();
+        renderCubby(currentCubby);
+      }
+    }
+    
+    function reorderSubtask(subtaskId, parentTaskId, newIndex) {
+      var cubbyData = appData.cubbies[currentCubby.id];
+      
+      cubbyData.subcubbies.forEach(function(sub) {
+        var parentTask = sub.tasks.find(function(t) { return t.id === parentTaskId; });
+        if (parentTask && parentTask.subtasks) {
+          var idx = parentTask.subtasks.findIndex(function(st) { return st.id === subtaskId; });
+          if (idx !== -1) {
+            var subtask = parentTask.subtasks.splice(idx, 1)[0];
+            parentTask.subtasks.splice(newIndex, 0, subtask);
+            saveData();
+            renderCubby(currentCubby);
+          }
+        }
+      });
+    }
+    
+    function reorderSubcubby(subcubbyId, newIndex) {
+      var cubbyData = appData.cubbies[currentCubby.id];
+      var idx = cubbyData.subcubbies.findIndex(function(s) { return s.id === subcubbyId; });
+      if (idx !== -1) {
+        var subcubby = cubbyData.subcubbies.splice(idx, 1)[0];
+        cubbyData.subcubbies.splice(newIndex, 0, subcubby);
+        saveData();
+        renderCubby(currentCubby);
+      }
+    }
+    
+    function reorderCubby(cubbyId, newIndex) {
+      var idx = currentRoom.cubbies.findIndex(function(c) { return c.id === cubbyId; });
+      if (idx !== -1) {
+        var cubby = currentRoom.cubbies.splice(idx, 1)[0];
+        currentRoom.cubbies.splice(newIndex, 0, cubby);
+        saveData();
+        renderRoom(currentRoom);
+      }
+    }
+    
+    function reorderRoom(roomId, newIndex) {
+      var idx = appData.rooms.findIndex(function(r) { return r.id === roomId; });
+      if (idx !== -1) {
+        var room = appData.rooms.splice(idx, 1)[0];
+        appData.rooms.splice(newIndex, 0, room);
+        saveData();
+        renderHome();
+      }
+    }
+    
+    initDragAndDrop();
     renderHome();
