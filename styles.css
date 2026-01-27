@@ -161,26 +161,6 @@
     .color-option:hover { transform: scale(1.02); }
     .color-option.selected { box-shadow: 0 0 0 3px rgba(255,255,255,0.5); }
     
-    /* Drag and drop */
-    .drag-handle { padding: 8px 4px 8px 8px; cursor: grab; color: var(--cubby-text-muted); opacity: 0.4; transition: opacity 0.2s ease; touch-action: none; }
-    .drag-handle:hover { opacity: 0.8; }
-    .drag-handle:active { cursor: grabbing; }
-    
-    .subcubby-drag-handle { padding: 8px; cursor: grab; color: var(--cubby-text-muted); opacity: 0.4; transition: opacity 0.2s ease; touch-action: none; }
-    .subcubby-drag-handle:hover { opacity: 0.8; }
-    .subcubby-header { display: flex; align-items: center; }
-    
-    .cubby-drag-handle { padding: 20px 8px 20px 16px; cursor: grab; opacity: 0.4; transition: opacity 0.2s ease; touch-action: none; }
-    .cubby-drag-handle:hover { opacity: 0.8; }
-    
-    .room-drag-handle { padding: 24px 8px 24px 20px; cursor: grab; color: rgba(255,255,255,0.3); opacity: 0.5; transition: opacity 0.2s ease; touch-action: none; }
-    .room-drag-handle:hover { opacity: 1; }
-    
-    .drag-clone { position: fixed; z-index: 1000; pointer-events: none; opacity: 0.85; box-shadow: 0 8px 32px rgba(0,0,0,0.5); border-radius: 16px; background: inherit; }
-    .drag-placeholder { background: rgba(255,255,255,0.05); border: 2px dashed rgba(255,255,255,0.15); border-radius: 12px; margin: 4px 0; min-height: 20px; }
-    .drag-hidden { opacity: 0 !important; pointer-events: none; position: absolute; left: -9999px; }
-    
-    /* Adjust task layout for drag handle */
+    /* Task layout */
     .task { display: flex; align-items: center; }
-    .task .drag-handle { flex-shrink: 0; }
-    .subtask .drag-handle { padding: 6px 4px 6px 8px; }
+    .subcubby-header { display: flex; align-items: center; }
