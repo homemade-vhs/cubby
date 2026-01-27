@@ -130,3 +130,22 @@
     .add-subcubby-btn:hover { opacity: 1; background: rgba(255,255,255,0.05); }
     .add-subcubby-btn .plus { color: var(--cubby-primary); font-size: 16px; font-weight: 600; }
     .add-subcubby-btn .text { color: var(--cubby-text-muted); font-size: 14px; font-weight: 500; }
+    
+    /* Cubby card layout */
+    .cubby-card { display: flex; align-items: center; position: relative; }
+    .cubby-card-main { display: flex; align-items: center; justify-content: space-between; flex: 1; padding: 20px 24px; cursor: pointer; }
+    .cubby-more-btn { padding: 20px 16px; cursor: pointer; opacity: 0.5; transition: opacity 0.2s ease; }
+    .cubby-more-btn:hover { opacity: 1; }
+    .cubby-menu-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 99; }
+    
+    /* Add cubby button */
+    .add-cubby-btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 20px; margin-top: 12px; background: rgba(255,255,255,0.03); border-radius: 16px; border: 1px dashed rgba(255,255,255,0.15); cursor: pointer; opacity: 0.6; transition: all 0.2s ease; }
+    .add-cubby-btn:hover { opacity: 1; background: rgba(255,255,255,0.05); }
+    .add-cubby-btn .plus { color: rgba(255,255,255,0.6); font-size: 18px; font-weight: 600; }
+    .add-cubby-btn .text { color: rgba(255,255,255,0.4); font-size: 15px; font-weight: 500; }
+    
+    /* Color picker modal */
+    .color-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 16px 0; }
+    .color-option { padding: 16px; border-radius: 12px; cursor: pointer; text-align: center; font-weight: 600; transition: transform 0.15s ease, box-shadow 0.15s ease; }
+    .color-option:hover { transform: scale(1.02); }
+    .color-option.selected { box-shadow: 0 0 0 3px rgba(255,255,255,0.5); }
