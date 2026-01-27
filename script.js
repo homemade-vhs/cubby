@@ -27,7 +27,8 @@
       teal: { primary: '#40E8D4', bg: '#082824', card: 'rgba(64, 232, 212, 0.12)', cardHover: 'rgba(64, 232, 212, 0.20)', border: 'rgba(64, 232, 212, 0.35)', text: '#b8fff4', textMuted: 'rgba(64, 232, 212, 0.6)', glow: 'rgba(64, 232, 212, 0.4)' }
     };
     
-    var appData = {
+    // DEFAULT DATA - used on first launch or if localStorage is empty
+    var defaultData = {
       user: { name: 'Matt' },
       rooms: [
         { id: 'supermega', name: 'SuperMega', cubbies: [
@@ -80,6 +81,32 @@
         ]}
       }
     };
+    
+    // PERSISTENCE - localStorage functions
+    var STORAGE_KEY = 'cubby_data';
+    
+    function saveData() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+      } catch (e) {
+        console.warn('Could not save to localStorage:', e);
+      }
+    }
+    
+    function loadData() {
+      try {
+        var saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          return JSON.parse(saved);
+        }
+      } catch (e) {
+        console.warn('Could not load from localStorage:', e);
+      }
+      return null;
+    }
+    
+    // Initialize appData - load from storage or use defaults
+    var appData = loadData() || JSON.parse(JSON.stringify(defaultData));
     
     var currentRoom = null;
     var currentCubby = null;
@@ -204,6 +231,7 @@
         header.classList.remove('expanded'); header.classList.add('collapsed'); tasks.classList.remove('visible');
         playSubcubbyCollapseSound();
       }
+      saveData();
     }
     
     function toggleTask(taskId) {
@@ -225,6 +253,7 @@
           checkbox.classList.add('pop'); setTimeout(function() { checkbox.classList.remove('pop'); }, 300);
           var taskCount = sub.tasks.filter(function(t) { return !t.completed; }).length;
           document.querySelector('[data-subcubby-id="' + sub.id + '"] .count').textContent = taskCount + ' tasks';
+          saveData();
         }
       });
     }
@@ -248,6 +277,7 @@
               playUncheckSound();
             }
             checkbox.classList.add('pop'); setTimeout(function() { checkbox.classList.remove('pop'); }, 300);
+            saveData();
           }
         }
       });
@@ -269,6 +299,7 @@
             taskEl.classList.remove('expanded'); expandBtn.classList.remove('expanded'); subtasksContainer.classList.remove('visible');
             playSubtaskCollapseSound();
           }
+          saveData();
         }
       });
     }
