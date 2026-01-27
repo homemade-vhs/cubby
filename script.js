@@ -273,8 +273,9 @@
     function toggleTask(taskId) {
       var cubbyData = appData.cubbies[currentCubby.id];
       cubbyData.subcubbies.forEach(function(sub) {
-        var task = sub.tasks.find(function(t) { return t.id === taskId; });
-        if (task) {
+        var taskIndex = sub.tasks.findIndex(function(t) { return t.id === taskId; });
+        if (taskIndex !== -1) {
+          var task = sub.tasks[taskIndex];
           task.completed = !task.completed;
           var taskEl = document.querySelector('[data-task-id="' + taskId + '"]');
           var checkbox = taskEl.querySelector('.checkbox');
@@ -282,14 +283,32 @@
           if (task.completed) {
             checkbox.classList.add('checked'); text.classList.add('completed'); taskEl.classList.add('completed-task');
             playCheckSound();
+            // Move to bottom after a short delay for visual feedback
+            setTimeout(function() {
+              sub.tasks.splice(taskIndex, 1);
+              sub.tasks.push(task);
+              saveData();
+              renderCubby(currentCubby);
+            }, 300);
           } else {
             checkbox.classList.remove('checked'); text.classList.remove('completed'); taskEl.classList.remove('completed-task');
             playUncheckSound();
+            // Move to top of incomplete tasks (above completed ones)
+            setTimeout(function() {
+              sub.tasks.splice(taskIndex, 1);
+              var firstCompletedIndex = sub.tasks.findIndex(function(t) { return t.completed; });
+              if (firstCompletedIndex === -1) {
+                sub.tasks.push(task);
+              } else {
+                sub.tasks.splice(firstCompletedIndex, 0, task);
+              }
+              saveData();
+              renderCubby(currentCubby);
+            }, 300);
           }
           checkbox.classList.add('pop'); setTimeout(function() { checkbox.classList.remove('pop'); }, 300);
           var taskCount = sub.tasks.filter(function(t) { return !t.completed; }).length;
           document.querySelector('[data-subcubby-id="' + sub.id + '"] .count').textContent = taskCount + ' tasks';
-          saveData();
         }
       });
     }
