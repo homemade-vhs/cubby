@@ -386,22 +386,98 @@
       cubbyData.subcubbies.forEach(function(sub) {
         var task = sub.tasks.find(function(t) { return t.id === parentId; });
         if (task) {
-          var subtask = task.subtasks.find(function(st) { return st.id === subtaskId; });
-          if (subtask) {
+          var subtaskIndex = task.subtasks.findIndex(function(st) { return st.id === subtaskId; });
+          if (subtaskIndex !== -1) {
+            var subtask = task.subtasks[subtaskIndex];
             subtask.completed = !subtask.completed;
             var subtaskEl = document.querySelector('[data-task-id="' + subtaskId + '"]');
             var checkbox = subtaskEl.querySelector('.checkbox');
             var text = subtaskEl.querySelector('.task-text');
+            
+            checkbox.classList.add('pop'); 
+            setTimeout(function() { checkbox.classList.remove('pop'); }, 300);
+            
+            var container = subtaskEl.closest('.subtasks-container');
+            
             if (subtask.completed) {
               checkbox.classList.add('checked'); text.classList.add('completed'); subtaskEl.classList.add('completed-task');
               playCheckSound();
+              
+              // Get positions before move
+              var allElements = Array.from(container.querySelectorAll('.subtask'));
+              var positions = new Map();
+              allElements.forEach(function(el) {
+                positions.set(el, el.getBoundingClientRect());
+              });
+              
+              // Move to bottom (before add-subtask-btn)
+              var addBtn = container.querySelector('.add-subtask-btn');
+              container.insertBefore(subtaskEl, addBtn);
+              
+              // Update data
+              task.subtasks.splice(subtaskIndex, 1);
+              task.subtasks.push(subtask);
+              saveData();
+              
+              // Animate
+              animateSubtasks(container, positions);
+              
             } else {
               checkbox.classList.remove('checked'); text.classList.remove('completed'); subtaskEl.classList.remove('completed-task');
               playUncheckSound();
+              
+              // Get positions before move
+              var allElements = Array.from(container.querySelectorAll('.subtask'));
+              var positions = new Map();
+              allElements.forEach(function(el) {
+                positions.set(el, el.getBoundingClientRect());
+              });
+              
+              // Move above first completed
+              var firstCompletedEl = container.querySelector('.subtask.completed-task');
+              if (firstCompletedEl) {
+                container.insertBefore(subtaskEl, firstCompletedEl);
+              }
+              
+              // Update data
+              task.subtasks.splice(subtaskIndex, 1);
+              var firstCompletedIndex = task.subtasks.findIndex(function(st) { return st.completed; });
+              if (firstCompletedIndex === -1) {
+                task.subtasks.push(subtask);
+              } else {
+                task.subtasks.splice(firstCompletedIndex, 0, subtask);
+              }
+              saveData();
+              
+              // Animate
+              animateSubtasks(container, positions);
             }
-            checkbox.classList.add('pop'); setTimeout(function() { checkbox.classList.remove('pop'); }, 300);
-            saveData();
           }
+        }
+      });
+    }
+    
+    function animateSubtasks(container, oldPositions) {
+      var elements = Array.from(container.querySelectorAll('.subtask'));
+      elements.forEach(function(el) {
+        var oldPos = oldPositions.get(el);
+        if (!oldPos) return;
+        
+        var newPos = el.getBoundingClientRect();
+        var deltaY = oldPos.top - newPos.top;
+        
+        if (Math.abs(deltaY) > 1) {
+          el.style.transform = 'translateY(' + deltaY + 'px)';
+          el.style.transition = 'none';
+          
+          el.offsetHeight;
+          
+          el.style.transition = 'transform 0.3s ease';
+          el.style.transform = '';
+          
+          setTimeout(function() {
+            el.style.transition = '';
+          }, 300);
         }
       });
     }
@@ -1704,6 +1780,15 @@
       var hidden = document.querySelectorAll('.drag-hidden');
       hidden.forEach(function(h) { h.classList.remove('drag-hidden'); });
       
+      // Clear any lingering transforms/transitions from drag
+      var transformed = document.querySelectorAll('[style*="transform"]');
+      transformed.forEach(function(el) {
+        if (el.style.transform && !el.classList.contains('drag-clone')) {
+          el.style.transform = '';
+          el.style.transition = '';
+        }
+      });
+      
       dragState.dragging = false;
       dragState.element = null;
       dragState.clone = null;
@@ -1833,14 +1918,58 @@
       
       // Find drop target
       var dropTarget = findDropTarget(clientX, clientY);
-      if (dropTarget && dropTarget !== dragState.element) {
+      if (dropTarget && dropTarget !== dragState.element && dropTarget !== dragState.placeholder) {
+        var container = dragState.placeholder.parentNode;
+        var siblings = Array.from(container.children).filter(function(el) {
+          return !el.classList.contains('drag-hidden') && 
+                 !el.classList.contains('drag-placeholder') &&
+                 !el.classList.contains('add-task-btn') &&
+                 !el.classList.contains('add-subtask-btn') &&
+                 !el.classList.contains('add-cubby-btn') &&
+                 !el.classList.contains('add-room-btn') &&
+                 !el.classList.contains('add-subcubby-btn');
+        });
+        
+        // Get positions before move
+        var positions = new Map();
+        siblings.forEach(function(el) {
+          positions.set(el, el.getBoundingClientRect());
+        });
+        
         var targetRect = dropTarget.getBoundingClientRect();
         var middle = targetRect.top + targetRect.height / 2;
+        
+        var oldPlaceholderPos = dragState.placeholder.getBoundingClientRect();
         
         if (clientY < middle) {
           dropTarget.parentNode.insertBefore(dragState.placeholder, dropTarget);
         } else {
           dropTarget.parentNode.insertBefore(dragState.placeholder, dropTarget.nextSibling);
+        }
+        
+        var newPlaceholderPos = dragState.placeholder.getBoundingClientRect();
+        
+        // Only animate if placeholder actually moved
+        if (Math.abs(oldPlaceholderPos.top - newPlaceholderPos.top) > 5) {
+          // FLIP animate siblings
+          siblings.forEach(function(el) {
+            var oldPos = positions.get(el);
+            if (!oldPos) return;
+            
+            var newPos = el.getBoundingClientRect();
+            var deltaY = oldPos.top - newPos.top;
+            
+            if (Math.abs(deltaY) > 1) {
+              // Cancel any existing transition
+              el.style.transition = 'none';
+              el.style.transform = 'translateY(' + deltaY + 'px)';
+              
+              el.offsetHeight; // Force reflow
+              
+              el.style.transition = 'transform 0.15s ease';
+              el.style.transform = '';
+            }
+          });
         }
       }
     }
