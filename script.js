@@ -487,7 +487,7 @@
       activeMenuParentId = parentTaskId || null;
       
       var moreBtn = event.currentTarget;
-      var taskEl = moreBtn.closest('.task');
+      var rect = moreBtn.getBoundingClientRect();
       
       // Create backdrop
       var backdrop = document.createElement('div');
@@ -518,7 +518,21 @@
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' +
           '<span>Delete</span></div>';
       
-      moreBtn.appendChild(menu);
+      document.body.appendChild(menu);
+      
+      // Position menu - check if it would go off screen bottom
+      var menuHeight = menu.offsetHeight;
+      var spaceBelow = window.innerHeight - rect.bottom;
+      var spaceAbove = rect.top;
+      
+      if (spaceBelow < menuHeight && spaceAbove > spaceBelow) {
+        // Show above the button
+        menu.style.top = (rect.top - menuHeight - 4) + 'px';
+      } else {
+        // Show below the button
+        menu.style.top = (rect.bottom + 4) + 'px';
+      }
+      menu.style.right = (window.innerWidth - rect.right) + 'px';
     }
     
     function closeTaskMenu() {

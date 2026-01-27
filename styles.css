@@ -100,7 +100,7 @@
     .add-subtask-btn .text { color: var(--cubby-text-muted); font-size: 12px; font-weight: 500; }
     
     /* Kebab menu */
-    .task-menu { position: absolute; top: 100%; right: 0; margin-top: 4px; background: #1a1a24; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 40px rgba(0,0,0,0.5); z-index: 100; min-width: 160px; overflow: hidden; display: none; }
+    .task-menu { position: fixed; background: #1a1a24; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 40px rgba(0,0,0,0.5); z-index: 100; min-width: 160px; overflow: hidden; display: none; }
     .task-menu.active { display: block; }
     .task-menu-item { display: flex; align-items: center; gap: 10px; padding: 12px 16px; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.8); cursor: pointer; transition: background 0.15s ease; }
     .task-menu-item:hover { background: rgba(255,255,255,0.05); }
@@ -109,8 +109,6 @@
     .task-menu-item.delete:hover { background: rgba(255,107,107,0.1); }
     .task-menu-item.delete svg { color: #ff6b6b; opacity: 0.8; }
     .task-menu-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 99; }
-    .task { position: relative; }
-    .more-btn { position: relative; }
     
     /* Move modal */
     .move-modal-content { max-height: 70vh; display: flex; flex-direction: column; }
