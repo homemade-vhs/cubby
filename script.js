@@ -154,10 +154,15 @@
       document.getElementById('greeting-text').textContent = getGreeting(appData.user.name);
       var html = '';
       appData.rooms.forEach(function(room, i) {
-        html += '<div class="room-card animate-in delay-' + (i + 1) + '" onclick="selectRoom(\'' + room.id + '\')">' +
+        html += '<div class="room-card animate-in delay-' + (i + 1) + '">' +
+          '<div class="room-card-main" onclick="selectRoom(\'' + room.id + '\')">' +
           '<div class="info"><h2>' + room.name + '</h2><p>' + room.cubbies.length + ' cubbies</p></div>' +
-          '<span class="arrow"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6L15 12L9 18"/></svg></span></div>';
+          '<span class="arrow"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6L15 12L9 18"/></svg></span></div>' +
+          '<div class="room-more-btn" onclick="openRoomMenu(event, \'' + room.id + '\')">' +
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="18" r="1.5" fill="currentColor"/></svg></div></div>';
       });
+      // Add new room button
+      html += '<div class="add-room-btn animate-in delay-' + (appData.rooms.length + 1) + '" onclick="openNewRoomModal()"><span class="plus">+</span><span class="text">new room</span></div>';
       document.getElementById('rooms-container').innerHTML = html;
     }
     
@@ -397,10 +402,34 @@
         saveEditedCubbyName(text);
       } else if (modalMode === 'newCubby') {
         addNewCubby(text);
+      } else if (modalMode === 'editRoomName') {
+        saveEditedRoomName(text);
+      } else if (modalMode === 'newRoom') {
+        addNewRoom(text);
       } else {
         addTask(modalSubcubbyId, text);
       }
       closeModal();
+    }
+    
+    function saveEditedRoomName(newName) {
+      var room = appData.rooms.find(function(r) { return r.id === activeRoomId; });
+      if (room) {
+        room.name = newName;
+        saveData();
+        renderHome();
+      }
+    }
+    
+    function addNewRoom(name) {
+      var newRoomId = 'room' + Date.now();
+      appData.rooms.push({
+        id: newRoomId,
+        name: name,
+        cubbies: []
+      });
+      saveData();
+      renderHome();
     }
     
     function saveEditedCubbyName(newName) {
@@ -1406,6 +1435,138 @@
       createModal();
       modalMode = 'newCubby';
       document.getElementById('modal-title').textContent = 'New Cubby';
+      document.getElementById('task-input').placeholder = 'Enter name...';
+      var modal = document.getElementById('task-modal');
+      modal.classList.add('active');
+      var input = document.getElementById('task-input');
+      input.value = '';
+      setTimeout(function() { input.focus(); }, 100);
+    }
+    
+    // ROOM MENU FUNCTIONS
+    var activeRoomId = null;
+    
+    function openRoomMenu(event, roomId) {
+      event.stopPropagation();
+      closeRoomMenu();
+      
+      activeRoomId = roomId;
+      
+      var moreBtn = event.currentTarget;
+      var rect = moreBtn.getBoundingClientRect();
+      
+      // Create backdrop
+      var backdrop = document.createElement('div');
+      backdrop.className = 'room-menu-backdrop';
+      backdrop.onclick = closeRoomMenu;
+      document.body.appendChild(backdrop);
+      
+      // Create menu
+      var menu = document.createElement('div');
+      menu.className = 'task-menu active';
+      menu.id = 'room-menu';
+      menu.innerHTML = 
+        '<div class="task-menu-item" onclick="editRoomName()">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>' +
+          '<span>Edit name</span></div>' +
+        '<div class="task-menu-item" onclick="moveRoomToTop()">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>' +
+          '<span>Move to top</span></div>' +
+        '<div class="task-menu-item" onclick="moveRoomToBottom()">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M19 12l-7 7-7-7"/></svg>' +
+          '<span>Move to bottom</span></div>' +
+        '<div class="task-menu-item delete" onclick="deleteRoom()">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' +
+          '<span>Delete</span></div>';
+      
+      document.body.appendChild(menu);
+      
+      // Position menu
+      var menuHeight = menu.offsetHeight;
+      var spaceBelow = window.innerHeight - rect.bottom;
+      
+      if (spaceBelow < menuHeight && rect.top > spaceBelow) {
+        menu.style.top = (rect.top - menuHeight - 4) + 'px';
+      } else {
+        menu.style.top = (rect.bottom + 4) + 'px';
+      }
+      menu.style.right = (window.innerWidth - rect.right) + 'px';
+    }
+    
+    function closeRoomMenu() {
+      var backdrop = document.querySelector('.room-menu-backdrop');
+      if (backdrop) backdrop.remove();
+      var menu = document.getElementById('room-menu');
+      if (menu) menu.remove();
+    }
+    
+    function editRoomName() {
+      var roomId = activeRoomId;
+      closeRoomMenu();
+      
+      var room = appData.rooms.find(function(r) { return r.id === roomId; });
+      if (!room) return;
+      
+      activeRoomId = roomId;
+      
+      createModal();
+      modalMode = 'editRoomName';
+      document.getElementById('modal-title').textContent = 'Edit Room Name';
+      document.getElementById('task-input').placeholder = 'Enter name...';
+      var modal = document.getElementById('task-modal');
+      modal.classList.add('active');
+      var input = document.getElementById('task-input');
+      input.value = room.name;
+      setTimeout(function() { input.focus(); input.select(); }, 100);
+    }
+    
+    function moveRoomToTop() {
+      var roomId = activeRoomId;
+      closeRoomMenu();
+      
+      var index = appData.rooms.findIndex(function(r) { return r.id === roomId; });
+      if (index > 0) {
+        var room = appData.rooms.splice(index, 1)[0];
+        appData.rooms.unshift(room);
+        saveData();
+        renderHome();
+      }
+    }
+    
+    function moveRoomToBottom() {
+      var roomId = activeRoomId;
+      closeRoomMenu();
+      
+      var index = appData.rooms.findIndex(function(r) { return r.id === roomId; });
+      if (index !== -1 && index < appData.rooms.length - 1) {
+        var room = appData.rooms.splice(index, 1)[0];
+        appData.rooms.push(room);
+        saveData();
+        renderHome();
+      }
+    }
+    
+    function deleteRoom() {
+      var roomId = activeRoomId;
+      closeRoomMenu();
+      
+      var room = appData.rooms.find(function(r) { return r.id === roomId; });
+      if (room) {
+        // Delete all cubby data for this room
+        room.cubbies.forEach(function(c) {
+          delete appData.cubbies[c.id];
+        });
+      }
+      
+      appData.rooms = appData.rooms.filter(function(r) { return r.id !== roomId; });
+      saveData();
+      renderHome();
+    }
+    
+    function openNewRoomModal() {
+      createModal();
+      modalMode = 'newRoom';
+      document.getElementById('modal-title').textContent = 'New Room';
       document.getElementById('task-input').placeholder = 'Enter name...';
       var modal = document.getElementById('task-modal');
       modal.classList.add('active');
