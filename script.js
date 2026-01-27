@@ -187,7 +187,21 @@
       setCubbyTheme(cubby.color);
       document.getElementById('cubby-title').innerHTML = '<h1>' + cubby.name + '</h1>';
       var cubbyData = appData.cubbies[cubby.id];
-      if (!cubbyData) { document.getElementById('tasks-container').innerHTML = '<p style="color:var(--cubby-text-muted);padding:20px;">No tasks yet</p>'; return; }
+      
+      // Initialize cubby data if it doesn't exist
+      if (!cubbyData) {
+        appData.cubbies[cubby.id] = {
+          subcubbies: [{
+            id: 'sub' + Date.now(),
+            name: 'General',
+            expanded: true,
+            tasks: []
+          }]
+        };
+        cubbyData = appData.cubbies[cubby.id];
+        saveData();
+      }
+      
       var html = '';
       cubbyData.subcubbies.forEach(function(sub, s) {
         var taskCount = sub.tasks.filter(function(t) { return !t.completed; }).length;
