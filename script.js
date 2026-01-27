@@ -858,8 +858,12 @@
       }
       
       if (taskToMove) {
-        // Add to target
+        // Initialize target cubby data if it doesn't exist
+        if (!appData.cubbies[targetCubbyId]) {
+          appData.cubbies[targetCubbyId] = { subcubbies: [] };
+        }
         var targetCubbyData = appData.cubbies[targetCubbyId];
+        if (!targetCubbyData.subcubbies) targetCubbyData.subcubbies = [];
         var targetSubcubby = targetCubbyData.subcubbies.find(function(s) { return s.id === targetSubcubbyId; });
         if (targetSubcubby) {
           targetSubcubby.tasks.unshift(taskToMove);
@@ -1081,6 +1085,10 @@
       
       var subcubby = cubbyData.subcubbies.splice(index, 1)[0];
       
+      // Initialize target cubby data if it doesn't exist
+      if (!appData.cubbies[targetCubbyId]) {
+        appData.cubbies[targetCubbyId] = { subcubbies: [] };
+      }
       var targetCubbyData = appData.cubbies[targetCubbyId];
       if (!targetCubbyData.subcubbies) targetCubbyData.subcubbies = [];
       targetCubbyData.subcubbies.push(subcubby);
