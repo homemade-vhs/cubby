@@ -813,7 +813,7 @@
       
       modal.innerHTML = 
         '<div class="modal-backdrop" onclick="closeMoveModal()"></div>' +
-        '<div class="modal-content move-modal-content">' +
+        '<div class="modal-content move-modal-content" onclick="event.stopPropagation()">' +
           '<h2>Move to...</h2>' +
           '<div class="move-options">' + optionsHtml + '</div>' +
           '<div class="modal-buttons">' +
@@ -1054,14 +1054,14 @@
       modal.className = 'modal active';
       
       var optionsHtml = cubbiesList.length > 0 ? cubbiesList.map(function(c) {
-        return '<div class="move-option" onclick="moveSubcubbyTo(\'' + c.cubbyId + '\')">' +
+        return '<div class="move-option" onclick="event.stopPropagation(); moveSubcubbyTo(\'' + c.cubbyId + '\')">' +
           '<span class="move-path">' + c.roomName + '</span>' +
           '<span class="move-subcubby">' + c.cubbyName + '</span></div>';
       }).join('') : '<p style="color:rgba(255,255,255,0.5);text-align:center;padding:20px;">No other cubbies available</p>';
       
       modal.innerHTML = 
         '<div class="modal-backdrop" onclick="closeMoveModal()"></div>' +
-        '<div class="modal-content move-modal-content">' +
+        '<div class="modal-content move-modal-content" onclick="event.stopPropagation()">' +
           '<h2>Move subcubby to...</h2>' +
           '<div class="move-options">' + optionsHtml + '</div>' +
           '<div class="modal-buttons">' +
