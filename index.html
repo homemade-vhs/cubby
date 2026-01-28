@@ -19,6 +19,7 @@
 
 <body>
 
+  <!-- Home Screen -->
   <div id="home-screen" class="screen active">
     <div class="greeting animate-in">
       <h1 id="greeting-text">Good evening, Matt!</h1>
@@ -28,9 +29,10 @@
     <div class="logo animate-in delay-3"><span>CUBBY</span></div>
   </div>
   
+  <!-- Room Screen -->
   <div id="room-screen" class="screen">
     <div class="header animate-in">
-      <button class="back-btn" onclick="goHome()">
+      <button class="back-btn" onclick="goToHome()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18L9 12L15 6"/></svg>
         back
       </button>
@@ -39,6 +41,7 @@
     <div id="cubbies-list" class="cubbies-list"></div>
   </div>
   
+  <!-- Cubby Screen -->
   <div id="cubby-screen" class="screen">
     <div class="cubby-header animate-in">
       <button class="back-btn" onclick="goToRoom()">
@@ -56,8 +59,36 @@
     <div id="tasks-container" class="tasks-container"></div>
   </div>
 
-
-  <script src="script.js"></script>
+  <!-- 
+    Script Loading Order:
+    1. app.js - Core data structures, localStorage, navigation, colors (loads data)
+    2. animations.js - FLIP animations (no dependencies except app.js variables)
+    3. render.js - All render functions (depends on app.js variables)
+    4. tasks.js - Task CRUD operations (depends on app.js, render.js, animations.js)
+    5. modals.js - Modal handling (depends on app.js, render.js, tasks.js)
+    6. menus.js - Kebab menus (depends on all above)
+    7. init.js - Initialization (calls renderHome at the end)
+  -->
+  <script src="app.js"></script>
+  <script src="animations.js"></script>
+  <script src="render.js"></script>
+  <script src="tasks.js"></script>
+  <script src="modals.js"></script>
+  <script src="menus.js"></script>
+  <script>
+    // Initialize the app after all scripts are loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      if (typeof renderHome === 'function') {
+        renderHome();
+      }
+    });
+    // Fallback: if DOMContentLoaded already fired, run immediately
+    if (document.readyState !== 'loading') {
+      if (typeof renderHome === 'function') {
+        renderHome();
+      }
+    }
+  </script>
   
 </body>
 </html>
