@@ -637,3 +637,44 @@
 .search-results {
     padding-right: 12px;
 }
+
+/* ============================================ */
+/* SUBTASK COUNTER STYLES */
+/* ============================================ */
+
+.subtask-counter {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    background: var(--cubby-card);
+    border: 1px solid var(--cubby-border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.subtask-counter:hover {
+    background: var(--cubby-card-hover);
+}
+
+.subtask-count {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--cubby-text-muted);
+}
+
+.subtask-counter.all-complete {
+    background: rgba(90, 232, 144, 0.15);
+    border-color: rgba(90, 232, 144, 0.3);
+}
+
+.subtask-counter.all-complete .subtask-count {
+    color: #5AE890;
+}
+
+/* Adjust task layout when has subtasks */
+.task.has-subtasks {
+    /* No changes needed, just a marker class */
+}

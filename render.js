@@ -29,7 +29,7 @@ function renderRoom(room) {
     document.getElementById('room-title').innerHTML = '<h1>' + room.name + '</h1>';
     var html = '';
     room.cubbies.forEach(function(cubby, i) {
-        var theme = colorThemes[cubby.color];
+        var theme = colorThemes[cubby.color] || colorThemes.purple;
         html += '<div class="cubby-card animate-in delay-' + (i + 1) + '" data-cubby-id="' + cubby.id + '" style="background:' + theme.card + ';border:2px solid ' + theme.border + ';">' +
             '<div class="cubby-card-main" onclick="selectCubby(\'' + cubby.id + '\')">' +
             '<span class="name" style="color:' + theme.text + '">' + cubby.name + '</span>' +
@@ -47,7 +47,7 @@ function renderRoom(room) {
 // ============================================
 
 function renderCubby(cubby) {
-    setCubbyTheme(cubby.color);
+    setCubbyTheme(cubby.color || 'purple');
     document.getElementById('cubby-title').innerHTML = '<h1>' + cubby.name + '</h1>';
     var cubbyData = appData.cubbies[cubby.id];
     
@@ -91,7 +91,7 @@ function renderCubby(cubby) {
 function renderTask(task) {
     var hasSubtasks = task.subtasks && task.subtasks.length > 0;
     var theme = colorThemes[currentCubby.color];
-    var html = '<div class="task ' + (task.expanded ? 'expanded' : '') + (task.completed ? ' completed-task' : '') + '" data-task-id="' + task.id + '">' +
+    var html = '<div class="task ' + (task.expanded ? 'expanded' : '') + (task.completed ? ' completed-task' : '') + (hasSubtasks ? ' has-subtasks' : '') + '" data-task-id="' + task.id + '">' +
         '<div class="checkbox ' + (task.completed ? 'checked' : '') + '" onclick="toggleTask(\'' + task.id + '\')">' +
         '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8L7 12L13 4" stroke="' + theme.bg + '" stroke-width="2.5" stroke-linecap="round"/></svg></div>' +
         '<span class="task-text ' + (task.completed ? 'completed' : '') + '">' + task.text + '</span>';
@@ -115,6 +115,16 @@ function renderTask(task) {
             html += '<span class="task-due-date ' + dueDateInfo.class + '">' + dueDateInfo.text + '</span>';
         }
         html += '</div>';
+    }
+    
+    // Subtask counter (only show if has subtasks)
+    if (hasSubtasks) {
+        var completedCount = task.subtasks.filter(function(st) { return st.completed; }).length;
+        var totalCount = task.subtasks.length;
+        var allComplete = completedCount === totalCount;
+        html += '<div class="subtask-counter' + (allComplete ? ' all-complete' : '') + '" onclick="toggleTaskExpand(\'' + task.id + '\')">' +
+            '<span class="subtask-count">' + completedCount + '/' + totalCount + '</span>' +
+            '</div>';
     }
     
     // Always show expand button for adding/viewing subtasks
