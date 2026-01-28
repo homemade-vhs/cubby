@@ -784,7 +784,7 @@
     position: absolute;
     left: 0;
     top: 8px;
-    bottom: 54px;
+    bottom: 36px;
     width: 2px;
     background: var(--cubby-border);
     border-radius: 2px;
@@ -820,7 +820,7 @@
     left: -24px;
     bottom: calc(50% - 1px);
     width: 12px;
-    height: 36px;
+    height: 54px;
     border-left: 2px solid var(--cubby-border);
     border-bottom: 2px solid var(--cubby-border);
     border-bottom-left-radius: 12px;
