@@ -752,13 +752,12 @@
 .add-subtask-btn::before {
     content: '';
     position: absolute;
-    left: -24px;
-    top: 50%;
+    left: -26px;
+    bottom: 50%;
     width: 14px;
     height: 20px;
     border-left: 2px solid var(--cubby-border);
     border-bottom: 2px solid var(--cubby-border);
     border-bottom-left-radius: 12px;
-    transform: translateY(-100%);
     background: transparent;
 }
