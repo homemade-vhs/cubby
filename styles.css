@@ -784,7 +784,7 @@
     position: absolute;
     left: 0;
     top: 0;
-    bottom: 32px;
+    bottom: 18px;
     width: 2px;
     background: var(--cubby-border);
 }
@@ -824,7 +824,7 @@
     left: -24px;
     bottom: 50%;
     width: 12px;
-    height: 14px;
+    height: 20px;
     border-left: 2px solid var(--cubby-border);
     border-bottom: 2px solid var(--cubby-border);
     border-bottom-left-radius: 12px;
