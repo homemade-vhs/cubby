@@ -25,6 +25,11 @@
       <h1 id="greeting-text">Good evening, Matt!</h1>
       <p>What would you like to work on?</p>
     </div>
+    <button class="search-btn animate-in delay-1" onclick="openSearchModal()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <span>Search tasks...</span>
+      <span class="search-shortcut">⌘K</span>
+    </button>
     <div id="rooms-container"></div>
     <div class="logo animate-in delay-3"><span>CUBBY</span></div>
   </div>
@@ -75,6 +80,7 @@
   <script src="tasks.js"></script>
   <script src="modals.js"></script>
   <script src="menus.js"></script>
+  <script src="search.js"></script>
   <script>
     // Initialize the app after all scripts are loaded
     document.addEventListener('DOMContentLoaded', function() {
