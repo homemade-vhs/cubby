@@ -63,7 +63,7 @@ var currentCubby = null;
 // ============================================
 
 function loadData() {
-    var stored = localStorage.getItem('cubbyAppData');
+    var stored = localStorage.getItem('cubby_data');
     if (stored) {
         try {
             appData = JSON.parse(stored);
@@ -77,7 +77,7 @@ function loadData() {
 }
 
 function saveData() {
-    localStorage.setItem('cubbyAppData', JSON.stringify(appData));
+    localStorage.setItem('cubby_data', JSON.stringify(appData));
 }
 
 function initializeDefaultData() {
