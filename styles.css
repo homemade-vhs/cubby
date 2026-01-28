@@ -707,22 +707,16 @@
     border-color: var(--cubby-primary);
 }
 
-/* Subtasks container with vertical line */
+/* Subtasks container */
 .subtasks-container {
     position: relative;
     margin-left: 20px;
     padding-left: 20px;
 }
 
-/* Main vertical line - stops before the last item */
+/* No pseudo-element on container - each item draws its own line segment */
 .subtasks-container::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 32px;
-    width: 2px;
-    background: var(--cubby-border);
+    display: none;
 }
 
 /* Subtask with curved connector */
@@ -730,16 +724,23 @@
     position: relative;
 }
 
+/* Vertical line segment + curve for each subtask */
 .task.subtask::before {
     content: '';
     position: absolute;
     left: -20px;
-    top: 0;
+    bottom: 50%;
     width: 12px;
-    height: 50%;
+    height: calc(100% + 8px);
     border-left: 2px solid var(--cubby-border);
     border-bottom: 2px solid var(--cubby-border);
-    border-bottom-left-radius: 10px;
+    border-bottom-left-radius: 12px;
+}
+
+/* First subtask needs less height */
+.task.subtask:first-child::before {
+    height: calc(50% + 8px);
+    bottom: 50%;
 }
 
 /* Add subtask button curved connector */
@@ -752,10 +753,15 @@
     content: '';
     position: absolute;
     left: -20px;
-    top: 0;
+    bottom: 50%;
     width: 12px;
-    height: 50%;
+    height: calc(100% + 8px);
     border-left: 2px solid var(--cubby-border);
     border-bottom: 2px solid var(--cubby-border);
-    border-bottom-left-radius: 10px;
+    border-bottom-left-radius: 12px;
+}
+
+/* When add-subtask is first child (no subtasks yet) */
+.subtasks-container > .add-subtask-btn:first-child::before {
+    height: calc(50% + 8px);
 }
