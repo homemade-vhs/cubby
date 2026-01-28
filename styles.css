@@ -173,6 +173,42 @@
     .task-due-date.due-later { background: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.5); }
     .task.completed-task .task-due-date { opacity: 0.5; }
     
+    /* Tag styles */
+    .task-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-left: auto; margin-right: 8px; }
+    .task-tag { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 10px; white-space: nowrap; text-transform: lowercase; }
+    .task-tag.tag-red { background: rgba(255, 107, 107, 0.25); color: #ff6b6b; }
+    .task-tag.tag-orange { background: rgba(255, 159, 67, 0.25); color: #ff9f43; }
+    .task-tag.tag-yellow { background: rgba(254, 202, 87, 0.25); color: #feca57; }
+    .task-tag.tag-green { background: rgba(46, 213, 115, 0.25); color: #2ed573; }
+    .task-tag.tag-blue { background: rgba(91, 142, 255, 0.25); color: #5B8EFF; }
+    .task-tag.tag-purple { background: rgba(165, 94, 234, 0.25); color: #a55eea; }
+    .task-tag.tag-pink { background: rgba(255, 107, 181, 0.25); color: #ff6bb5; }
+    .task-tag.tag-gray { background: rgba(255, 255, 255, 0.15); color: rgba(255, 255, 255, 0.7); }
+    .task.completed-task .task-tag { opacity: 0.5; }
+    .task.subtask .task-tags { margin-left: 0; }
+    
+    /* Task meta container - holds tags and due date */
+    .task-meta { display: flex; align-items: center; gap: 6px; margin-left: auto; margin-right: 8px; }
+    .task-meta .task-tags { margin: 0; }
+    .task-meta .task-due-date { margin: 0; }
+    
+    /* Tags input in modal */
+    .tags-row { margin-top: 12px; }
+    .tags-row label { display: block; font-size: 14px; color: rgba(255,255,255,0.6); font-weight: 500; margin-bottom: 8px; }
+    .tags-input-container { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; min-height: 44px; align-items: center; }
+    .tags-input-container:focus-within { border-color: rgba(255,255,255,0.3); }
+    .tags-input-container .tag-pill { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; padding: 4px 8px; border-radius: 8px; cursor: default; }
+    .tags-input-container .tag-pill .remove-tag { cursor: pointer; opacity: 0.6; font-size: 14px; line-height: 1; margin-left: 2px; }
+    .tags-input-container .tag-pill .remove-tag:hover { opacity: 1; }
+    .tags-input-container input { flex: 1; min-width: 80px; background: transparent; border: none; color: #fff; font-size: 14px; font-family: inherit; outline: none; padding: 4px 0; }
+    .tags-input-container input::placeholder { color: rgba(255,255,255,0.3); }
+    
+    /* Tag color picker */
+    .tag-colors { display: flex; gap: 6px; margin-top: 8px; }
+    .tag-color-btn { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.15s ease, border-color 0.15s ease; }
+    .tag-color-btn:hover { transform: scale(1.1); }
+    .tag-color-btn.selected { border-color: rgba(255,255,255,0.8); }
+    
     /* Date input in modal */
     .modal-content .date-row { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
     .modal-content .date-row label { font-size: 14px; color: rgba(255,255,255,0.6); font-weight: 500; white-space: nowrap; }

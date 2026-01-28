@@ -27,6 +27,19 @@
       teal: { primary: '#40E8D4', bg: '#082824', card: 'rgba(64, 232, 212, 0.12)', cardHover: 'rgba(64, 232, 212, 0.20)', border: 'rgba(64, 232, 212, 0.35)', text: '#b8fff4', textMuted: 'rgba(64, 232, 212, 0.6)', glow: 'rgba(64, 232, 212, 0.4)' }
     };
     
+    // Tag colors for task tags
+    var tagColors = {
+      red: { bg: 'rgba(255, 107, 107, 0.25)', text: '#ff6b6b' },
+      orange: { bg: 'rgba(255, 159, 67, 0.25)', text: '#ff9f43' },
+      yellow: { bg: 'rgba(254, 202, 87, 0.25)', text: '#feca57' },
+      green: { bg: 'rgba(46, 213, 115, 0.25)', text: '#2ed573' },
+      blue: { bg: 'rgba(91, 142, 255, 0.25)', text: '#5B8EFF' },
+      purple: { bg: 'rgba(165, 94, 234, 0.25)', text: '#a55eea' },
+      pink: { bg: 'rgba(255, 107, 181, 0.25)', text: '#ff6bb5' },
+      gray: { bg: 'rgba(255, 255, 255, 0.15)', text: 'rgba(255, 255, 255, 0.7)' }
+    };
+    var tagColorNames = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'gray'];
+    
     // DEFAULT DATA - used on first launch or if localStorage is empty
     var defaultData = {
       user: { name: 'Matt' },
@@ -256,10 +269,26 @@
         '<div class="checkbox ' + (task.completed ? 'checked' : '') + '" onclick="toggleTask(\'' + task.id + '\')">' +
         '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8L7 12L13 4" stroke="' + theme.bg + '" stroke-width="2.5" stroke-linecap="round"/></svg></div>' +
         '<span class="task-text ' + (task.completed ? 'completed' : '') + '">' + task.text + '</span>';
-      // Due date display
-      if (task.dueDate) {
-        var dueDateInfo = formatDueDate(task.dueDate);
-        html += '<span class="task-due-date ' + dueDateInfo.class + '">' + dueDateInfo.text + '</span>';
+      
+      // Task meta (tags + due date)
+      var hasTags = task.tags && task.tags.length > 0;
+      var hasDueDate = task.dueDate;
+      if (hasTags || hasDueDate) {
+        html += '<div class="task-meta">';
+        // Tags display
+        if (hasTags) {
+          html += '<div class="task-tags">';
+          task.tags.forEach(function(tag) {
+            html += '<span class="task-tag tag-' + tag.color + '">' + tag.text + '</span>';
+          });
+          html += '</div>';
+        }
+        // Due date display
+        if (hasDueDate) {
+          var dueDateInfo = formatDueDate(task.dueDate);
+          html += '<span class="task-due-date ' + dueDateInfo.class + '">' + dueDateInfo.text + '</span>';
+        }
+        html += '</div>';
       }
       // Always show expand button for adding/viewing subtasks
       html += '<div class="expand-btn ' + (task.expanded ? 'expanded' : '') + '" onclick="toggleTaskExpand(\'' + task.id + '\')">' +
@@ -269,10 +298,30 @@
       html += '<div class="subtasks-container ' + (task.expanded ? 'visible' : '') + '" data-parent-task="' + task.id + '">';
       if (hasSubtasks) {
         task.subtasks.forEach(function(st) {
+          // Build subtask meta HTML (tags + due date)
+          var subtaskMetaHtml = '';
+          var stHasTags = st.tags && st.tags.length > 0;
+          var stHasDueDate = st.dueDate;
+          if (stHasTags || stHasDueDate) {
+            subtaskMetaHtml += '<div class="task-meta">';
+            if (stHasTags) {
+              subtaskMetaHtml += '<div class="task-tags">';
+              st.tags.forEach(function(tag) {
+                subtaskMetaHtml += '<span class="task-tag tag-' + tag.color + '">' + tag.text + '</span>';
+              });
+              subtaskMetaHtml += '</div>';
+            }
+            if (stHasDueDate) {
+              var stDueDateInfo = formatDueDate(st.dueDate);
+              subtaskMetaHtml += '<span class="task-due-date ' + stDueDateInfo.class + '">' + stDueDateInfo.text + '</span>';
+            }
+            subtaskMetaHtml += '</div>';
+          }
           html += '<div class="task subtask ' + (st.completed ? 'completed-task' : '') + '" data-task-id="' + st.id + '" data-parent="' + task.id + '">' +
             '<div class="checkbox small ' + (st.completed ? 'checked' : '') + '" onclick="toggleSubtask(\'' + task.id + '\',\'' + st.id + '\')">' +
             '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8L7 12L13 4" stroke="' + theme.bg + '" stroke-width="2.5" stroke-linecap="round"/></svg></div>' +
             '<span class="task-text ' + (st.completed ? 'completed' : '') + '">' + st.text + '</span>' +
+            subtaskMetaHtml +
             '<div class="more-btn" onclick="openTaskMenu(event, \'' + st.id + '\', true, \'' + task.id + '\')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="18" r="1.5" fill="currentColor"/></svg></div></div>';
         });
       }
@@ -535,6 +584,8 @@
     var modalSubcubbyId = null;
     var modalParentTaskId = null;
     var modalMode = 'task'; // 'task' or 'subtask'
+    var modalTags = []; // Current tags being edited
+    var modalSelectedTagColor = 'blue'; // Default tag color
     
     function createModal() {
       if (document.getElementById('task-modal')) return;
@@ -551,6 +602,13 @@
             '<input type="date" id="task-date">' +
             '<button type="button" class="clear-date-btn" onclick="clearDueDate()">Clear</button>' +
           '</div>' +
+          '<div class="tags-row" id="tags-row">' +
+            '<label>Tags</label>' +
+            '<div class="tags-input-container" id="tags-container">' +
+              '<input type="text" id="tag-input" placeholder="Add tag...">' +
+            '</div>' +
+            '<div class="tag-colors" id="tag-colors"></div>' +
+          '</div>' +
           '<div class="modal-buttons">' +
             '<button class="modal-btn cancel" onclick="closeModal()">Cancel</button>' +
             '<button class="modal-btn confirm" onclick="confirmAddTask()">Add</button>' +
@@ -558,10 +616,82 @@
         '</div>';
       document.body.appendChild(modal);
       
-      // Handle Enter key
+      // Handle Enter key on task input
       document.getElementById('task-input').addEventListener('keyup', function(e) {
         if (e.key === 'Enter') confirmAddTask();
         if (e.key === 'Escape') closeModal();
+      });
+      
+      // Handle tag input
+      document.getElementById('tag-input').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ',') {
+          e.preventDefault();
+          addTagFromInput();
+        } else if (e.key === 'Backspace' && this.value === '' && modalTags.length > 0) {
+          removeTag(modalTags.length - 1);
+        } else if (e.key === 'Escape') {
+          closeModal();
+        }
+      });
+      
+      // Render tag color buttons
+      renderTagColorButtons();
+    }
+    
+    function renderTagColorButtons() {
+      var container = document.getElementById('tag-colors');
+      if (!container) return;
+      container.innerHTML = '';
+      tagColorNames.forEach(function(color) {
+        var btn = document.createElement('div');
+        btn.className = 'tag-color-btn' + (color === modalSelectedTagColor ? ' selected' : '');
+        btn.style.background = tagColors[color].text;
+        btn.onclick = function() { selectTagColor(color); };
+        container.appendChild(btn);
+      });
+    }
+    
+    function selectTagColor(color) {
+      modalSelectedTagColor = color;
+      renderTagColorButtons();
+    }
+    
+    function addTagFromInput() {
+      var input = document.getElementById('tag-input');
+      var text = input.value.trim().replace(/,/g, '');
+      if (!text) return;
+      
+      // Don't add duplicate tags
+      var exists = modalTags.some(function(t) { return t.text.toLowerCase() === text.toLowerCase(); });
+      if (exists) {
+        input.value = '';
+        return;
+      }
+      
+      modalTags.push({ text: text, color: modalSelectedTagColor });
+      input.value = '';
+      renderModalTags();
+    }
+    
+    function removeTag(index) {
+      modalTags.splice(index, 1);
+      renderModalTags();
+    }
+    
+    function renderModalTags() {
+      var container = document.getElementById('tags-container');
+      var input = document.getElementById('tag-input');
+      
+      // Remove existing tag pills
+      var pills = container.querySelectorAll('.tag-pill');
+      pills.forEach(function(p) { p.remove(); });
+      
+      // Add tag pills before input
+      modalTags.forEach(function(tag, index) {
+        var pill = document.createElement('span');
+        pill.className = 'tag-pill tag-' + tag.color;
+        pill.innerHTML = tag.text + '<span class="remove-tag" onclick="removeTag(' + index + ')">×</span>';
+        container.insertBefore(pill, input);
       });
     }
     
@@ -574,10 +704,16 @@
       modalMode = 'task';
       modalSubcubbyId = subcubbyId;
       modalParentTaskId = null;
+      modalTags = [];
+      modalSelectedTagColor = 'blue';
       document.getElementById('modal-title').textContent = 'New Task';
       document.getElementById('task-input').placeholder = 'Enter task...';
       document.getElementById('date-row').style.display = 'flex';
       document.getElementById('task-date').value = '';
+      document.getElementById('tags-row').style.display = 'block';
+      document.getElementById('tag-input').value = '';
+      renderModalTags();
+      renderTagColorButtons();
       var modal = document.getElementById('task-modal');
       modal.classList.add('active');
       var input = document.getElementById('task-input');
@@ -590,9 +726,16 @@
       modalMode = 'subtask';
       modalParentTaskId = parentTaskId;
       modalSubcubbyId = null;
+      modalTags = [];
+      modalSelectedTagColor = 'blue';
       document.getElementById('modal-title').textContent = 'New Subtask';
       document.getElementById('task-input').placeholder = 'Enter subtask...';
-      document.getElementById('date-row').style.display = 'none';
+      document.getElementById('date-row').style.display = 'flex';
+      document.getElementById('task-date').value = '';
+      document.getElementById('tags-row').style.display = 'block';
+      document.getElementById('tag-input').value = '';
+      renderModalTags();
+      renderTagColorButtons();
       var modal = document.getElementById('task-modal');
       modal.classList.add('active');
       var input = document.getElementById('task-input');
@@ -605,6 +748,7 @@
       if (modal) modal.classList.remove('active');
       modalSubcubbyId = null;
       modalParentTaskId = null;
+      modalTags = [];
     }
     
     function confirmAddTask() {
@@ -613,11 +757,12 @@
       if (!text) return;
       
       var dueDate = document.getElementById('task-date').value || null;
+      var tags = modalTags.slice(); // Copy current tags
       
       if (modalMode === 'edit') {
-        saveEditedTask(text, dueDate);
+        saveEditedTask(text, dueDate, tags);
       } else if (modalMode === 'subtask') {
-        addSubtask(modalParentTaskId, text);
+        addSubtask(modalParentTaskId, text, dueDate, tags);
       } else if (modalMode === 'editSubcubby') {
         saveEditedSubcubby(text);
       } else if (modalMode === 'newSubcubby') {
@@ -631,7 +776,7 @@
       } else if (modalMode === 'newRoom') {
         addNewRoom(text);
       } else {
-        addTask(modalSubcubbyId, text, dueDate);
+        addTask(modalSubcubbyId, text, dueDate, tags);
       }
       closeModal();
     }
@@ -709,25 +854,30 @@
       renderCubby(currentCubby);
     }
     
-    function saveEditedTask(newText, newDueDate) {
+    function saveEditedTask(newText, newDueDate, newTags) {
       var cubbyData = appData.cubbies[currentCubby.id];
       
       if (activeMenuIsSubtask) {
-        // Edit subtask (no due date for subtasks)
+        // Edit subtask (including due date and tags)
         cubbyData.subcubbies.forEach(function(sub) {
           var parentTask = sub.tasks.find(function(t) { return t.id === activeMenuParentId; });
           if (parentTask && parentTask.subtasks) {
             var subtask = parentTask.subtasks.find(function(st) { return st.id === activeMenuTaskId; });
-            if (subtask) subtask.text = newText;
+            if (subtask) {
+              subtask.text = newText;
+              subtask.dueDate = newDueDate || null;
+              subtask.tags = newTags || [];
+            }
           }
         });
       } else {
-        // Edit task (including due date)
+        // Edit task (including due date and tags)
         cubbyData.subcubbies.forEach(function(sub) {
           var task = sub.tasks.find(function(t) { return t.id === activeMenuTaskId; });
           if (task) {
             task.text = newText;
             task.dueDate = newDueDate || null;
+            task.tags = newTags || [];
           }
         });
       }
@@ -736,7 +886,7 @@
       renderCubby(currentCubby);
     }
     
-    function addTask(subcubbyId, text, dueDate) {
+    function addTask(subcubbyId, text, dueDate, tags) {
       var cubbyData = appData.cubbies[currentCubby.id];
       var subcubby = cubbyData.subcubbies.find(function(s) { return s.id === subcubbyId; });
       if (!subcubby) return;
@@ -751,7 +901,8 @@
         completed: false,
         expanded: false,
         subtasks: [],
-        dueDate: dueDate || null
+        dueDate: dueDate || null,
+        tags: tags || []
       };
       
       // Add to beginning of task list
@@ -762,7 +913,7 @@
       renderCubby(currentCubby);
     }
     
-    function addSubtask(parentTaskId, text) {
+    function addSubtask(parentTaskId, text, dueDate, tags) {
       var cubbyData = appData.cubbies[currentCubby.id];
       cubbyData.subcubbies.forEach(function(sub) {
         var task = sub.tasks.find(function(t) { return t.id === parentTaskId; });
@@ -774,7 +925,9 @@
           var newSubtask = {
             id: newId,
             text: text,
-            completed: false
+            completed: false,
+            dueDate: dueDate || null,
+            tags: tags || []
           };
           
           // Initialize subtasks array if needed
@@ -882,6 +1035,7 @@
       
       var taskText = '';
       var taskDueDate = null;
+      var taskTags = [];
       var cubbyData = appData.cubbies[currentCubby.id];
       
       if (isSubtask) {
@@ -890,7 +1044,11 @@
           var parentTask = sub.tasks.find(function(t) { return t.id === parentId; });
           if (parentTask) {
             var subtask = parentTask.subtasks.find(function(st) { return st.id === taskId; });
-            if (subtask) taskText = subtask.text;
+            if (subtask) {
+              taskText = subtask.text;
+              taskDueDate = subtask.dueDate || null;
+              taskTags = subtask.tags ? subtask.tags.slice() : [];
+            }
           }
         });
       } else {
@@ -900,6 +1058,7 @@
           if (task) {
             taskText = task.text;
             taskDueDate = task.dueDate || null;
+            taskTags = task.tags ? task.tags.slice() : [];
           }
         });
       }
@@ -909,17 +1068,23 @@
       activeMenuIsSubtask = isSubtask;
       activeMenuParentId = parentId;
       
-      openEditModal(taskText, taskDueDate);
+      openEditModal(taskText, taskDueDate, taskTags);
     }
     
-    function openEditModal(currentText, currentDueDate) {
+    function openEditModal(currentText, currentDueDate, currentTags) {
       createModal();
       modalMode = 'edit';
+      modalTags = currentTags || [];
+      modalSelectedTagColor = 'blue';
       document.getElementById('modal-title').textContent = activeMenuIsSubtask ? 'Edit Subtask' : 'Edit Task';
       document.getElementById('task-input').placeholder = activeMenuIsSubtask ? 'Enter subtask...' : 'Enter task...';
-      // Show date row only for tasks, not subtasks
-      document.getElementById('date-row').style.display = activeMenuIsSubtask ? 'none' : 'flex';
+      // Show date row for both tasks and subtasks now
+      document.getElementById('date-row').style.display = 'flex';
       document.getElementById('task-date').value = currentDueDate || '';
+      document.getElementById('tags-row').style.display = 'block';
+      document.getElementById('tag-input').value = '';
+      renderModalTags();
+      renderTagColorButtons();
       var modal = document.getElementById('task-modal');
       modal.classList.add('active');
       var input = document.getElementById('task-input');
@@ -970,7 +1135,9 @@
               var newSubtask = {
                 id: 'st' + Date.now(),
                 text: subtask.text,
-                completed: false
+                completed: false,
+                dueDate: subtask.dueDate || null,
+                tags: subtask.tags ? subtask.tags.slice() : []
               };
               var index = parentTask.subtasks.findIndex(function(st) { return st.id === taskId; });
               parentTask.subtasks.splice(index + 1, 0, newSubtask);
@@ -988,9 +1155,16 @@
               completed: false,
               expanded: false,
               subtasks: task.subtasks ? task.subtasks.map(function(st) {
-                return { id: 'st' + Date.now() + Math.random().toString(36).substr(2, 5), text: st.text, completed: false };
+                return { 
+                  id: 'st' + Date.now() + Math.random().toString(36).substr(2, 5), 
+                  text: st.text, 
+                  completed: false,
+                  dueDate: st.dueDate || null,
+                  tags: st.tags ? st.tags.slice() : []
+                };
               }) : [],
-              dueDate: task.dueDate || null
+              dueDate: task.dueDate || null,
+              tags: task.tags ? task.tags.slice() : []
             };
             var index = sub.tasks.findIndex(function(t) { return t.id === taskId; });
             sub.tasks.splice(index + 1, 0, newTask);
@@ -1291,6 +1465,7 @@
       document.getElementById('modal-title').textContent = 'Edit Subcubby';
       document.getElementById('task-input').placeholder = 'Enter name...';
       document.getElementById('date-row').style.display = 'none';
+      document.getElementById('tags-row').style.display = 'none';
       var modal = document.getElementById('task-modal');
       modal.classList.add('active');
       var input = document.getElementById('task-input');
@@ -1441,6 +1616,7 @@
       document.getElementById('modal-title').textContent = 'New Subcubby';
       document.getElementById('task-input').placeholder = 'Enter name...';
       document.getElementById('date-row').style.display = 'none';
+      document.getElementById('tags-row').style.display = 'none';
       var modal = document.getElementById('task-modal');
       modal.classList.add('active');
       var input = document.getElementById('task-input');
@@ -1525,6 +1701,7 @@
       document.getElementById('modal-title').textContent = 'Edit Cubby Name';
       document.getElementById('task-input').placeholder = 'Enter name...';
       document.getElementById('date-row').style.display = 'none';
+      document.getElementById('tags-row').style.display = 'none';
       var modal = document.getElementById('task-modal');
       modal.classList.add('active');
       var input = document.getElementById('task-input');
@@ -1676,6 +1853,7 @@
       document.getElementById('modal-title').textContent = 'New Cubby';
       document.getElementById('task-input').placeholder = 'Enter name...';
       document.getElementById('date-row').style.display = 'none';
+      document.getElementById('tags-row').style.display = 'none';
       var modal = document.getElementById('task-modal');
       modal.classList.add('active');
       var input = document.getElementById('task-input');
@@ -1754,6 +1932,7 @@
       document.getElementById('modal-title').textContent = 'Edit Room Name';
       document.getElementById('task-input').placeholder = 'Enter name...';
       document.getElementById('date-row').style.display = 'none';
+      document.getElementById('tags-row').style.display = 'none';
       var modal = document.getElementById('task-modal');
       modal.classList.add('active');
       var input = document.getElementById('task-input');
@@ -1810,6 +1989,7 @@
       document.getElementById('modal-title').textContent = 'New Room';
       document.getElementById('task-input').placeholder = 'Enter name...';
       document.getElementById('date-row').style.display = 'none';
+      document.getElementById('tags-row').style.display = 'none';
       var modal = document.getElementById('task-modal');
       modal.classList.add('active');
       var input = document.getElementById('task-input');
