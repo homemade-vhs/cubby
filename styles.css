@@ -748,13 +748,17 @@
     margin-left: 24px;
 }
 
-/* Horizontal connector for add button */
+/* Curved connector for add subtask button */
 .add-subtask-btn::before {
     content: '';
     position: absolute;
     left: -24px;
     top: 50%;
-    width: 20px;
-    height: 2px;
-    background: var(--cubby-border);
+    width: 14px;
+    height: 20px;
+    border-left: 2px solid var(--cubby-border);
+    border-bottom: 2px solid var(--cubby-border);
+    border-bottom-left-radius: 12px;
+    transform: translateY(-100%);
+    background: transparent;
 }
