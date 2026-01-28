@@ -361,6 +361,7 @@
     font-family: inherit;
     cursor: pointer;
     white-space: nowrap;
+    flex-shrink: 0;
     transition: all 0.2s ease;
 }
 
@@ -528,4 +529,31 @@
 .search-highlight {
     animation: highlightPulse 0.5s ease 3;
     background: var(--cubby-card-hover) !important;
+}
+
+/* Header search button (Room & Cubby screens) */
+.header-search-btn {
+    padding: 10px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.08);
+    cursor: pointer;
+    color: rgba(255,255,255,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+.header-search-btn:hover {
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.7);
+}
+.cubby-header .header-search-btn {
+    background: var(--cubby-card);
+    border-color: var(--cubby-border);
+    color: var(--cubby-text-muted);
+}
+.cubby-header .header-search-btn:hover {
+    background: var(--cubby-card-hover);
+    color: var(--cubby-text);
 }
