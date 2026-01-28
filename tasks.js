@@ -310,12 +310,35 @@ function addSubtask(parentTaskId, text, dueDate, tags) {
             // Add to end of subtasks list
             task.subtasks.push(newSubtask);
             
-            // Make sure task is expanded to show the new subtask
+            // Make sure task stays expanded
             task.expanded = true;
             
-            // Save and re-render
+            // Save data
             saveData();
-            renderCubby(currentCubby);
+            
+            // Re-render just the subtasks container instead of whole cubby
+            var subtasksContainer = document.querySelector('[data-parent-task="' + parentTaskId + '"]');
+            if (subtasksContainer) {
+                var theme = colorThemes[currentCubby.color] || colorThemes.purple;
+                var html = '';
+                task.subtasks.forEach(function(st) {
+                    html += renderSubtask(st, parentTaskId, theme);
+                });
+                html += '<div class="add-subtask-btn" onclick="openSubtaskModal(\'' + parentTaskId + '\')"><span class="plus">+</span><span class="text">add subtask</span></div>';
+                subtasksContainer.innerHTML = html;
+                
+                // Update the subtask counter on the parent task
+                var taskEl = document.querySelector('[data-task-id="' + parentTaskId + '"]');
+                if (taskEl) {
+                    var counter = taskEl.querySelector('.subtask-counter');
+                    var completedCount = task.subtasks.filter(function(st) { return st.completed; }).length;
+                    var totalCount = task.subtasks.length;
+                    if (counter) {
+                        counter.querySelector('.subtask-count').textContent = completedCount + '/' + totalCount;
+                        counter.classList.toggle('all-complete', completedCount === totalCount);
+                    }
+                }
+            }
         }
     });
 }

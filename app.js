@@ -17,26 +17,26 @@ function playSubtaskCollapseSound() {}
 // ============================================
 
 var colorThemes = {
-    blue: { primary: '#5B8EFF', bg: '#0a1628', card: 'rgba(91, 142, 255, 0.12)', cardHover: 'rgba(91, 142, 255, 0.20)', border: 'rgba(91, 142, 255, 0.35)', text: '#b8d4ff', textMuted: 'rgba(91, 142, 255, 0.6)', glow: 'rgba(91, 142, 255, 0.4)' },
-    purple: { primary: '#B366FF', bg: '#180a28', card: 'rgba(179, 102, 255, 0.12)', cardHover: 'rgba(179, 102, 255, 0.20)', border: 'rgba(179, 102, 255, 0.35)', text: '#ddb8ff', textMuted: 'rgba(179, 102, 255, 0.6)', glow: 'rgba(179, 102, 255, 0.4)' },
-    pink: { primary: '#FF5A9E', bg: '#280a18', card: 'rgba(255, 90, 158, 0.12)', cardHover: 'rgba(255, 90, 158, 0.20)', border: 'rgba(255, 90, 158, 0.35)', text: '#ffb8d4', textMuted: 'rgba(255, 90, 158, 0.6)', glow: 'rgba(255, 90, 158, 0.4)' },
-    red: { primary: '#FF5A5A', bg: '#280a0a', card: 'rgba(255, 90, 90, 0.12)', cardHover: 'rgba(255, 90, 90, 0.20)', border: 'rgba(255, 90, 90, 0.35)', text: '#ffb8b8', textMuted: 'rgba(255, 90, 90, 0.6)', glow: 'rgba(255, 90, 90, 0.4)' },
-    orange: { primary: '#FF9F4A', bg: '#281808', card: 'rgba(255, 159, 74, 0.12)', cardHover: 'rgba(255, 159, 74, 0.20)', border: 'rgba(255, 159, 74, 0.35)', text: '#ffd4b8', textMuted: 'rgba(255, 159, 74, 0.6)', glow: 'rgba(255, 159, 74, 0.4)' },
-    yellow: { primary: '#FFE14A', bg: '#282408', card: 'rgba(255, 225, 74, 0.12)', cardHover: 'rgba(255, 225, 74, 0.20)', border: 'rgba(255, 225, 74, 0.35)', text: '#fff4b8', textMuted: 'rgba(255, 225, 74, 0.6)', glow: 'rgba(255, 225, 74, 0.4)' },
-    green: { primary: '#5AE890', bg: '#082818', card: 'rgba(90, 232, 144, 0.12)', cardHover: 'rgba(90, 232, 144, 0.20)', border: 'rgba(90, 232, 144, 0.35)', text: '#b8ffd4', textMuted: 'rgba(90, 232, 144, 0.6)', glow: 'rgba(90, 232, 144, 0.4)' },
-    teal: { primary: '#40E8D4', bg: '#082824', card: 'rgba(64, 232, 212, 0.12)', cardHover: 'rgba(64, 232, 212, 0.20)', border: 'rgba(64, 232, 212, 0.35)', text: '#b8fff4', textMuted: 'rgba(64, 232, 212, 0.6)', glow: 'rgba(64, 232, 212, 0.4)' }
+    blue: { primary: '#6BA3FF', bg: '#0a1628', card: 'rgba(107, 163, 255, 0.15)', cardHover: 'rgba(107, 163, 255, 0.25)', border: 'rgba(107, 163, 255, 0.45)', text: '#c5dfff', textMuted: 'rgba(107, 163, 255, 0.7)', glow: 'rgba(107, 163, 255, 0.5)' },
+    purple: { primary: '#C77DFF', bg: '#180a28', card: 'rgba(199, 125, 255, 0.15)', cardHover: 'rgba(199, 125, 255, 0.25)', border: 'rgba(199, 125, 255, 0.45)', text: '#e8c8ff', textMuted: 'rgba(199, 125, 255, 0.7)', glow: 'rgba(199, 125, 255, 0.5)' },
+    pink: { primary: '#FF6BAD', bg: '#280a18', card: 'rgba(255, 107, 173, 0.15)', cardHover: 'rgba(255, 107, 173, 0.25)', border: 'rgba(255, 107, 173, 0.45)', text: '#ffc8e0', textMuted: 'rgba(255, 107, 173, 0.7)', glow: 'rgba(255, 107, 173, 0.5)' },
+    red: { primary: '#FF6B6B', bg: '#280a0a', card: 'rgba(255, 107, 107, 0.15)', cardHover: 'rgba(255, 107, 107, 0.25)', border: 'rgba(255, 107, 107, 0.45)', text: '#ffc8c8', textMuted: 'rgba(255, 107, 107, 0.7)', glow: 'rgba(255, 107, 107, 0.5)' },
+    orange: { primary: '#FFB05A', bg: '#281808', card: 'rgba(255, 176, 90, 0.15)', cardHover: 'rgba(255, 176, 90, 0.25)', border: 'rgba(255, 176, 90, 0.45)', text: '#ffe0c0', textMuted: 'rgba(255, 176, 90, 0.7)', glow: 'rgba(255, 176, 90, 0.5)' },
+    yellow: { primary: '#FFE85A', bg: '#282408', card: 'rgba(255, 232, 90, 0.15)', cardHover: 'rgba(255, 232, 90, 0.25)', border: 'rgba(255, 232, 90, 0.45)', text: '#fff8c0', textMuted: 'rgba(255, 232, 90, 0.7)', glow: 'rgba(255, 232, 90, 0.5)' },
+    green: { primary: '#6BF5A0', bg: '#082818', card: 'rgba(107, 245, 160, 0.15)', cardHover: 'rgba(107, 245, 160, 0.25)', border: 'rgba(107, 245, 160, 0.45)', text: '#c0ffe0', textMuted: 'rgba(107, 245, 160, 0.7)', glow: 'rgba(107, 245, 160, 0.5)' },
+    teal: { primary: '#5AF0E0', bg: '#082824', card: 'rgba(90, 240, 224, 0.15)', cardHover: 'rgba(90, 240, 224, 0.25)', border: 'rgba(90, 240, 224, 0.45)', text: '#c0fff8', textMuted: 'rgba(90, 240, 224, 0.7)', glow: 'rgba(90, 240, 224, 0.5)' }
 };
 
 // Tag colors for task tags
 var tagColors = {
-    red: { bg: 'rgba(255, 107, 107, 0.25)', text: '#ff6b6b' },
-    orange: { bg: 'rgba(255, 159, 67, 0.25)', text: '#ff9f43' },
-    yellow: { bg: 'rgba(254, 202, 87, 0.25)', text: '#feca57' },
-    green: { bg: 'rgba(46, 213, 115, 0.25)', text: '#2ed573' },
-    blue: { bg: 'rgba(91, 142, 255, 0.25)', text: '#5B8EFF' },
-    purple: { bg: 'rgba(165, 94, 234, 0.25)', text: '#a55eea' },
-    pink: { bg: 'rgba(255, 107, 181, 0.25)', text: '#ff6bb5' },
-    gray: { bg: 'rgba(255, 255, 255, 0.15)', text: 'rgba(255, 255, 255, 0.7)' }
+    red: { bg: 'rgba(255, 107, 107, 0.3)', text: '#ff6b6b' },
+    orange: { bg: 'rgba(255, 176, 90, 0.3)', text: '#ffb05a' },
+    yellow: { bg: 'rgba(255, 232, 90, 0.3)', text: '#ffe85a' },
+    green: { bg: 'rgba(107, 245, 160, 0.3)', text: '#6bf5a0' },
+    blue: { bg: 'rgba(107, 163, 255, 0.3)', text: '#6ba3ff' },
+    purple: { bg: 'rgba(199, 125, 255, 0.3)', text: '#c77dff' },
+    pink: { bg: 'rgba(255, 107, 173, 0.3)', text: '#ff6bad' },
+    gray: { bg: 'rgba(255, 255, 255, 0.18)', text: 'rgba(255, 255, 255, 0.75)' }
 };
 
 var tagColorNames = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'gray'];

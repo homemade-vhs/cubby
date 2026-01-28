@@ -752,12 +752,23 @@
 .add-subtask-btn::before {
     content: '';
     position: absolute;
-    left: -26px;
-    bottom: 50%;
-    width: 14px;
-    height: 20px;
+    left: -24px;
+    bottom: calc(50% - 1px);
+    width: 12px;
+    height: 18px;
     border-left: 2px solid var(--cubby-border);
     border-bottom: 2px solid var(--cubby-border);
     border-bottom-left-radius: 12px;
     background: transparent;
+}
+
+/* Hide the vertical line where the curve starts */
+.subtasks-container::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 10px;
+    width: 2px;
+    height: 20px;
+    background: var(--cubby-bg, #0a0a0f);
 }
