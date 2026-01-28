@@ -713,13 +713,13 @@
     margin-left: 32px;
 }
 
-/* Vertical line on the left */
+/* Vertical line on the left - stops above the add button */
 .subtasks-container::before {
     content: '';
     position: absolute;
     left: 0;
     top: 8px;
-    bottom: 28px;
+    bottom: 54px;
     width: 2px;
     background: var(--cubby-border);
     border-radius: 2px;
@@ -748,27 +748,16 @@
     margin-left: 24px;
 }
 
-/* Curved connector for add subtask button */
+/* Curved connector for add subtask button - bridges from vertical line */
 .add-subtask-btn::before {
     content: '';
     position: absolute;
     left: -24px;
     bottom: calc(50% - 1px);
     width: 12px;
-    height: 18px;
+    height: 36px;
     border-left: 2px solid var(--cubby-border);
     border-bottom: 2px solid var(--cubby-border);
     border-bottom-left-radius: 12px;
     background: transparent;
-}
-
-/* Hide the vertical line where the curve starts */
-.subtasks-container::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: 10px;
-    width: 2px;
-    height: 20px;
-    background: var(--cubby-bg, #0a0a0f);
 }
