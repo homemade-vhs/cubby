@@ -580,3 +580,73 @@
     background: var(--cubby-card-hover);
     color: var(--cubby-text);
 }
+
+/* ============================================ */
+/* CUSTOM SCROLLBAR STYLES */
+/* ============================================ */
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.15);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.25);
+}
+
+/* Home screen scrollbar */
+#home-screen::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.15);
+}
+
+/* Room screen scrollbar */
+#room-screen .cubbies-list::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.15);
+}
+
+/* Cubby screen scrollbar - uses theme color */
+#cubby-screen::-webkit-scrollbar-thumb,
+#cubby-screen .tasks-container::-webkit-scrollbar-thumb {
+    background: var(--cubby-primary, rgba(255,255,255,0.15));
+    opacity: 0.4;
+}
+
+#cubby-screen::-webkit-scrollbar-thumb,
+#cubby-screen .tasks-container::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--cubby-primary) 40%, transparent);
+}
+
+/* Search modal scrollbar */
+.search-results::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.15);
+}
+
+.search-results::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.25);
+}
+
+/* Modal scrollbars */
+.move-options::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.15);
+}
+
+/* Firefox scrollbar */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.15) transparent;
+}
+
+#cubby-screen,
+#cubby-screen .tasks-container {
+    scrollbar-color: var(--cubby-primary) transparent;
+}
