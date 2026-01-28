@@ -933,3 +933,21 @@
 .task-menu-item.delete:active {
     background: rgba(255,107,107,0.2);
 }
+
+/* ============================================ */
+/* VERSION NUMBER */
+/* ============================================ */
+
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.version {
+    font-size: 10px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.25);
+    letter-spacing: 0.5px;
+}
