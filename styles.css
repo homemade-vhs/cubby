@@ -164,3 +164,20 @@
     /* Task layout */
     .task { display: flex; align-items: center; }
     .subcubby-header { display: flex; align-items: center; }
+    
+    /* Due date styles */
+    .task-due-date { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; margin-left: auto; margin-right: 8px; white-space: nowrap; }
+    .task-due-date.overdue { background: rgba(255, 107, 107, 0.2); color: #ff6b6b; }
+    .task-due-date.due-today { background: rgba(255, 179, 71, 0.2); color: #ffb347; }
+    .task-due-date.due-soon { background: rgba(91, 142, 255, 0.2); color: #5B8EFF; }
+    .task-due-date.due-later { background: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.5); }
+    .task.completed-task .task-due-date { opacity: 0.5; }
+    
+    /* Date input in modal */
+    .modal-content .date-row { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+    .modal-content .date-row label { font-size: 14px; color: rgba(255,255,255,0.6); font-weight: 500; white-space: nowrap; }
+    .modal-content input[type="date"] { flex: 1; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; color: #fff; font-size: 14px; font-family: inherit; outline: none; transition: border-color 0.2s ease; }
+    .modal-content input[type="date"]:focus { border-color: rgba(255,255,255,0.3); }
+    .modal-content input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.6; cursor: pointer; }
+    .clear-date-btn { padding: 8px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: rgba(255,255,255,0.5); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s ease; }
+    .clear-date-btn:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); }
