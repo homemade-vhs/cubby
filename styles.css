@@ -784,7 +784,7 @@
     position: absolute;
     left: 0;
     top: 0;
-    bottom: 8px;
+    bottom: 14px;
     width: 2px;
     background: var(--cubby-border);
 }
