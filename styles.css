@@ -710,23 +710,22 @@
 /* Subtasks container with vertical line */
 .subtasks-container {
     position: relative;
-    margin-left: 12px;
-    padding-left: 28px;
+    margin-left: 20px;
+    padding-left: 20px;
 }
 
-/* Main vertical line */
+/* Main vertical line - stops before the last item */
 .subtasks-container::before {
     content: '';
     position: absolute;
-    left: 8px;
+    left: 0;
     top: 0;
-    bottom: 24px;
+    bottom: 32px;
     width: 2px;
     background: var(--cubby-border);
-    border-radius: 1px;
 }
 
-/* Subtask horizontal connector */
+/* Subtask with curved connector */
 .task.subtask {
     position: relative;
 }
@@ -735,14 +734,15 @@
     content: '';
     position: absolute;
     left: -20px;
-    top: 50%;
-    width: 16px;
-    height: 2px;
-    background: var(--cubby-border);
-    transform: translateY(-50%);
+    top: 0;
+    width: 12px;
+    height: 50%;
+    border-left: 2px solid var(--cubby-border);
+    border-bottom: 2px solid var(--cubby-border);
+    border-bottom-left-radius: 10px;
 }
 
-/* Add subtask button connector */
+/* Add subtask button curved connector */
 .add-subtask-btn {
     position: relative;
     margin-left: 0;
@@ -752,9 +752,10 @@
     content: '';
     position: absolute;
     left: -20px;
-    top: 50%;
-    width: 16px;
-    height: 2px;
-    background: var(--cubby-border);
-    transform: translateY(-50%);
+    top: 0;
+    width: 12px;
+    height: 50%;
+    border-left: 2px solid var(--cubby-border);
+    border-bottom: 2px solid var(--cubby-border);
+    border-bottom-left-radius: 10px;
 }
