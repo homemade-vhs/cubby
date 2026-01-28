@@ -215,15 +215,36 @@ function toggleTaskExpand(taskId) {
             var taskEl = document.querySelector('[data-task-id="' + taskId + '"]');
             var expandBtn = taskEl.querySelector('.expand-btn');
             var subtasksContainer = document.querySelector('[data-parent-task="' + taskId + '"]');
+            var tasksContainer = document.querySelector('.tasks-container');
+            
             if (task.expanded) {
+                // Collapse any other expanded tasks first
+                document.querySelectorAll('.task.expanded:not(.subtask)').forEach(function(otherTask) {
+                    if (otherTask !== taskEl) {
+                        var otherId = otherTask.dataset.taskId;
+                        otherTask.classList.remove('expanded');
+                        var otherBtn = otherTask.querySelector('.expand-btn');
+                        if (otherBtn) otherBtn.classList.remove('expanded');
+                        var otherContainer = document.querySelector('[data-parent-task="' + otherId + '"]');
+                        if (otherContainer) otherContainer.classList.remove('visible');
+                        // Update data for other task
+                        cubbyData.subcubbies.forEach(function(s) {
+                            var t = s.tasks.find(function(tsk) { return tsk.id === otherId; });
+                            if (t) t.expanded = false;
+                        });
+                    }
+                });
+                
                 taskEl.classList.add('expanded');
                 expandBtn.classList.add('expanded');
                 subtasksContainer.classList.add('visible');
+                tasksContainer.classList.add('has-expanded-task');
                 playSubtaskExpandSound();
             } else {
                 taskEl.classList.remove('expanded');
                 expandBtn.classList.remove('expanded');
                 subtasksContainer.classList.remove('visible');
+                tasksContainer.classList.remove('has-expanded-task');
                 playSubtaskCollapseSound();
             }
             saveData();

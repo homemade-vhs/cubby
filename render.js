@@ -65,6 +65,14 @@ function renderCubby(cubby) {
         saveData();
     }
     
+    // Check if any task is expanded
+    var hasExpandedTask = false;
+    cubbyData.subcubbies.forEach(function(sub) {
+        sub.tasks.forEach(function(task) {
+            if (task.expanded) hasExpandedTask = true;
+        });
+    });
+    
     var html = '';
     cubbyData.subcubbies.forEach(function(sub, s) {
         var taskCount = sub.tasks.filter(function(t) { return !t.completed; }).length;
@@ -81,7 +89,16 @@ function renderCubby(cubby) {
     });
     // Add new subcubby button
     html += '<div class="add-subcubby-btn" onclick="openNewSubcubbyModal()"><span class="plus">+</span><span class="text">new subcubby</span></div>';
-    document.getElementById('tasks-container').innerHTML = html;
+    
+    var tasksContainer = document.getElementById('tasks-container');
+    tasksContainer.innerHTML = html;
+    
+    // Set focus mode if task is expanded
+    if (hasExpandedTask) {
+        tasksContainer.classList.add('has-expanded-task');
+    } else {
+        tasksContainer.classList.remove('has-expanded-task');
+    }
 }
 
 // ============================================

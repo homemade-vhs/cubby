@@ -678,3 +678,124 @@
 .task.has-subtasks {
     /* No changes needed, just a marker class */
 }
+
+/* ============================================ */
+/* EXPANDED TASK FOCUS MODE */
+/* ============================================ */
+
+/* When any task is expanded, dim other elements */
+.tasks-container.has-expanded-task .subcubby {
+    transition: opacity 0.3s ease;
+}
+
+.tasks-container.has-expanded-task .subcubby-header,
+.tasks-container.has-expanded-task .task:not(.expanded):not(.subtask),
+.tasks-container.has-expanded-task .add-task-btn,
+.tasks-container.has-expanded-task .add-subcubby-btn,
+.tasks-container.has-expanded-task .cubby-title {
+    opacity: 0.2;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+/* Keep expanded task and its subtasks fully visible */
+.tasks-container.has-expanded-task .task.expanded,
+.tasks-container.has-expanded-task .task.expanded + .subtasks-container,
+.tasks-container.has-expanded-task .task.expanded + .subtasks-container .task.subtask,
+.tasks-container.has-expanded-task .task.expanded + .subtasks-container .add-subtask-btn {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Glowing border on expanded task */
+.task.expanded.has-subtasks {
+    position: relative;
+    border-color: var(--cubby-primary);
+    box-shadow: 
+        -8px -8px 20px -10px var(--cubby-glow),
+        8px 8px 20px -10px var(--cubby-glow);
+}
+
+/* Curved connector line for subtasks */
+.subtasks-container {
+    position: relative;
+    margin-left: 12px;
+    padding-left: 20px;
+}
+
+/* Remove old straight line */
+.subtasks-container::before {
+    display: none;
+}
+
+/* Curved vertical line */
+.subtasks-container::after {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: -4px;
+    bottom: 20px;
+    width: 2px;
+    background: var(--cubby-border);
+    border-radius: 0 0 8px 8px;
+}
+
+/* Subtask connector - curved */
+.task.subtask {
+    position: relative;
+    margin-left: 20px;
+}
+
+.task.subtask::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    width: 16px;
+    height: 50%;
+    border-left: 2px solid var(--cubby-border);
+    border-bottom: 2px solid var(--cubby-border);
+    border-radius: 0 0 0 12px;
+    transform: translateY(-100%);
+    top: 50%;
+}
+
+/* Last subtask or add-subtask button gets the curved end */
+.add-subtask-btn {
+    position: relative;
+    margin-left: 20px;
+    margin-top: 4px;
+}
+
+.add-subtask-btn::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    width: 16px;
+    height: calc(50% + 8px);
+    border-left: 2px solid var(--cubby-border);
+    border-bottom: 2px solid var(--cubby-border);
+    border-radius: 0 0 0 12px;
+    top: -8px;
+}
+
+/* Hide the main vertical line, we'll handle it per-item */
+.subtasks-container::after {
+    display: none;
+}
+
+/* Each subtask draws its own connector */
+.task.subtask::after {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    bottom: -12px;
+    width: 2px;
+    background: var(--cubby-border);
+}
+
+/* Last subtask before add-btn shouldn't extend */
+.task.subtask:last-of-type::after {
+    display: none;
+}
