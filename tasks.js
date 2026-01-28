@@ -740,3 +740,33 @@ function openModalForFirstSubcubby() {
         openModal(cubbyData.subcubbies[0].id);
     }
 }
+
+// ============================================
+// CLICK OUTSIDE TO COLLAPSE EXPANDED TASK
+// ============================================
+
+document.addEventListener('click', function(e) {
+    // Only handle if we're in focus mode (has expanded task)
+    var tasksContainer = document.querySelector('.tasks-container.has-expanded-task');
+    if (!tasksContainer) return;
+    
+    // Find the expanded task
+    var expandedTask = document.querySelector('.task.expanded:not(.subtask)');
+    if (!expandedTask) return;
+    
+    // Get the expanded task's subtasks container
+    var taskId = expandedTask.dataset.taskId;
+    var subtasksContainer = document.querySelector('[data-parent-task="' + taskId + '"]');
+    
+    // Check if click is inside the expanded task or its subtasks
+    var clickedInsideTask = expandedTask.contains(e.target);
+    var clickedInsideSubtasks = subtasksContainer && subtasksContainer.contains(e.target);
+    
+    // Check if click is on header buttons (back, search, new task)
+    var clickedHeader = e.target.closest('.cubby-header');
+    
+    // If clicked outside task area and not on header, collapse
+    if (!clickedInsideTask && !clickedInsideSubtasks && !clickedHeader) {
+        toggleTaskExpand(taskId);
+    }
+});

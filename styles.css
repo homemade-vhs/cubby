@@ -680,8 +680,73 @@
 }
 
 /* ============================================ */
-/* EXPANDED TASK FOCUS MODE */
+/* BUTTON PRESS EFFECTS */
 /* ============================================ */
+
+/* Generic button press effect */
+.back-btn:active,
+.new-task-btn:active,
+.header-search-btn:active,
+.search-btn:active,
+.add-task-btn:active,
+.add-subtask-btn:active,
+.add-room-btn:active,
+.add-cubby-btn:active,
+.add-subcubby-btn:active,
+.filter-btn:active,
+.modal-btn:active {
+    transform: scale(0.96);
+    transition: transform 0.1s ease;
+}
+
+/* Cubby card press */
+.cubby-card:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+}
+
+/* Room card press */
+.room-card-main:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+}
+
+/* Task press effect */
+.task:active:not(.expanded) {
+    transform: scale(0.99);
+    transition: transform 0.1s ease;
+}
+
+/* Checkbox press */
+.checkbox:active {
+    transform: scale(0.9);
+    transition: transform 0.1s ease;
+}
+
+/* Expand button press */
+.expand-btn:active {
+    transform: scale(0.85) rotate(90deg);
+    transition: transform 0.1s ease;
+}
+
+.expand-btn:not(.expanded):active {
+    transform: scale(0.85);
+}
+
+/* Subtask counter press */
+.subtask-counter:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+}
+
+/* More/kebab button press */
+.more-btn:active,
+.room-more-btn:active,
+.cubby-more-btn:active,
+.subcubby-more-btn:active {
+    transform: scale(0.85);
+    transition: transform 0.1s ease;
+}
 
 /* When any task is expanded, dim other elements */
 .tasks-container.has-expanded-task .subcubby-header,
@@ -760,4 +825,111 @@
     border-bottom: 2px solid var(--cubby-border);
     border-bottom-left-radius: 12px;
     background: transparent;
+}
+
+/* ============================================ */
+/* BUTTON PRESS STATES (Mobile-friendly) */
+/* ============================================ */
+
+/* Room cards */
+.room-card:active {
+    transform: scale(0.98);
+    background: rgba(255,255,255,0.06);
+}
+
+/* Cubby cards */
+.cubby-card:active {
+    transform: scale(0.97);
+    filter: brightness(1.1);
+}
+
+/* Tasks */
+.task:active {
+    transform: scale(0.99);
+    filter: brightness(1.15);
+}
+
+/* Checkboxes */
+.checkbox:active {
+    transform: scale(0.9);
+}
+
+/* Back button */
+.back-btn:active {
+    transform: scale(0.95);
+    filter: brightness(1.2);
+}
+
+/* New task button */
+.new-task-btn:active {
+    transform: scale(0.95);
+    filter: brightness(1.2);
+}
+
+/* Search button */
+.search-btn:active {
+    transform: scale(0.98);
+    background: rgba(255,255,255,0.08);
+}
+
+.header-search-btn:active {
+    transform: scale(0.9);
+    filter: brightness(1.2);
+}
+
+/* Add buttons (new task, new subtask, new subcubby, new room, new cubby) */
+.add-task-btn:active,
+.add-subtask-btn:active,
+.add-subcubby-btn:active,
+.add-room-btn:active,
+.add-cubby-btn:active {
+    transform: scale(0.98);
+    filter: brightness(1.2);
+}
+
+/* Expand button */
+.expand-btn:active {
+    transform: scale(0.85) rotate(90deg);
+}
+
+.expand-btn:not(.expanded):active {
+    transform: scale(0.85);
+}
+
+/* More/kebab menu button */
+.more-btn:active {
+    transform: scale(0.85);
+    opacity: 1;
+}
+
+/* Subcubby header */
+.subcubby-header:active {
+    opacity: 0.8;
+}
+
+/* Modal buttons */
+.modal-btn:active {
+    transform: scale(0.97);
+    filter: brightness(1.1);
+}
+
+/* Filter buttons in search */
+.filter-btn:active {
+    transform: scale(0.95);
+    filter: brightness(1.2);
+}
+
+/* Subtask counter */
+.subtask-counter:active {
+    transform: scale(0.95);
+    filter: brightness(1.2);
+}
+
+/* Menu items */
+.task-menu-item:active {
+    background: rgba(255,255,255,0.1);
+}
+
+.task-menu-item.delete:active {
+    background: rgba(255,107,107,0.2);
 }
