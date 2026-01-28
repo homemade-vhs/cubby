@@ -279,7 +279,15 @@
     flex-direction: column;
     overflow: hidden;
     z-index: 101;
-    animation: slideIn 0.2s ease;
+}
+
+@keyframes searchSlideIn {
+    from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.search-modal-content {
+    animation: searchSlideIn 0.2s ease;
 }
 
 .search-header {
@@ -347,6 +355,7 @@
     padding: 12px 16px;
     border-bottom: 1px solid rgba(255,255,255,0.06);
     overflow-x: auto;
+    flex-shrink: 0;
     -webkit-overflow-scrolling: touch;
 }
 
@@ -370,10 +379,24 @@
 }
 
 .filter-btn.active {
-    background: rgba(255,255,255,0.12);
-    border-color: rgba(255,255,255,0.2);
-    color: #fff;
+    border-color: currentColor;
 }
+
+/* Color-coded filter buttons */
+.filter-btn[data-filter="all"] { color: rgba(255,255,255,0.5); }
+.filter-btn[data-filter="all"].active { background: rgba(255,255,255,0.12); color: #fff; }
+
+.filter-btn[data-filter="active"] { color: #5B8EFF; }
+.filter-btn[data-filter="active"].active { background: rgba(91, 142, 255, 0.2); color: #5B8EFF; }
+
+.filter-btn[data-filter="completed"] { color: #5AE890; }
+.filter-btn[data-filter="completed"].active { background: rgba(90, 232, 144, 0.2); color: #5AE890; }
+
+.filter-btn[data-filter="due-soon"] { color: #feca57; }
+.filter-btn[data-filter="due-soon"].active { background: rgba(254, 202, 87, 0.2); color: #feca57; }
+
+.filter-btn[data-filter="overdue"] { color: #ff6b6b; }
+.filter-btn[data-filter="overdue"].active { background: rgba(255, 107, 107, 0.2); color: #ff6b6b; }
 
 /* Search results */
 .search-results {

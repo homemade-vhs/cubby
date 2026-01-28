@@ -132,8 +132,8 @@ function openSearchModal() {
                 '<button class="filter-btn" data-filter="all" onclick="setSearchFilter(\'all\')">All</button>' +
                 '<button class="filter-btn" data-filter="active" onclick="setSearchFilter(\'active\')">Active</button>' +
                 '<button class="filter-btn" data-filter="completed" onclick="setSearchFilter(\'completed\')">Completed</button>' +
-                '<button class="filter-btn" data-filter="overdue" onclick="setSearchFilter(\'overdue\')">Overdue</button>' +
                 '<button class="filter-btn" data-filter="due-soon" onclick="setSearchFilter(\'due-soon\')">Due Soon</button>' +
+                '<button class="filter-btn" data-filter="overdue" onclick="setSearchFilter(\'overdue\')">Overdue</button>' +
             '</div>' +
             '<div class="search-results" id="search-results">' +
                 '<div class="search-empty">Start typing to search across all your tasks...</div>' +
