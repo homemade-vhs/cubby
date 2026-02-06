@@ -423,10 +423,9 @@ function getScrollContainer() {
 function saveReorderedData() {
     var type = dragState.type;
     var items = dragState.items;
-    
+
     switch (type) {
         case 'room':
-            // Reorder rooms array
             var newRooms = [];
             items.forEach(function(item) {
                 var roomId = item.getAttribute('data-room-id');
@@ -434,10 +433,10 @@ function saveReorderedData() {
                 if (room) newRooms.push(room);
             });
             appData.rooms = newRooms;
+            syncUpdatePositions('workspaces', buildPositionArray(appData.rooms));
             break;
-            
+
         case 'cubby':
-            // Reorder cubbies in current room
             if (currentRoom) {
                 var newCubbies = [];
                 items.forEach(function(item) {
@@ -446,11 +445,11 @@ function saveReorderedData() {
                     if (cubby) newCubbies.push(cubby);
                 });
                 currentRoom.cubbies = newCubbies;
+                syncUpdatePositions('cubbies', buildPositionArray(currentRoom.cubbies));
             }
             break;
-            
+
         case 'subcubby':
-            // Reorder subcubbies in current cubby
             if (currentCubby) {
                 var cubbyData = appData.cubbies[currentCubby.id];
                 var newSubcubbies = [];
@@ -460,14 +459,13 @@ function saveReorderedData() {
                     if (subcubby) newSubcubbies.push(subcubby);
                 });
                 cubbyData.subcubbies = newSubcubbies;
+                syncUpdatePositions('subcubbies', buildPositionArray(cubbyData.subcubbies));
             }
             break;
-            
+
         case 'task':
-            // Reorder tasks in subcubby - need to find which subcubby
             if (currentCubby) {
                 var cubbyData = appData.cubbies[currentCubby.id];
-                // Find the subcubby by looking at the first task's parent
                 var firstTaskEl = items[0];
                 var subcubbyEl = firstTaskEl.closest('.subcubby');
                 if (subcubbyEl) {
@@ -481,27 +479,25 @@ function saveReorderedData() {
                             if (task) newTasks.push(task);
                         });
                         subcubby.tasks = newTasks;
+                        syncUpdatePositions('tasks', buildPositionArray(subcubby.tasks));
                     }
                 }
             }
             break;
-            
+
         case 'subtask':
-            // Reorder subtasks in parent task
             if (currentCubby) {
                 var cubbyData = appData.cubbies[currentCubby.id];
-                // Find parent task from the subtasks container
                 var firstSubtaskEl = items[0];
                 var subtasksContainer = firstSubtaskEl.closest('.subtasks-container');
                 if (subtasksContainer) {
                     var parentTaskId = subtasksContainer.getAttribute('data-parent-task');
-                    // Find the parent task
                     var parentTask = null;
                     cubbyData.subcubbies.forEach(function(sub) {
                         var found = sub.tasks.find(function(t) { return t.id === parentTaskId; });
                         if (found) parentTask = found;
                     });
-                    
+
                     if (parentTask && parentTask.subtasks) {
                         var newSubtasks = [];
                         items.forEach(function(item) {
@@ -510,12 +506,13 @@ function saveReorderedData() {
                             if (subtask) newSubtasks.push(subtask);
                         });
                         parentTask.subtasks = newSubtasks;
+                        syncUpdatePositions('subtasks', buildPositionArray(parentTask.subtasks));
                     }
                 }
             }
             break;
     }
-    
+
     saveData();
 }
 

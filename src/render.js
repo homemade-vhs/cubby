@@ -55,7 +55,7 @@ function renderCubby(cubby) {
     if (!cubbyData) {
         appData.cubbies[cubby.id] = {
             subcubbies: [{
-                id: 'sub' + Date.now(),
+                id: generateUUID(),
                 name: 'General',
                 expanded: true,
                 tasks: []

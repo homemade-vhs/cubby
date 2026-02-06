@@ -53,42 +53,44 @@ function toggleTask(taskId) {
                 text.classList.add('completed');
                 taskEl.classList.add('completed-task');
                 playCheckSound();
-                
+
                 // Get all elements and their positions before move
                 var allElements = Array.from(container.children);
                 var positions = new Map();
                 allElements.forEach(function(el) {
                     positions.set(el, el.getBoundingClientRect());
                 });
-                
+
                 // Move in DOM to bottom (before add-task-btn)
                 var addBtn = container.querySelector('.add-task-btn');
                 container.insertBefore(taskEl, addBtn);
                 if (hasSubtasks) {
                     container.insertBefore(subtasksContainer, addBtn);
                 }
-                
+
                 // Update data
                 sub.tasks.splice(taskIndex, 1);
                 sub.tasks.push(task);
                 saveData();
-                
+                syncUpdateTask(task.id, { completed: true, completed_at: new Date().toISOString() });
+                syncUpdatePositions('tasks', buildPositionArray(sub.tasks));
+
                 // FLIP animation
                 animateElements(container, positions);
-                
+
             } else {
                 checkbox.classList.remove('checked');
                 text.classList.remove('completed');
                 taskEl.classList.remove('completed-task');
                 playUncheckSound();
-                
+
                 // Get all elements and their positions before move
                 var allElements = Array.from(container.children);
                 var positions = new Map();
                 allElements.forEach(function(el) {
                     positions.set(el, el.getBoundingClientRect());
                 });
-                
+
                 // Find where to insert (before first completed task)
                 var firstCompletedEl = container.querySelector('.task.completed-task:not(.subtask)');
                 if (firstCompletedEl) {
@@ -97,7 +99,7 @@ function toggleTask(taskId) {
                         container.insertBefore(subtasksContainer, firstCompletedEl);
                     }
                 }
-                
+
                 // Update data
                 sub.tasks.splice(taskIndex, 1);
                 var firstCompletedIndex = sub.tasks.findIndex(function(t) { return t.completed; });
@@ -107,7 +109,9 @@ function toggleTask(taskId) {
                     sub.tasks.splice(firstCompletedIndex, 0, task);
                 }
                 saveData();
-                
+                syncUpdateTask(task.id, { completed: false, completed_at: null });
+                syncUpdatePositions('tasks', buildPositionArray(sub.tasks));
+
                 // FLIP animation
                 animateElements(container, positions);
             }
@@ -145,45 +149,47 @@ function toggleSubtask(parentId, subtaskId) {
                     text.classList.add('completed');
                     subtaskEl.classList.add('completed-task');
                     playCheckSound();
-                    
+
                     // Get positions before move
                     var allElements = Array.from(container.querySelectorAll('.subtask'));
                     var positions = new Map();
                     allElements.forEach(function(el) {
                         positions.set(el, el.getBoundingClientRect());
                     });
-                    
+
                     // Move to bottom (before add-subtask-btn)
                     var addBtn = container.querySelector('.add-subtask-btn');
                     container.insertBefore(subtaskEl, addBtn);
-                    
+
                     // Update data
                     task.subtasks.splice(subtaskIndex, 1);
                     task.subtasks.push(subtask);
                     saveData();
-                    
+                    syncUpdateSubtask(subtask.id, { completed: true });
+                    syncUpdatePositions('subtasks', buildPositionArray(task.subtasks));
+
                     // Animate
                     animateSubtasks(container, positions);
-                    
+
                 } else {
                     checkbox.classList.remove('checked');
                     text.classList.remove('completed');
                     subtaskEl.classList.remove('completed-task');
                     playUncheckSound();
-                    
+
                     // Get positions before move
                     var allElements = Array.from(container.querySelectorAll('.subtask'));
                     var positions = new Map();
                     allElements.forEach(function(el) {
                         positions.set(el, el.getBoundingClientRect());
                     });
-                    
+
                     // Move above first completed
                     var firstCompletedEl = container.querySelector('.subtask.completed-task');
                     if (firstCompletedEl) {
                         container.insertBefore(subtaskEl, firstCompletedEl);
                     }
-                    
+
                     // Update data
                     task.subtasks.splice(subtaskIndex, 1);
                     var firstCompletedIndex = task.subtasks.findIndex(function(st) { return st.completed; });
@@ -193,7 +199,9 @@ function toggleSubtask(parentId, subtaskId) {
                         task.subtasks.splice(firstCompletedIndex, 0, subtask);
                     }
                     saveData();
-                    
+                    syncUpdateSubtask(subtask.id, { completed: false });
+                    syncUpdatePositions('subtasks', buildPositionArray(task.subtasks));
+
                     // Animate
                     animateSubtasks(container, positions);
                 }
@@ -260,10 +268,10 @@ function addTask(subcubbyId, text, dueDate, tags) {
     var cubbyData = appData.cubbies[currentCubby.id];
     var subcubby = cubbyData.subcubbies.find(function(s) { return s.id === subcubbyId; });
     if (!subcubby) return;
-    
+
     // Generate unique ID
-    var newId = 't' + Date.now();
-    
+    var newId = generateUUID();
+
     // Create new task
     var newTask = {
         id: newId,
@@ -274,12 +282,14 @@ function addTask(subcubbyId, text, dueDate, tags) {
         dueDate: dueDate || null,
         tags: tags || []
     };
-    
+
     // Add to beginning of task list
     subcubby.tasks.unshift(newTask);
-    
+
     // Save and re-render
     saveData();
+    syncInsertTask(newId, subcubbyId, text, dueDate, tags, 0);
+    syncUpdatePositions('tasks', buildPositionArray(subcubby.tasks));
     renderCubby(currentCubby);
 }
 
@@ -293,8 +303,8 @@ function addSubtask(parentTaskId, text, dueDate, tags) {
         var task = sub.tasks.find(function(t) { return t.id === parentTaskId; });
         if (task) {
             // Generate unique ID
-            var newId = 'st' + Date.now();
-            
+            var newId = generateUUID();
+
             // Create new subtask
             var newSubtask = {
                 id: newId,
@@ -303,18 +313,19 @@ function addSubtask(parentTaskId, text, dueDate, tags) {
                 dueDate: dueDate || null,
                 tags: tags || []
             };
-            
+
             // Initialize subtasks array if needed
             if (!task.subtasks) task.subtasks = [];
-            
+
             // Add to end of subtasks list
             task.subtasks.push(newSubtask);
-            
+
             // Make sure task stays expanded
             task.expanded = true;
-            
+
             // Save data
             saveData();
+            syncInsertSubtask(newId, parentTaskId, text, dueDate, tags, task.subtasks.length - 1);
             
             // Re-render just the subtasks container instead of whole cubby
             var subtasksContainer = document.querySelector('[data-parent-task="' + parentTaskId + '"]');
@@ -349,7 +360,7 @@ function addSubtask(parentTaskId, text, dueDate, tags) {
 
 function saveEditedTask(newText, newDueDate, newTags) {
     var cubbyData = appData.cubbies[currentCubby.id];
-    
+
     if (activeMenuIsSubtask) {
         // Edit subtask (including due date and tags)
         cubbyData.subcubbies.forEach(function(sub) {
@@ -363,6 +374,7 @@ function saveEditedTask(newText, newDueDate, newTags) {
                 }
             }
         });
+        syncUpdateSubtask(activeMenuTaskId, { text: newText, due_date: newDueDate || null, tags: newTags || [] });
     } else {
         // Edit task (including due date and tags)
         cubbyData.subcubbies.forEach(function(sub) {
@@ -373,8 +385,9 @@ function saveEditedTask(newText, newDueDate, newTags) {
                 task.tags = newTags || [];
             }
         });
+        syncUpdateTask(activeMenuTaskId, { text: newText, due_date: newDueDate || null, tags: newTags || [] });
     }
-    
+
     saveData();
     renderCubby(currentCubby);
 }
@@ -389,7 +402,7 @@ function deleteTask() {
     var parentId = activeMenuParentId;
     closeTaskMenu();
     var cubbyData = appData.cubbies[currentCubby.id];
-    
+
     if (isSubtask) {
         // Delete subtask
         cubbyData.subcubbies.forEach(function(sub) {
@@ -398,13 +411,15 @@ function deleteTask() {
                 parentTask.subtasks = parentTask.subtasks.filter(function(st) { return st.id !== taskId; });
             }
         });
+        syncDeleteSubtask(taskId);
     } else {
-        // Delete task
+        // Delete task (CASCADE deletes subtasks in Supabase)
         cubbyData.subcubbies.forEach(function(sub) {
             sub.tasks = sub.tasks.filter(function(t) { return t.id !== taskId; });
         });
+        syncDeleteTask(taskId);
     }
-    
+
     saveData();
     renderCubby(currentCubby);
 }
@@ -419,7 +434,7 @@ function duplicateTask() {
     var parentId = activeMenuParentId;
     closeTaskMenu();
     var cubbyData = appData.cubbies[currentCubby.id];
-    
+
     if (isSubtask) {
         // Duplicate subtask
         cubbyData.subcubbies.forEach(function(sub) {
@@ -427,8 +442,9 @@ function duplicateTask() {
             if (parentTask && parentTask.subtasks) {
                 var subtask = parentTask.subtasks.find(function(st) { return st.id === taskId; });
                 if (subtask) {
+                    var newSubtaskId = generateUUID();
                     var newSubtask = {
-                        id: 'st' + Date.now(),
+                        id: newSubtaskId,
                         text: subtask.text,
                         completed: false,
                         dueDate: subtask.dueDate || null,
@@ -436,6 +452,8 @@ function duplicateTask() {
                     };
                     var index = parentTask.subtasks.findIndex(function(st) { return st.id === taskId; });
                     parentTask.subtasks.splice(index + 1, 0, newSubtask);
+                    syncInsertSubtask(newSubtaskId, parentId, newSubtask.text, newSubtask.dueDate, newSubtask.tags, index + 1);
+                    syncUpdatePositions('subtasks', buildPositionArray(parentTask.subtasks));
                 }
             }
         });
@@ -444,14 +462,15 @@ function duplicateTask() {
         cubbyData.subcubbies.forEach(function(sub) {
             var task = sub.tasks.find(function(t) { return t.id === taskId; });
             if (task) {
+                var newTaskId = generateUUID();
                 var newTask = {
-                    id: 't' + Date.now(),
+                    id: newTaskId,
                     text: task.text,
                     completed: false,
                     expanded: false,
                     subtasks: task.subtasks ? task.subtasks.map(function(st) {
                         return {
-                            id: 'st' + Date.now() + Math.random().toString(36).substr(2, 5),
+                            id: generateUUID(),
                             text: st.text,
                             completed: false,
                             dueDate: st.dueDate || null,
@@ -463,10 +482,18 @@ function duplicateTask() {
                 };
                 var index = sub.tasks.findIndex(function(t) { return t.id === taskId; });
                 sub.tasks.splice(index + 1, 0, newTask);
+
+                // Sync the new task
+                syncInsertTask(newTaskId, sub.id, newTask.text, newTask.dueDate, newTask.tags, index + 1);
+                // Sync all new subtasks
+                newTask.subtasks.forEach(function(st, sti) {
+                    syncInsertSubtask(st.id, newTaskId, st.text, st.dueDate, st.tags, sti);
+                });
+                syncUpdatePositions('tasks', buildPositionArray(sub.tasks));
             }
         });
     }
-    
+
     saveData();
     renderCubby(currentCubby);
 }
@@ -481,9 +508,8 @@ function moveTaskToTop() {
     var parentId = activeMenuParentId;
     closeTaskMenu();
     var cubbyData = appData.cubbies[currentCubby.id];
-    
+
     if (isSubtask) {
-        // Move subtask to top
         cubbyData.subcubbies.forEach(function(sub) {
             var parentTask = sub.tasks.find(function(t) { return t.id === parentId; });
             if (parentTask && parentTask.subtasks) {
@@ -491,20 +517,21 @@ function moveTaskToTop() {
                 if (index > 0) {
                     var subtask = parentTask.subtasks.splice(index, 1)[0];
                     parentTask.subtasks.unshift(subtask);
+                    syncUpdatePositions('subtasks', buildPositionArray(parentTask.subtasks));
                 }
             }
         });
     } else {
-        // Move task to top
         cubbyData.subcubbies.forEach(function(sub) {
             var index = sub.tasks.findIndex(function(t) { return t.id === taskId; });
             if (index > 0) {
                 var task = sub.tasks.splice(index, 1)[0];
                 sub.tasks.unshift(task);
+                syncUpdatePositions('tasks', buildPositionArray(sub.tasks));
             }
         });
     }
-    
+
     saveData();
     renderCubby(currentCubby);
 }
@@ -519,9 +546,8 @@ function moveTaskToBottom() {
     var parentId = activeMenuParentId;
     closeTaskMenu();
     var cubbyData = appData.cubbies[currentCubby.id];
-    
+
     if (isSubtask) {
-        // Move subtask to bottom
         cubbyData.subcubbies.forEach(function(sub) {
             var parentTask = sub.tasks.find(function(t) { return t.id === parentId; });
             if (parentTask && parentTask.subtasks) {
@@ -529,20 +555,21 @@ function moveTaskToBottom() {
                 if (index !== -1 && index < parentTask.subtasks.length - 1) {
                     var subtask = parentTask.subtasks.splice(index, 1)[0];
                     parentTask.subtasks.push(subtask);
+                    syncUpdatePositions('subtasks', buildPositionArray(parentTask.subtasks));
                 }
             }
         });
     } else {
-        // Move task to bottom
         cubbyData.subcubbies.forEach(function(sub) {
             var index = sub.tasks.findIndex(function(t) { return t.id === taskId; });
             if (index !== -1 && index < sub.tasks.length - 1) {
                 var task = sub.tasks.splice(index, 1)[0];
                 sub.tasks.push(task);
+                syncUpdatePositions('tasks', buildPositionArray(sub.tasks));
             }
         });
     }
-    
+
     saveData();
     renderCubby(currentCubby);
 }
@@ -555,10 +582,10 @@ function moveTaskToSection(targetSubcubbyId) {
     var taskId = activeMenuTaskId;
     var isSubtask = activeMenuIsSubtask;
     var parentId = activeMenuParentId;
-    
+
     var cubbyData = appData.cubbies[currentCubby.id];
     var taskToMove = null;
-    
+
     if (isSubtask) {
         // Find and remove subtask, convert to task
         cubbyData.subcubbies.forEach(function(sub) {
@@ -568,6 +595,8 @@ function moveTaskToSection(targetSubcubbyId) {
                 if (subtaskIndex !== -1) {
                     var subtask = parentTask.subtasks.splice(subtaskIndex, 1)[0];
                     taskToMove = { id: subtask.id, text: subtask.text, completed: subtask.completed, expanded: false, subtasks: [] };
+                    // Delete from subtasks table, will be re-inserted as task
+                    syncDeleteSubtask(taskId);
                 }
             }
         });
@@ -577,18 +606,24 @@ function moveTaskToSection(targetSubcubbyId) {
             var taskIndex = sub.tasks.findIndex(function(t) { return t.id === taskId; });
             if (taskIndex !== -1) {
                 taskToMove = sub.tasks.splice(taskIndex, 1)[0];
+                // Update the task's subcubby_id in Supabase
+                syncUpdateTask(taskId, { subcubby_id: targetSubcubbyId, position: 0 });
             }
         });
     }
-    
+
     if (taskToMove) {
-        // Add to target subcubby
         var targetSubcubby = cubbyData.subcubbies.find(function(s) { return s.id === targetSubcubbyId; });
         if (targetSubcubby) {
             targetSubcubby.tasks.unshift(taskToMove);
+            if (isSubtask) {
+                // Re-insert as a task in Supabase
+                syncInsertTask(taskToMove.id, targetSubcubbyId, taskToMove.text, null, [], 0);
+            }
+            syncUpdatePositions('tasks', buildPositionArray(targetSubcubby.tasks));
         }
     }
-    
+
     closeMoveModal();
     saveData();
     renderCubby(currentCubby);
@@ -601,8 +636,7 @@ function moveTaskToSection(targetSubcubbyId) {
 function moveTaskTo(targetCubbyId, targetSubcubbyId) {
     var cubbyData = appData.cubbies[currentCubby.id];
     var taskToMove = null;
-    var sourceSubcubbyId = null;
-    
+
     if (activeMenuIsSubtask) {
         // Find and remove subtask, convert to task
         cubbyData.subcubbies.forEach(function(sub) {
@@ -612,6 +646,7 @@ function moveTaskTo(targetCubbyId, targetSubcubbyId) {
                 if (subtaskIndex !== -1) {
                     var subtask = parentTask.subtasks.splice(subtaskIndex, 1)[0];
                     taskToMove = { id: subtask.id, text: subtask.text, completed: subtask.completed, expanded: false, subtasks: [] };
+                    syncDeleteSubtask(activeMenuTaskId);
                 }
             }
         });
@@ -621,13 +656,12 @@ function moveTaskTo(targetCubbyId, targetSubcubbyId) {
             var taskIndex = sub.tasks.findIndex(function(t) { return t.id === activeMenuTaskId; });
             if (taskIndex !== -1) {
                 taskToMove = sub.tasks.splice(taskIndex, 1)[0];
-                sourceSubcubbyId = sub.id;
+                syncUpdateTask(activeMenuTaskId, { subcubby_id: targetSubcubbyId, position: 0 });
             }
         });
     }
-    
+
     if (taskToMove) {
-        // Initialize target cubby data if it doesn't exist
         if (!appData.cubbies[targetCubbyId]) {
             appData.cubbies[targetCubbyId] = { subcubbies: [] };
         }
@@ -636,9 +670,13 @@ function moveTaskTo(targetCubbyId, targetSubcubbyId) {
         var targetSubcubby = targetCubbyData.subcubbies.find(function(s) { return s.id === targetSubcubbyId; });
         if (targetSubcubby) {
             targetSubcubby.tasks.unshift(taskToMove);
+            if (activeMenuIsSubtask) {
+                syncInsertTask(taskToMove.id, targetSubcubbyId, taskToMove.text, null, [], 0);
+            }
+            syncUpdatePositions('tasks', buildPositionArray(targetSubcubby.tasks));
         }
     }
-    
+
     closeMoveModal();
     saveData();
     renderCubby(currentCubby);
@@ -654,20 +692,23 @@ function saveEditedSubcubby(newName) {
     if (subcubby) {
         subcubby.name = newName;
         saveData();
+        syncUpdateSubcubby(activeSubcubbyId, { name: newName });
         renderCubby(currentCubby);
     }
 }
 
 function addNewSubcubby(name) {
     var cubbyData = appData.cubbies[currentCubby.id];
+    var newId = generateUUID();
     var newSubcubby = {
-        id: 'sub' + Date.now(),
+        id: newId,
         name: name,
         expanded: true,
         tasks: []
     };
     cubbyData.subcubbies.push(newSubcubby);
     saveData();
+    syncInsertSubcubby(newId, currentCubby.id, name, cubbyData.subcubbies.length - 1);
     renderCubby(currentCubby);
 }
 
@@ -680,28 +721,32 @@ function saveEditedCubbyName(newName) {
     if (cubby) {
         cubby.name = newName;
         saveData();
+        syncUpdateCubby(activeCubbyId, { name: newName });
         renderRoom(currentRoom);
     }
 }
 
 function addNewCubby(name) {
-    var newCubbyId = 'cubby' + Date.now();
+    var newCubbyId = generateUUID();
+    var newSubId = generateUUID();
     // Add to room's cubby list
     currentRoom.cubbies.push({
         id: newCubbyId,
         name: name,
-        color: 'purple' // default color
+        color: 'purple'
     });
     // Initialize cubby data
     appData.cubbies[newCubbyId] = {
         subcubbies: [{
-            id: 'sub' + Date.now(),
+            id: newSubId,
             name: 'General',
             expanded: true,
             tasks: []
         }]
     };
     saveData();
+    syncInsertCubby(newCubbyId, currentRoom.id, name, 'purple', currentRoom.cubbies.length - 1);
+    syncInsertSubcubby(newSubId, newCubbyId, 'General', 0);
     renderRoom(currentRoom);
 }
 
@@ -714,18 +759,25 @@ function saveEditedRoomName(newName) {
     if (room) {
         room.name = newName;
         saveData();
+        syncUpdateWorkspace(activeRoomId, { name: newName });
         renderHome();
     }
 }
 
 function addNewRoom(name) {
-    var newRoomId = 'room' + Date.now();
+    var newRoomId = generateUUID();
     appData.rooms.push({
         id: newRoomId,
         name: name,
         cubbies: []
     });
     saveData();
+    // Need user ID for workspace insert
+    getCurrentUser().then(function(user) {
+        if (user) {
+            syncInsertWorkspace(newRoomId, user.id, name, appData.rooms.length - 1);
+        }
+    });
     renderHome();
 }
 

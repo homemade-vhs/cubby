@@ -505,6 +505,7 @@ function setCubbyColor(colorName) {
     if (cubby) {
         cubby.color = colorName;
         saveData();
+        syncUpdateCubby(activeCubbyId, { color: colorName });
         renderRoom(currentRoom);
     }
     closeColorModal();

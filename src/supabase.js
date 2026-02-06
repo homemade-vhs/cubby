@@ -50,84 +50,8 @@ async function getCurrentUser() {
 }
 
 // ============================================
-// TASK FUNCTIONS (for testing)
+// (Old test functions removed - sync.js handles all data operations)
 // ============================================
-
-async function cloudAddTask(text) {
-    const user = await getCurrentUser();
-    if (!user) {
-        console.error('Must be logged in to add tasks');
-        return null;
-    }
-
-    const { data, error } = await sb
-        .from('tasks')
-        .insert({
-            text: text,
-            completed: false,
-            user_id: user.id
-        })
-        .select()
-        .single();
-
-    if (error) {
-        console.error('Error adding task:', error.message);
-        return null;
-    }
-    return data;
-}
-
-async function cloudGetTasks() {
-    const { data, error } = await sb
-        .from('tasks')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-    if (error) {
-        console.error('Error fetching tasks:', error.message);
-        return [];
-    }
-    return data;
-}
-
-async function cloudToggleTask(taskId, completed) {
-    const { error } = await sb
-        .from('tasks')
-        .update({ completed: completed })
-        .eq('id', taskId);
-
-    if (error) {
-        console.error('Error updating task:', error.message);
-    }
-}
-
-async function cloudDeleteTask(taskId) {
-    const { error } = await sb
-        .from('tasks')
-        .delete()
-        .eq('id', taskId);
-
-    if (error) {
-        console.error('Error deleting task:', error.message);
-    }
-}
-
-// ============================================
-// REAL-TIME SUBSCRIPTION
-// ============================================
-
-function subscribeToTasks(callback) {
-    return sb
-        .channel('tasks-channel')
-        .on('postgres_changes',
-            { event: '*', schema: 'public', table: 'tasks' },
-            (payload) => {
-                console.log('Real-time update:', payload);
-                callback(payload);
-            }
-        )
-        .subscribe();
-}
 
 // ============================================
 // AUTH UI HANDLING
@@ -223,6 +147,38 @@ async function showApp() {
 
     // Update greeting with user's name
     await updateGreeting();
+
+    // Try to load data from Supabase
+    if (typeof loadFromSupabase === 'function') {
+        var loaded = await loadFromSupabase();
+        if (!loaded) {
+            // No Supabase data — check if we should migrate localStorage data
+            var user = await getCurrentUser();
+            if (user && typeof migrateLocalDataToSupabase === 'function') {
+                var localData = localStorage.getItem('cubby_data');
+                if (localData) {
+                    var parsed = null;
+                    try { parsed = JSON.parse(localData); } catch (e) {}
+                    if (parsed && parsed.rooms && parsed.rooms.length > 0) {
+                        console.log('Found localStorage data, migrating to Supabase...');
+                        var migrated = await migrateLocalDataToSupabase(user.id);
+                        if (migrated) {
+                            // Reload from Supabase with new UUIDs
+                            await loadFromSupabase();
+                        }
+                    } else {
+                        // No local data either — create fresh defaults
+                        await initializeSupabaseDefaults(user.id);
+                        await loadFromSupabase();
+                    }
+                } else {
+                    // No local data — create fresh defaults
+                    await initializeSupabaseDefaults(user.id);
+                    await loadFromSupabase();
+                }
+            }
+        }
+    }
 
     if (typeof renderHome === 'function') {
         renderHome();

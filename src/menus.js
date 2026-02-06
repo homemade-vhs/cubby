@@ -213,44 +213,62 @@ function editSubcubby() {
 function duplicateSubcubby() {
     var subcubbyId = activeSubcubbyId;
     closeSubcubbyMenu();
-    
+
     var cubbyData = appData.cubbies[currentCubby.id];
     var index = cubbyData.subcubbies.findIndex(function(s) { return s.id === subcubbyId; });
     if (index === -1) return;
-    
+
     var original = cubbyData.subcubbies[index];
+    var newSubId = generateUUID();
     var newSubcubby = {
-        id: 'sub' + Date.now(),
+        id: newSubId,
         name: original.name + ' (copy)',
         expanded: true,
         tasks: original.tasks.map(function(t) {
+            var newTaskId = generateUUID();
             return {
-                id: 't' + Date.now() + Math.random().toString(36).substr(2, 5),
+                id: newTaskId,
                 text: t.text,
                 completed: false,
                 expanded: false,
+                dueDate: t.dueDate || null,
+                tags: t.tags ? t.tags.slice() : [],
                 subtasks: t.subtasks ? t.subtasks.map(function(st) {
-                    return { id: 'st' + Date.now() + Math.random().toString(36).substr(2, 5), text: st.text, completed: false };
+                    return { id: generateUUID(), text: st.text, completed: false, dueDate: st.dueDate || null, tags: st.tags ? st.tags.slice() : [] };
                 }) : []
             };
         })
     };
-    
+
     cubbyData.subcubbies.splice(index + 1, 0, newSubcubby);
     saveData();
+
+    // Sync: insert subcubby, all tasks, and all subtasks
+    syncInsertSubcubby(newSubId, currentCubby.id, newSubcubby.name, index + 1);
+    newSubcubby.tasks.forEach(function(t, ti) {
+        syncInsertTask(t.id, newSubId, t.text, t.dueDate, t.tags, ti);
+        if (t.subtasks) {
+            t.subtasks.forEach(function(st, sti) {
+                syncInsertSubtask(st.id, t.id, st.text, st.dueDate, st.tags, sti);
+            });
+        }
+    });
+    syncUpdatePositions('subcubbies', buildPositionArray(cubbyData.subcubbies));
+
     renderCubby(currentCubby);
 }
 
 function moveSubcubbyToTop() {
     var subcubbyId = activeSubcubbyId;
     closeSubcubbyMenu();
-    
+
     var cubbyData = appData.cubbies[currentCubby.id];
     var index = cubbyData.subcubbies.findIndex(function(s) { return s.id === subcubbyId; });
     if (index > 0) {
         var subcubby = cubbyData.subcubbies.splice(index, 1)[0];
         cubbyData.subcubbies.unshift(subcubby);
         saveData();
+        syncUpdatePositions('subcubbies', buildPositionArray(cubbyData.subcubbies));
         renderCubby(currentCubby);
     }
 }
@@ -258,13 +276,14 @@ function moveSubcubbyToTop() {
 function moveSubcubbyToBottom() {
     var subcubbyId = activeSubcubbyId;
     closeSubcubbyMenu();
-    
+
     var cubbyData = appData.cubbies[currentCubby.id];
     var index = cubbyData.subcubbies.findIndex(function(s) { return s.id === subcubbyId; });
     if (index !== -1 && index < cubbyData.subcubbies.length - 1) {
         var subcubby = cubbyData.subcubbies.splice(index, 1)[0];
         cubbyData.subcubbies.push(subcubby);
         saveData();
+        syncUpdatePositions('subcubbies', buildPositionArray(cubbyData.subcubbies));
         renderCubby(currentCubby);
     }
 }
@@ -272,32 +291,33 @@ function moveSubcubbyToBottom() {
 function deleteSubcubby() {
     var subcubbyId = activeSubcubbyId;
     closeSubcubbyMenu();
-    
+
     var cubbyData = appData.cubbies[currentCubby.id];
     cubbyData.subcubbies = cubbyData.subcubbies.filter(function(s) { return s.id !== subcubbyId; });
     saveData();
+    syncDeleteSubcubby(subcubbyId);
     renderCubby(currentCubby);
 }
 
 function moveSubcubbyTo(targetCubbyId) {
     var subcubbyId = activeSubcubbyId;
-    
+
     var cubbyData = appData.cubbies[currentCubby.id];
     var index = cubbyData.subcubbies.findIndex(function(s) { return s.id === subcubbyId; });
     if (index === -1) return;
-    
+
     var subcubby = cubbyData.subcubbies.splice(index, 1)[0];
-    
-    // Initialize target cubby data if it doesn't exist
+
     if (!appData.cubbies[targetCubbyId]) {
         appData.cubbies[targetCubbyId] = { subcubbies: [] };
     }
     var targetCubbyData = appData.cubbies[targetCubbyId];
     if (!targetCubbyData.subcubbies) targetCubbyData.subcubbies = [];
     targetCubbyData.subcubbies.push(subcubby);
-    
+
     closeMoveModal();
     saveData();
+    syncUpdateSubcubby(subcubbyId, { cubby_id: targetCubbyId, position: targetCubbyData.subcubbies.length - 1 });
     renderCubby(currentCubby);
 }
 
@@ -391,12 +411,13 @@ function editCubbyName() {
 function moveCubbyToTop() {
     var cubbyId = activeCubbyId;
     closeCubbyMenu();
-    
+
     var index = currentRoom.cubbies.findIndex(function(c) { return c.id === cubbyId; });
     if (index > 0) {
         var cubby = currentRoom.cubbies.splice(index, 1)[0];
         currentRoom.cubbies.unshift(cubby);
         saveData();
+        syncUpdatePositions('cubbies', buildPositionArray(currentRoom.cubbies));
         renderRoom(currentRoom);
     }
 }
@@ -404,12 +425,13 @@ function moveCubbyToTop() {
 function moveCubbyToBottom() {
     var cubbyId = activeCubbyId;
     closeCubbyMenu();
-    
+
     var index = currentRoom.cubbies.findIndex(function(c) { return c.id === cubbyId; });
     if (index !== -1 && index < currentRoom.cubbies.length - 1) {
         var cubby = currentRoom.cubbies.splice(index, 1)[0];
         currentRoom.cubbies.push(cubby);
         saveData();
+        syncUpdatePositions('cubbies', buildPositionArray(currentRoom.cubbies));
         renderRoom(currentRoom);
     }
 }
@@ -417,28 +439,30 @@ function moveCubbyToBottom() {
 function deleteCubby() {
     var cubbyId = activeCubbyId;
     closeCubbyMenu();
-    
+
     currentRoom.cubbies = currentRoom.cubbies.filter(function(c) { return c.id !== cubbyId; });
     delete appData.cubbies[cubbyId];
     saveData();
+    syncDeleteCubby(cubbyId);
     renderRoom(currentRoom);
 }
 
 function moveCubbyToRoom(targetRoomId) {
     var cubbyId = activeCubbyId;
-    
+
     var index = currentRoom.cubbies.findIndex(function(c) { return c.id === cubbyId; });
     if (index === -1) return;
-    
+
     var cubby = currentRoom.cubbies.splice(index, 1)[0];
-    
+
     var targetRoom = appData.rooms.find(function(r) { return r.id === targetRoomId; });
     if (targetRoom) {
         targetRoom.cubbies.push(cubby);
     }
-    
+
     closeMoveModal();
     saveData();
+    syncUpdateCubby(cubbyId, { workspace_id: targetRoomId, position: targetRoom ? targetRoom.cubbies.length - 1 : 0 });
     renderRoom(currentRoom);
 }
 
@@ -526,12 +550,13 @@ function editRoomName() {
 function moveRoomToTop() {
     var roomId = activeRoomId;
     closeRoomMenu();
-    
+
     var index = appData.rooms.findIndex(function(r) { return r.id === roomId; });
     if (index > 0) {
         var room = appData.rooms.splice(index, 1)[0];
         appData.rooms.unshift(room);
         saveData();
+        syncUpdatePositions('workspaces', buildPositionArray(appData.rooms));
         renderHome();
     }
 }
@@ -539,12 +564,13 @@ function moveRoomToTop() {
 function moveRoomToBottom() {
     var roomId = activeRoomId;
     closeRoomMenu();
-    
+
     var index = appData.rooms.findIndex(function(r) { return r.id === roomId; });
     if (index !== -1 && index < appData.rooms.length - 1) {
         var room = appData.rooms.splice(index, 1)[0];
         appData.rooms.push(room);
         saveData();
+        syncUpdatePositions('workspaces', buildPositionArray(appData.rooms));
         renderHome();
     }
 }
@@ -552,16 +578,16 @@ function moveRoomToBottom() {
 function deleteRoom() {
     var roomId = activeRoomId;
     closeRoomMenu();
-    
+
     var room = appData.rooms.find(function(r) { return r.id === roomId; });
     if (room) {
-        // Delete all cubby data for this room
         room.cubbies.forEach(function(c) {
             delete appData.cubbies[c.id];
         });
     }
-    
+
     appData.rooms = appData.rooms.filter(function(r) { return r.id !== roomId; });
     saveData();
+    syncDeleteWorkspace(roomId);
     renderHome();
 }
