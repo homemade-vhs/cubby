@@ -11,9 +11,12 @@
     .delay-2 { animation-delay: 0.1s; opacity: 0; }
     .delay-3 { animation-delay: 0.15s; opacity: 0; }
     #home-screen { padding: calc(var(--safe-top) + 20px) 20px var(--safe-bottom); background: #0a0a0f; overflow-y: auto; }
-    .greeting { margin-bottom: 40px; }
+    .home-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; }
     .greeting h1 { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
     .greeting p { font-size: 16px; color: rgba(255,255,255,0.5); font-weight: 500; }
+    .signout-btn { padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; color: rgba(255,255,255,0.4); cursor: pointer; transition: all 0.2s ease; }
+    .signout-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); }
+    .signout-btn:active { transform: scale(0.95); }
     .room-card { margin-bottom: 16px; background: rgba(255,255,255,0.03); border-radius: 20px; border: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; transition: all 0.2s ease; }
     .room-card-main { flex: 1; padding: 24px; cursor: pointer; display: flex; align-items: center; gap: 16px; }
     .room-card-main:active { background: rgba(255,255,255,0.02); border-radius: 20px 0 0 20px; }
@@ -956,4 +959,214 @@
     font-weight: 500;
     color: rgba(255, 255, 255, 0.25);
     letter-spacing: 0.5px;
+}
+
+/* ============================================ */
+/* AUTH SCREEN STYLES */
+/* ============================================ */
+
+#auth-screen {
+    background: #0a0a0f;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 360px;
+    animation: slideIn 0.4s ease;
+}
+
+.auth-logo {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    color: rgba(255, 255, 255, 0.15);
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.auth-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 32px;
+    text-align: center;
+}
+
+#auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.auth-input-group input {
+    width: 100%;
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    color: #fff;
+    font-size: 16px;
+    font-family: inherit;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.auth-input-group input:focus {
+    border-color: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.auth-input-group input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.auth-error {
+    color: #ff6b6b;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    min-height: 20px;
+}
+
+.auth-btn {
+    width: 100%;
+    padding: 16px;
+    background: #C77DFF;
+    border: none;
+    border-radius: 14px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 8px;
+}
+
+.auth-btn:hover {
+    background: #b366e8;
+}
+
+.auth-btn:active {
+    transform: scale(0.98);
+}
+
+.auth-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.auth-switch {
+    text-align: center;
+    margin-top: 32px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.auth-switch-btn {
+    background: none;
+    border: none;
+    color: #C77DFF;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    margin-left: 4px;
+}
+
+.auth-switch-btn:hover {
+    text-decoration: underline;
+}
+
+/* ============================================ */
+/* DRAG & DROP STYLES */
+/* ============================================ */
+
+/* Element being dragged */
+.dragging {
+    opacity: 0.4 !important;
+    pointer-events: none;
+}
+
+/* Drag clone (the element you see moving) */
+.drag-clone {
+    opacity: 1 !important;
+    transform: scale(1.05) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+    cursor: grabbing !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    will-change: transform, top;
+}
+
+.drag-clone.task,
+.drag-clone.subtask {
+    background: var(--cubby-card-hover) !important;
+    border-color: var(--cubby-border) !important;
+}
+
+.drag-clone .subcubby-tasks {
+    display: none !important;
+}
+
+/* Container during drag */
+.drag-active .room-card,
+.drag-active .cubby-card,
+.drag-active .subcubby,
+.drag-active .task {
+    transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1) !important;
+}
+
+/* Preparing to drag */
+.drag-preparing {
+    cursor: grabbing;
+}
+
+/* Make draggable elements have a grab cursor on hover */
+.room-card-main,
+.cubby-card-main {
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.subcubby-header,
+.subcubby-header-left {
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.task:not(.subtask),
+.task.subtask {
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.room-card-main:active,
+.cubby-card-main:active,
+.subcubby-header:active,
+.subcubby-header-left:active,
+.task:active {
+    cursor: grabbing;
+}
+
+/* Smooth transitions for reordering */
+.drag-active .room-card:not(.dragging),
+.drag-active .cubby-card:not(.dragging),
+.drag-active .subcubby:not(.dragging),
+.drag-active .task:not(.dragging) {
+    transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Touch feedback */
+@media (hover: none) and (pointer: coarse) {
+    .drag-clone {
+        transform: scale(1.08) !important;
+    }
 }
