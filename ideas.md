@@ -180,3 +180,20 @@ More in depth options that can be added to a task or subtask, beyond tags / due 
 
 - Apple Glass looking buttons and design
 - Very subtle gradients
+
+
+└─ Workspaces
+    └─ Projects (Overall parent project or organization)
+      └─ Cubbies (Individual sections within a parent project)
+        └─ Subcubbies (Containers for tasks within parent Cubbies)
+          └─ Tasks (Individual tasks within a Cubby or Subcubby)
+            └─ Subtasks (Parts of a bigger task, children)
+└─ Documents
+    └─ Notebooks
+      └─ Pages (Document)
+      └─ Lists (List)
+      └─ Scribbles (Drawing)
+└─ My Places
+    └─ Place
+      └─ Room (Room of building)
+      └─ Space (Non-room such as yard, patio, garage, attic, etc)
