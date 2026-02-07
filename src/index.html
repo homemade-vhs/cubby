@@ -65,8 +65,25 @@
       <span>Search tasks...</span>
       <span class="search-shortcut">⌘K</span>
     </button>
+    <button class="views-btn animate-in delay-1" onclick="openViews()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      <span>Views</span>
+      <span class="views-subtitle">Tasks by due date</span>
+    </button>
     <div id="rooms-container"></div>
     <div class="logo animate-in delay-3"><span>CUBBY</span><span class="version">v1.0.0</span></div>
+  </div>
+
+  <!-- Views Screen -->
+  <div id="views-screen" class="screen">
+    <div class="header animate-in">
+      <button class="back-btn" onclick="goToHome()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18L9 12L15 6"/></svg>
+        back
+      </button>
+    </div>
+    <div class="views-title animate-in delay-1"><h1>Views</h1></div>
+    <div id="views-container" class="views-container"></div>
   </div>
   
   <!-- Room Screen -->
@@ -126,6 +143,7 @@
   <script src="modals.js"></script>
   <script src="menus.js"></script>
   <script src="search.js"></script>
+  <script src="views.js"></script>
   <script>
     // App initialization is now handled by checkAuthState() in supabase.js
     // It checks if user is logged in and shows the appropriate screen

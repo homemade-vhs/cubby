@@ -114,6 +114,7 @@ function selectRoom(roomId) {
     if (!currentRoom) return;
     currentView = 'room';
     document.getElementById('home-screen').classList.remove('active');
+    document.getElementById('views-screen').classList.remove('active');
     document.getElementById('room-screen').classList.add('active');
     document.getElementById('cubby-screen').classList.remove('active');
     renderRoom(currentRoom);
@@ -124,6 +125,7 @@ function selectCubby(cubbyId) {
     if (!currentCubby) return;
     currentView = 'cubby';
     document.getElementById('home-screen').classList.remove('active');
+    document.getElementById('views-screen').classList.remove('active');
     document.getElementById('room-screen').classList.remove('active');
     document.getElementById('cubby-screen').classList.add('active');
     renderCubby(currentCubby);
@@ -134,6 +136,7 @@ function goToHome() {
     currentRoom = null;
     currentCubby = null;
     document.getElementById('home-screen').classList.add('active');
+    document.getElementById('views-screen').classList.remove('active');
     document.getElementById('room-screen').classList.remove('active');
     document.getElementById('cubby-screen').classList.remove('active');
     renderHome();
@@ -144,9 +147,21 @@ function goToRoom() {
     currentView = 'room';
     currentCubby = null;
     document.getElementById('home-screen').classList.remove('active');
+    document.getElementById('views-screen').classList.remove('active');
     document.getElementById('room-screen').classList.add('active');
     document.getElementById('cubby-screen').classList.remove('active');
     renderRoom(currentRoom);
+}
+
+function openViews() {
+    currentView = 'views';
+    currentRoom = null;
+    currentCubby = null;
+    document.getElementById('home-screen').classList.remove('active');
+    document.getElementById('views-screen').classList.add('active');
+    document.getElementById('room-screen').classList.remove('active');
+    document.getElementById('cubby-screen').classList.remove('active');
+    renderViews();
 }
 
 // ============================================
