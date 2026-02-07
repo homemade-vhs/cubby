@@ -133,12 +133,20 @@ function renderTask(task) {
         }
         html += '</div>';
     }
-    
-    // Subtask counter (only show if has subtasks)
+
+    // Memo indicator icon (small note icon if task has a memo)
+    var hasMemo = task.memo && task.memo.trim();
+    if (hasMemo) {
+        html += '<div class="memo-indicator"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>';
+    }
+
+    // Subtask counter with progress bar (only show if has subtasks)
     if (hasSubtasks) {
         var completedCount = task.subtasks.filter(function(st) { return st.completed; }).length;
         var totalCount = task.subtasks.length;
         var allComplete = completedCount === totalCount;
+        var pct = Math.round((completedCount / totalCount) * 100);
+        html += '<div class="task-progress"><div class="task-progress-fill' + (allComplete ? ' complete' : '') + '" style="width:' + pct + '%"></div></div>';
         html += '<div class="subtask-counter' + (allComplete ? ' all-complete' : '') + '" onclick="toggleTaskExpand(\'' + task.id + '\')">' +
             '<span class="subtask-count">' + completedCount + '/' + totalCount + '</span>' +
             '</div>';
@@ -147,10 +155,15 @@ function renderTask(task) {
     // Always show expand button for adding/viewing subtasks
     html += '<div class="expand-btn ' + (task.expanded ? 'expanded' : '') + '" onclick="toggleTaskExpand(\'' + task.id + '\')">' +
         '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6L15 12L9 18"/></svg></div>';
-    html += '<div class="more-btn" onclick="openTaskMenu(event, \'' + task.id + '\', false)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="18" r="1.5" fill="currentColor"/></svg></div></div>';
+    html += '<div class="more-btn" onclick="openTaskMenu(event, \'' + task.id + '\', false)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="18" r="1.5" fill="currentColor"/></svg></div>';
+    html += '</div>';
     
     // Subtasks container (always rendered, visibility controlled by expanded state)
     html += '<div class="subtasks-container ' + (task.expanded ? 'visible' : '') + '" data-parent-task="' + task.id + '">';
+    // Memo display (above subtasks)
+    if (hasMemo) {
+        html += '<div class="task-memo-display">' + task.memo.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>') + '</div>';
+    }
     if (hasSubtasks) {
         task.subtasks.forEach(function(st) {
             html += renderSubtask(st, task.id, theme);

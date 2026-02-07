@@ -89,8 +89,9 @@ function editTask() {
     var taskText = '';
     var taskDueDate = null;
     var taskTags = [];
+    var taskMemo = '';
     var cubbyData = appData.cubbies[currentCubby.id];
-    
+
     if (isSubtask) {
         cubbyData.subcubbies.forEach(function(sub) {
             var parentTask = sub.tasks.find(function(t) { return t.id === parentId; });
@@ -110,16 +111,17 @@ function editTask() {
                 taskText = task.text;
                 taskDueDate = task.dueDate || null;
                 taskTags = task.tags ? task.tags.slice() : [];
+                taskMemo = task.memo || '';
             }
         });
     }
-    
+
     // Store for saveEditedTask to use
     activeMenuTaskId = taskId;
     activeMenuIsSubtask = isSubtask;
     activeMenuParentId = parentId;
-    
-    openEditModal(taskText, taskDueDate, taskTags);
+
+    openEditModal(taskText, taskDueDate, taskTags, taskMemo);
 }
 
 // ============================================

@@ -205,6 +205,37 @@ function toggleSubtask(parentId, subtaskId) {
                     // Animate
                     animateSubtasks(container, positions);
                 }
+
+                // Update subtask counter and progress bar on parent task
+                var parentEl = document.querySelector('.task[data-task-id="' + parentId + '"]:not(.subtask)');
+                if (parentEl) {
+                    var doneCount = task.subtasks.filter(function(st) { return st.completed; }).length;
+                    var totalCount = task.subtasks.length;
+                    var allDone = doneCount === totalCount;
+
+                    // Update counter
+                    var counter = parentEl.querySelector('.subtask-counter');
+                    if (counter) {
+                        counter.querySelector('.subtask-count').textContent = doneCount + '/' + totalCount;
+                        if (allDone) {
+                            counter.classList.add('all-complete');
+                        } else {
+                            counter.classList.remove('all-complete');
+                        }
+                    }
+
+                    // Update progress bar
+                    var progressFill = parentEl.querySelector('.task-progress-fill');
+                    if (progressFill) {
+                        var pct = Math.round((doneCount / totalCount) * 100);
+                        progressFill.style.width = pct + '%';
+                        if (allDone) {
+                            progressFill.classList.add('complete');
+                        } else {
+                            progressFill.classList.remove('complete');
+                        }
+                    }
+                }
             }
         }
     });
@@ -264,7 +295,7 @@ function toggleTaskExpand(taskId) {
 // ADD TASK
 // ============================================
 
-function addTask(subcubbyId, text, dueDate, tags) {
+function addTask(subcubbyId, text, dueDate, tags, memo) {
     var cubbyData = appData.cubbies[currentCubby.id];
     var subcubby = cubbyData.subcubbies.find(function(s) { return s.id === subcubbyId; });
     if (!subcubby) return;
@@ -280,7 +311,8 @@ function addTask(subcubbyId, text, dueDate, tags) {
         expanded: false,
         subtasks: [],
         dueDate: dueDate || null,
-        tags: tags || []
+        tags: tags || [],
+        memo: memo || ''
     };
 
     // Add to beginning of task list
@@ -288,7 +320,7 @@ function addTask(subcubbyId, text, dueDate, tags) {
 
     // Save and re-render
     saveData();
-    syncInsertTask(newId, subcubbyId, text, dueDate, tags, 0);
+    syncInsertTask(newId, subcubbyId, text, dueDate, tags, memo, 0);
     syncUpdatePositions('tasks', buildPositionArray(subcubby.tasks));
     renderCubby(currentCubby);
 }
@@ -327,26 +359,53 @@ function addSubtask(parentTaskId, text, dueDate, tags) {
             saveData();
             syncInsertSubtask(newId, parentTaskId, text, dueDate, tags, task.subtasks.length - 1);
             
-            // Re-render just the subtasks container instead of whole cubby
+            // Insert just the new subtask element (don't rebuild entire container)
             var subtasksContainer = document.querySelector('[data-parent-task="' + parentTaskId + '"]');
             if (subtasksContainer) {
                 var theme = colorThemes[currentCubby.color] || colorThemes.purple;
-                var html = '';
-                task.subtasks.forEach(function(st) {
-                    html += renderSubtask(st, parentTaskId, theme);
-                });
-                html += '<div class="add-subtask-btn" onclick="openSubtaskModal(\'' + parentTaskId + '\')"><span class="plus">+</span><span class="text">add subtask</span></div>';
-                subtasksContainer.innerHTML = html;
-                
-                // Update the subtask counter on the parent task
-                var taskEl = document.querySelector('[data-task-id="' + parentTaskId + '"]');
+
+                // Create new subtask element
+                var temp = document.createElement('div');
+                temp.innerHTML = renderSubtask(newSubtask, parentTaskId, theme);
+                var newEl = temp.firstChild;
+
+                // Insert before the add-subtask button
+                var addBtn = subtasksContainer.querySelector('.add-subtask-btn');
+                subtasksContainer.insertBefore(newEl, addBtn);
+
+                // Update counter and progress on parent task
+                var taskEl = document.querySelector('[data-task-id="' + parentTaskId + '"]:not(.subtask)');
                 if (taskEl) {
-                    var counter = taskEl.querySelector('.subtask-counter');
                     var completedCount = task.subtasks.filter(function(st) { return st.completed; }).length;
                     var totalCount = task.subtasks.length;
+                    var allComplete = completedCount === totalCount;
+                    var pct = Math.round((completedCount / totalCount) * 100);
+
+                    var counter = taskEl.querySelector('.subtask-counter');
                     if (counter) {
+                        // Update existing counter
                         counter.querySelector('.subtask-count').textContent = completedCount + '/' + totalCount;
-                        counter.classList.toggle('all-complete', completedCount === totalCount);
+                        counter.classList.toggle('all-complete', allComplete);
+                    } else {
+                        // First subtask — create counter and progress bar
+                        var expandBtn = taskEl.querySelector('.expand-btn');
+                        var progDiv = document.createElement('div');
+                        progDiv.className = 'task-progress';
+                        progDiv.innerHTML = '<div class="task-progress-fill" style="width:' + pct + '%"></div>';
+                        taskEl.insertBefore(progDiv, expandBtn);
+                        var counterDiv = document.createElement('div');
+                        counterDiv.className = 'subtask-counter';
+                        counterDiv.setAttribute('onclick', "toggleTaskExpand('" + parentTaskId + "')");
+                        counterDiv.innerHTML = '<span class="subtask-count">' + completedCount + '/' + totalCount + '</span>';
+                        taskEl.insertBefore(counterDiv, expandBtn);
+                        taskEl.classList.add('has-subtasks');
+                    }
+
+                    // Update progress bar
+                    var progressFill = taskEl.querySelector('.task-progress-fill');
+                    if (progressFill) {
+                        progressFill.style.width = pct + '%';
+                        progressFill.classList.toggle('complete', allComplete);
                     }
                 }
             }
@@ -358,7 +417,7 @@ function addSubtask(parentTaskId, text, dueDate, tags) {
 // SAVE EDITED TASK
 // ============================================
 
-function saveEditedTask(newText, newDueDate, newTags) {
+function saveEditedTask(newText, newDueDate, newTags, newMemo) {
     var cubbyData = appData.cubbies[currentCubby.id];
 
     if (activeMenuIsSubtask) {
@@ -376,16 +435,17 @@ function saveEditedTask(newText, newDueDate, newTags) {
         });
         syncUpdateSubtask(activeMenuTaskId, { text: newText, due_date: newDueDate || null, tags: newTags || [] });
     } else {
-        // Edit task (including due date and tags)
+        // Edit task (including due date, tags, and memo)
         cubbyData.subcubbies.forEach(function(sub) {
             var task = sub.tasks.find(function(t) { return t.id === activeMenuTaskId; });
             if (task) {
                 task.text = newText;
                 task.dueDate = newDueDate || null;
                 task.tags = newTags || [];
+                task.memo = newMemo || '';
             }
         });
-        syncUpdateTask(activeMenuTaskId, { text: newText, due_date: newDueDate || null, tags: newTags || [] });
+        syncUpdateTask(activeMenuTaskId, { text: newText, due_date: newDueDate || null, tags: newTags || [], memo: newMemo || '' });
     }
 
     saveData();
@@ -478,13 +538,14 @@ function duplicateTask() {
                         };
                     }) : [],
                     dueDate: task.dueDate || null,
-                    tags: task.tags ? task.tags.slice() : []
+                    tags: task.tags ? task.tags.slice() : [],
+                    memo: task.memo || ''
                 };
                 var index = sub.tasks.findIndex(function(t) { return t.id === taskId; });
                 sub.tasks.splice(index + 1, 0, newTask);
 
                 // Sync the new task
-                syncInsertTask(newTaskId, sub.id, newTask.text, newTask.dueDate, newTask.tags, index + 1);
+                syncInsertTask(newTaskId, sub.id, newTask.text, newTask.dueDate, newTask.tags, newTask.memo, index + 1);
                 // Sync all new subtasks
                 newTask.subtasks.forEach(function(st, sti) {
                     syncInsertSubtask(st.id, newTaskId, st.text, st.dueDate, st.tags, sti);

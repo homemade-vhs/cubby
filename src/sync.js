@@ -86,6 +86,7 @@ async function loadFromSupabase() {
                 expanded: false,
                 dueDate: t.due_date ? t.due_date.split('T')[0] : null,
                 tags: t.tags || [],
+                memo: t.memo || '',
                 subtasks: subtasksByTask[t.id] || []
             });
         });
@@ -244,6 +245,7 @@ async function migrateLocalDataToSupabase(userId) {
                                 expanded: false,
                                 due_date: task.dueDate || null,
                                 tags: task.tags || [],
+                                memo: task.memo || '',
                                 position: ti
                             })
                             .select().single();
@@ -285,7 +287,7 @@ async function migrateLocalDataToSupabase(userId) {
 // TASK SYNC FUNCTIONS
 // ============================================
 
-function syncInsertTask(id, subcubbyId, text, dueDate, tags, position) {
+function syncInsertTask(id, subcubbyId, text, dueDate, tags, memo, position) {
     sb.from('tasks').insert({
         id: id,
         subcubby_id: subcubbyId,
@@ -294,6 +296,7 @@ function syncInsertTask(id, subcubbyId, text, dueDate, tags, position) {
         expanded: false,
         due_date: dueDate || null,
         tags: tags || [],
+        memo: memo || '',
         position: position
     }).then(function(res) {
         if (res.error) console.error('Sync error (insertTask):', res.error.message);

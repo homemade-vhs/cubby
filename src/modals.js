@@ -38,6 +38,10 @@ function createModal() {
                 '</div>' +
                 '<div class="tag-colors" id="tag-colors"></div>' +
             '</div>' +
+            '<div class="memo-row" id="memo-row">' +
+                '<label for="task-memo">Notes</label>' +
+                '<textarea id="task-memo" placeholder="Add notes..." rows="3"></textarea>' +
+            '</div>' +
             '<div class="modal-buttons">' +
                 '<button class="modal-btn cancel" onclick="closeModal()">Cancel</button>' +
                 '<button class="modal-btn confirm" onclick="confirmAddTask()">Add</button>' +
@@ -149,6 +153,8 @@ function openModal(subcubbyId) {
     document.getElementById('task-date').value = '';
     document.getElementById('tags-row').style.display = 'block';
     document.getElementById('tag-input').value = '';
+    document.getElementById('memo-row').style.display = 'block';
+    document.getElementById('task-memo').value = '';
     renderModalTags();
     renderTagColorButtons();
     var modal = document.getElementById('task-modal');
@@ -175,6 +181,7 @@ function openSubtaskModal(parentTaskId) {
     document.getElementById('task-date').value = '';
     document.getElementById('tags-row').style.display = 'block';
     document.getElementById('tag-input').value = '';
+    document.getElementById('memo-row').style.display = 'none';
     renderModalTags();
     renderTagColorButtons();
     var modal = document.getElementById('task-modal');
@@ -188,7 +195,7 @@ function openSubtaskModal(parentTaskId) {
 // OPEN MODAL - EDIT TASK
 // ============================================
 
-function openEditModal(currentText, currentDueDate, currentTags) {
+function openEditModal(currentText, currentDueDate, currentTags, currentMemo) {
     createModal();
     modalMode = 'edit';
     modalTags = currentTags || [];
@@ -200,6 +207,13 @@ function openEditModal(currentText, currentDueDate, currentTags) {
     document.getElementById('task-date').value = currentDueDate || '';
     document.getElementById('tags-row').style.display = 'block';
     document.getElementById('tag-input').value = '';
+    // Only show memo for tasks, not subtasks
+    if (activeMenuIsSubtask) {
+        document.getElementById('memo-row').style.display = 'none';
+    } else {
+        document.getElementById('memo-row').style.display = 'block';
+        document.getElementById('task-memo').value = currentMemo || '';
+    }
     renderModalTags();
     renderTagColorButtons();
     var modal = document.getElementById('task-modal');
@@ -220,6 +234,7 @@ function openNewSubcubbyModal() {
     document.getElementById('task-input').placeholder = 'Enter name...';
     document.getElementById('date-row').style.display = 'none';
     document.getElementById('tags-row').style.display = 'none';
+    document.getElementById('memo-row').style.display = 'none';
     var modal = document.getElementById('task-modal');
     modal.classList.add('active');
     var input = document.getElementById('task-input');
@@ -238,6 +253,7 @@ function openNewCubbyModal() {
     document.getElementById('task-input').placeholder = 'Enter name...';
     document.getElementById('date-row').style.display = 'none';
     document.getElementById('tags-row').style.display = 'none';
+    document.getElementById('memo-row').style.display = 'none';
     var modal = document.getElementById('task-modal');
     modal.classList.add('active');
     var input = document.getElementById('task-input');
@@ -256,6 +272,7 @@ function openNewRoomModal() {
     document.getElementById('task-input').placeholder = 'Enter name...';
     document.getElementById('date-row').style.display = 'none';
     document.getElementById('tags-row').style.display = 'none';
+    document.getElementById('memo-row').style.display = 'none';
     var modal = document.getElementById('task-modal');
     modal.classList.add('active');
     var input = document.getElementById('task-input');
@@ -283,12 +300,13 @@ function confirmAddTask() {
     var input = document.getElementById('task-input');
     var text = input.value.trim();
     if (!text) return;
-    
+
     var dueDate = document.getElementById('task-date').value || null;
     var tags = modalTags.slice(); // Copy current tags
-    
+    var memo = (document.getElementById('task-memo').value || '').trim();
+
     if (modalMode === 'edit') {
-        saveEditedTask(text, dueDate, tags);
+        saveEditedTask(text, dueDate, tags, memo);
     } else if (modalMode === 'subtask') {
         addSubtask(modalParentTaskId, text, dueDate, tags);
     } else if (modalMode === 'editSubcubby') {
@@ -304,7 +322,7 @@ function confirmAddTask() {
     } else if (modalMode === 'newRoom') {
         addNewRoom(text);
     } else {
-        addTask(modalSubcubbyId, text, dueDate, tags);
+        addTask(modalSubcubbyId, text, dueDate, tags, memo);
     }
     closeModal();
 }

@@ -679,7 +679,96 @@
 
 /* Adjust task layout when has subtasks */
 .task.has-subtasks {
-    /* No changes needed, just a marker class */
+    /* marker class */
+}
+
+/* ============================================ */
+/* TASK PROGRESS BAR */
+/* ============================================ */
+
+.task-progress {
+    width: 48px;
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.task-progress-fill {
+    height: 100%;
+    background: var(--cubby-primary);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+    opacity: 0.7;
+}
+
+.task-progress-fill.complete {
+    background: #5AE890;
+    opacity: 1;
+}
+
+/* ============================================ */
+/* TASK MEMO STYLES */
+/* ============================================ */
+
+/* Memo indicator icon on task row */
+.memo-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--cubby-text-muted);
+    opacity: 0.5;
+}
+
+/* Memo display in expanded area */
+.task-memo-display {
+    padding: 10px 14px;
+    margin-left: 24px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--cubby-text-muted);
+    line-height: 1.5;
+    border-left: 2px solid var(--cubby-primary);
+    background: rgba(255,255,255,0.02);
+    border-radius: 0 8px 8px 0;
+}
+
+/* Memo textarea in modal */
+.memo-row {
+    margin-top: 12px;
+}
+
+.memo-row label {
+    display: block;
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.memo-row textarea {
+    width: 100%;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    color: #fff;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    resize: vertical;
+    min-height: 60px;
+    transition: border-color 0.2s ease;
+}
+
+.memo-row textarea:focus {
+    border-color: rgba(255,255,255,0.3);
+}
+
+.memo-row textarea::placeholder {
+    color: rgba(255,255,255,0.3);
 }
 
 /* ============================================ */
