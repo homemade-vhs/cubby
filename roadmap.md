@@ -2,9 +2,9 @@
 
 ## Phase 1: Enhance What's Already Built
 
-- [ ] **Task Details / Memos** — Add a description or notes field to tasks and subtasks
-- [ ] **Progress Bars on Tasks** — Show completion percentage based on subtask progress
-- [ ] **Views (Today, This Week, etc.)** — Smart filtered perspectives of tasks across all Cubbies by due date
+- [x] **Task Details / Memos** — Add a description or notes field to tasks and subtasks
+- [x] **Progress Bars on Tasks** — Show completion percentage based on subtask progress
+- [x] **Views (Today, This Week, etc.)** — Smart filtered perspectives of tasks across all Cubbies by due date
 
 ## Phase 2: Navigation and Home Improvements
 
