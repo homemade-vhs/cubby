@@ -851,14 +851,16 @@
 
 /* Cubby card press */
 .cubby-card:active {
-    transform: scale(0.98);
-    transition: transform 0.1s ease;
+    transform: scale(0.97);
+    filter: brightness(0.9);
+    transition: transform 0.08s ease, filter 0.08s ease;
 }
 
 /* Room card press */
 .room-card:active {
-    transform: scale(0.98);
-    transition: transform 0.1s ease;
+    transform: scale(0.97);
+    filter: brightness(0.9);
+    transition: transform 0.08s ease, filter 0.08s ease;
 }
 
 /* Task press effect */
@@ -1013,18 +1015,6 @@
 /* ============================================ */
 /* BUTTON PRESS STATES (Mobile-friendly) */
 /* ============================================ */
-
-/* Room cards */
-.room-card:active {
-    transform: scale(0.98);
-    background: rgba(255,255,255,0.06);
-}
-
-/* Cubby cards */
-.cubby-card:active {
-    transform: scale(0.97);
-    filter: brightness(1.1);
-}
 
 /* Tasks */
 .task:active {
@@ -2439,8 +2429,6 @@ textarea:hover {
     100% { transform: scale(1); filter: brightness(1); }
 }
 
-.room-card:active,
-.cubby-card:active,
 .task-card:active,
 .settings-link-btn:active,
 .add-room-btn:active,
