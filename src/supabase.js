@@ -184,12 +184,12 @@ async function showApp() {
         renderHome();
     }
 
+    showNavBar();
+    updateNavBar();
+
     // Run auto-archive and auto-trash-purge
     if (typeof runAutoArchive === 'function') runAutoArchive();
     if (typeof runAutoTrashPurge === 'function') runAutoTrashPurge();
-
-    showNavBar();
-    updateNavBar();
 }
 
 async function updateGreeting() {

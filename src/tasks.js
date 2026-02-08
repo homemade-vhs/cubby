@@ -1247,6 +1247,7 @@ function emptyTrash() {
 // ============================================
 
 function runAutoArchive() {
+    if (!appData.settings) return;
     var settings = appData.settings.autoArchive;
     if (!settings || settings.duration === 'never') return;
 
@@ -1377,6 +1378,7 @@ function getArchiveThresholdDate(settings, now) {
 }
 
 function runAutoTrashPurge() {
+    if (!appData.settings) return;
     var settings = appData.settings.autoTrash;
     if (!settings || settings.duration === 'never') return;
 
