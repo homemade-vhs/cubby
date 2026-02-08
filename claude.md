@@ -17,6 +17,7 @@ Matt is very technically skilled in graphic design, Photoshop, Premiere, UI desi
 - Automatically update the version number at the bottom of the Cubby home screen for every new build. Just add one number to the third decimal spot with each new build, no matter how small the changes. The version is displayed via `settings.js` in the `renderSettings()` function.
 - Automatically update this document to contain the most up to date information about Cubby, its features, what is currently implemented, what isn't working fully, and what should be added or improved.
 - Always check and update the .md files before, during, and at the end of sessions.
+- After every batch of changes, **always stage, commit, and push to GitHub** (`git add`, `git commit`, `git push origin main`). Don't wait for Matt to ask — do it automatically after finishing each set of changes.
 
 ### .md files
 
@@ -66,7 +67,7 @@ There are several .md files for you to reference. Please check them at the start
 
 ## Current Features
 
-These features exist and work in the current build (v1.0.3):
+These features exist and work in the current build (v1.0.4):
 
 ### App Hierarchy
 **Workspaces > Cubbies > Subcubbies > Tasks > Subtasks**
