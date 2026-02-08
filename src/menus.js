@@ -379,7 +379,7 @@ function openCubbyMenu(event, cubbyId) {
             '<span>Move to bottom</span></div>' +
         '<div class="task-menu-item" onclick="openMoveCubbyModal()">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 9l-3 3 3 3"/><path d="M9 5l3-3 3 3"/><path d="M15 19l3 3 3-3"/><path d="M19 9l3 3-3 3"/><path d="M2 12h20"/><path d="M12 2v20"/></svg>' +
-            '<span>Move to room</span></div>' +
+            '<span>Move to workspace</span></div>' +
         '<div class="task-menu-item" onclick="archiveCubbyFromMenu()">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>' +
             '<span>Archive</span></div>' +
@@ -537,7 +537,7 @@ function openCubbySettingsMenu(event) {
             '<span>Share cubby</span></div>' +
         '<div class="task-menu-item" onclick="openMoveCubbyFromSettings()">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 9l-3 3 3 3"/><path d="M9 5l3-3 3 3"/><path d="M15 19l3 3 3-3"/><path d="M19 9l3 3-3 3"/><path d="M2 12h20"/><path d="M12 2v20"/></svg>' +
-            '<span>Move to room</span></div>' +
+            '<span>Move to workspace</span></div>' +
         '<div class="task-menu-item" onclick="duplicateCubbyFromSettings()">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>' +
             '<span>Duplicate cubby</span></div>' +
@@ -688,6 +688,9 @@ function openRoomMenu(event, roomId) {
         '<div class="task-menu-item" onclick="editRoomName()">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>' +
             '<span>Edit name</span></div>' +
+        '<div class="task-menu-item" onclick="editRoomColor()">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/></svg>' +
+            '<span>Edit color</span></div>' +
         '<div class="task-menu-item" onclick="moveRoomToTop()">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>' +
             '<span>Move to top</span></div>' +
@@ -729,7 +732,7 @@ function editRoomName() {
     
     createModal();
     modalMode = 'editRoomName';
-    document.getElementById('modal-title').textContent = 'Edit Room Name';
+    document.getElementById('modal-title').textContent = 'Edit Workspace Name';
     document.getElementById('task-input').placeholder = 'Enter name...';
     document.getElementById('date-row').style.display = 'none';
     document.getElementById('tags-row').style.display = 'none';
@@ -768,11 +771,66 @@ function moveRoomToBottom() {
     }
 }
 
+function editRoomColor() {
+    var roomId = activeRoomId;
+    closeRoomMenu();
+
+    var room = appData.rooms.find(function(r) { return r.id === roomId; });
+    if (!room) return;
+
+    var existingModal = document.getElementById('color-modal');
+    if (existingModal) existingModal.remove();
+
+    var modal = document.createElement('div');
+    modal.id = 'color-modal';
+    modal.className = 'modal active';
+
+    var colorNames = ['none'].concat(Object.keys(colorThemes));
+    var colorOptions = colorNames.map(function(colorName) {
+        if (colorName === 'none') {
+            var selected = !room.color ? ' selected' : '';
+            return '<div class="color-option' + selected + '" onclick="setRoomColor(\'\')" style="background:rgba(255,255,255,0.03);border:2px solid rgba(255,255,255,0.1);">' +
+                '<span style="color:rgba(255,255,255,0.5)">None</span></div>';
+        }
+        var theme = colorThemes[colorName];
+        var selected = room.color === colorName ? ' selected' : '';
+        return '<div class="color-option' + selected + '" onclick="setRoomColor(\'' + colorName + '\')" style="background:rgba(0,0,0,0.4);border:2px solid ' + theme.border + ';">' +
+            '<span style="color:' + theme.text + '">' + colorName.charAt(0).toUpperCase() + colorName.slice(1) + '</span></div>';
+    }).join('');
+
+    modal.innerHTML =
+        '<div class="modal-backdrop" onclick="closeColorModal()"></div>' +
+        '<div class="modal-content" onclick="event.stopPropagation()">' +
+            '<h2>Workspace Color</h2>' +
+            '<div class="color-options">' + colorOptions + '</div>' +
+            '<div class="modal-buttons">' +
+                '<button class="modal-btn cancel" onclick="closeColorModal()">Cancel</button>' +
+            '</div>' +
+        '</div>';
+
+    document.body.appendChild(modal);
+}
+
+function setRoomColor(colorName) {
+    var roomId = activeRoomId;
+    var room = appData.rooms.find(function(r) { return r.id === roomId; });
+    if (room) {
+        if (colorName) {
+            room.color = colorName;
+        } else {
+            delete room.color;
+        }
+        saveData();
+        renderHome();
+    }
+    closeColorModal();
+}
+
 function deleteRoom() {
     var roomId = activeRoomId;
     closeRoomMenu();
 
-    showConfirmDialog('Delete room?', 'This will move the room and all its cubbies to Trash.', function() {
+    showConfirmDialog('Delete workspace?', 'This will move the workspace and all its cubbies to Trash.', function() {
         var room = appData.rooms.find(function(r) { return r.id === roomId; });
         if (room) {
             var cubbyData = [];

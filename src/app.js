@@ -157,7 +157,7 @@ function initializeDefaultData() {
     appData = {
         rooms: [{
             id: 'room1',
-            name: 'My Room',
+            name: 'My Workspace',
             cubbies: [{
                 id: 'cubby1',
                 name: 'Tasks',

@@ -9,15 +9,23 @@
 function renderHome() {
     var html = '';
     appData.rooms.forEach(function(room, i) {
-        html += '<div class="room-card animate-in delay-' + (i + 1) + '" data-room-id="' + room.id + '">' +
+        var roomColor = room.color;
+        var roomTheme = roomColor ? (colorThemes[roomColor] || colorThemes.purple) : null;
+        var roomStyle = roomTheme ? 'border-color:' + roomTheme.border + ';' : '';
+        var roomClass = 'room-card animate-in delay-' + (i + 1) + (roomTheme ? ' room-colored' : '');
+        var nameStyle = roomTheme ? ' style="color:' + roomTheme.text + '"' : '';
+        var countStyle = roomTheme ? ' style="color:' + roomTheme.textMuted + '"' : '';
+        var arrowColor = roomTheme ? roomTheme.textMuted : 'currentColor';
+        var moreColor = roomTheme ? ' style="color:' + roomTheme.textMuted + '"' : '';
+        html += '<div class="' + roomClass + '" data-room-id="' + room.id + '" style="' + roomStyle + '">' +
             '<div class="room-card-main" onclick="selectRoom(\'' + room.id + '\')">' +
-            '<div class="info"><h2>' + room.name + '</h2><p>' + room.cubbies.length + ' cubbies</p></div>' +
-            '<span class="arrow"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6L15 12L9 18"/></svg></span></div>' +
-            '<div class="room-more-btn" onclick="openRoomMenu(event, \'' + room.id + '\')">' +
+            '<div class="info"><h2' + nameStyle + '>' + room.name + '</h2><p' + countStyle + '>' + room.cubbies.length + ' cubbies</p></div>' +
+            '<span class="arrow"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="' + arrowColor + '" stroke-width="2"><path d="M9 6L15 12L9 18"/></svg></span></div>' +
+            '<div class="room-more-btn"' + moreColor + ' onclick="openRoomMenu(event, \'' + room.id + '\')">' +
             '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="18" r="1.5" fill="currentColor"/></svg></div></div>';
     });
     // Add new room button
-    html += '<div class="add-room-btn animate-in delay-' + (appData.rooms.length + 1) + '" onclick="openNewRoomModal()"><span class="plus">+</span><span class="text">new room</span></div>';
+    html += '<div class="add-room-btn animate-in delay-' + (appData.rooms.length + 1) + '" onclick="openNewRoomModal()"><span class="plus">+</span><span class="text">new workspace</span></div>';
     document.getElementById('rooms-container').innerHTML = html;
 }
 

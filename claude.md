@@ -66,21 +66,21 @@ There are several .md files for you to reference. Please check them at the start
 
 ## Current Features
 
-These features exist and work in the current build (v1.0.1):
+These features exist and work in the current build (v1.0.3):
 
 ### App Hierarchy
-**Rooms > Cubbies > Subcubbies > Tasks > Subtasks**
-- **Rooms**: Top-level organizational containers (e.g., "Work", "Personal")
-- **Cubbies**: Color-themed project lists inside rooms
+**Workspaces > Cubbies > Subcubbies > Tasks > Subtasks**
+- **Workspaces** (called "rooms" in code): Top-level organizational containers (e.g., "Work", "Personal"). Can optionally have a color theme (dark background with colored border/text).
+- **Cubbies**: Color-themed project lists inside workspaces
 - **Subcubbies**: Sections within a cubby (e.g., "General", "Urgent")
 - **Tasks**: Main items with text, due dates, tags, descriptions, and expandable subtasks
 - **Subtasks**: Nested items under tasks
 
 ### Navigation
-- **Bottom nav bar** with 6 tabs: Home, Tasks, Cubbies, New (+), Search, Profile
+- **Bottom nav bar** with 7 tabs (left to right): Tasks, Notes, Cubbies, New (+), Home, Search, Profile
   - Cubbies tab highlights when on home, room, or cubby screens
-  - New button uses dark green theme styling
-  - All nav buttons are uniform size (60x60px)
+  - New (+) button uses dark green theme styling
+  - Notes tab is a placeholder (not yet functional)
   - Search opens a modal overlay while keeping the nav bar visible with the Search tab highlighted
 - **Three-screen navigation**: Home > Room > Cubby views with back buttons
 - **Profile tab** opens Settings screen
@@ -118,7 +118,9 @@ These features exist and work in the current build (v1.0.1):
 - Both accessible from Settings > Data section
 
 ### Customization
+- **All-lowercase UI**: All UI text is rendered lowercase via CSS `text-transform: lowercase` on `html, body`. User-created content (task text, cubby names, descriptions, etc.) is exempted with `text-transform: none`. When adding new UI elements, apply `text-transform: none` to any element that displays user input.
 - **8 color themes**: blue, purple, pink, red, orange, yellow, green, teal
+- **Workspace colors**: Workspaces can optionally have a color (dark sunken background with colored border/text, distinct from cubby card styling)
 - **Custom theme colors**: Users can customize each color theme's primary color via a color picker in Settings. All derived colors (backgrounds, borders, glows) are auto-generated from the primary color. Reset to defaults available.
 - **Dark theme**: The entire app uses a dark color scheme
 - **Hover effects**: Buttons, task cards, and interactive elements brighten on hover (brightness + saturation filter)
@@ -154,6 +156,14 @@ After making edits, briefly tell Matt:
 - What specifically you added, changed, or removed
 - How to test the change (if applicable)
 
+**Always end your response with a changes summary table** formatted like this:
+
+| # | Task | Files Changed |
+|---|------|---------------|
+| 1 | **Short description** | `file.js` — what changed |
+
+This gives Matt a quick at-a-glance reference for everything that was done.
+
 ### 5. Don't Break Existing Functionality
 Before making changes, consider what might be affected. If a change could potentially break drag-and-drop, task saving, or other existing features, mention the risk before proceeding.
 
@@ -185,7 +195,7 @@ These have caused issues before — be aware of them:
 ### appData (stored in localStorage as `cubby_data`)
 ```javascript
 {
-    rooms: [...],           // Array of room objects with cubbies
+    rooms: [...],           // Array of room/workspace objects with cubbies (rooms can have optional .color property)
     cubbies: {...},         // Cubby data keyed by cubby ID
     archive: [...],         // Archived tasks
     trash: [...],           // Deleted tasks (with deletedAt timestamp)

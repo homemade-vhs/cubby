@@ -54,7 +54,7 @@ function createModal() {
                 '<div class="cubby-color-options" id="cubby-color-options"></div>' +
             '</div>' +
             '<div class="cubby-room-row" id="cubby-room-row" style="display:none">' +
-                '<label>Room</label>' +
+                '<label>Workspace</label>' +
                 '<div class="cubby-room-options" id="cubby-room-options"></div>' +
             '</div>' +
             '<div class="modal-buttons">' +
@@ -291,7 +291,7 @@ function openNewCubbyModal() {
 function openNewRoomModal() {
     createModal();
     modalMode = 'newRoom';
-    document.getElementById('modal-title').textContent = 'New Room';
+    document.getElementById('modal-title').textContent = 'New Workspace';
     document.getElementById('task-input').placeholder = 'Enter name...';
     document.getElementById('date-row').style.display = 'none';
     document.getElementById('tags-row').style.display = 'none';
@@ -540,7 +540,7 @@ function openMoveCubbyModal() {
     var optionsHtml = roomsList.length > 0 ? roomsList.map(function(r) {
         return '<div class="move-option" onclick="moveCubbyToRoom(\'' + r.id + '\')">' +
             '<span class="move-subcubby">' + r.name + '</span></div>';
-    }).join('') : '<p style="color:rgba(255,255,255,0.5);text-align:center;padding:20px;">No other rooms available</p>';
+    }).join('') : '<p style="color:rgba(255,255,255,0.5);text-align:center;padding:20px;">No other workspaces available</p>';
     
     modal.innerHTML =
         '<div class="modal-backdrop" onclick="closeMoveModal()"></div>' +

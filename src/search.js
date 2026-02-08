@@ -111,6 +111,10 @@ function matchesSearch(task, queryLower, filters) {
 function openSearchModal() {
     searchOpen = true;
 
+    // Remove active highlight from all data-tab nav tabs
+    var tabs = document.querySelectorAll('.nav-tab[data-tab]');
+    tabs.forEach(function(tab) { tab.classList.remove('active'); });
+
     // Highlight search nav tab
     var searchTab = document.querySelector('.nav-tab-search');
     if (searchTab) searchTab.classList.add('active');
@@ -409,6 +413,9 @@ function closeSearchModal() {
     // Remove search nav tab highlight
     var searchTab = document.querySelector('.nav-tab-search');
     if (searchTab) searchTab.classList.remove('active');
+
+    // Restore correct tab highlighting
+    updateNavBar();
 
     var modal = document.getElementById('search-modal');
     if (modal) {

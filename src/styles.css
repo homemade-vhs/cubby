@@ -1,7 +1,27 @@
 
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     :root { --bg-dark: #0a0a0f; --safe-top: env(safe-area-inset-top, 20px); --safe-bottom: env(safe-area-inset-bottom, 20px); --nav-height: calc(60px + env(safe-area-inset-bottom, 20px)); }
-    html, body { height: 100%; width: 100%; overflow: hidden; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-dark); color: #ffffff; position: fixed; }
+    html, body { height: 100%; width: 100%; overflow: hidden; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-dark); color: #ffffff; position: fixed; text-transform: lowercase; }
+
+    /* Preserve original casing for user-created content */
+    .task-text, input, textarea,
+    .room-card .info h2, .room-card .info p,
+    .cubby-card .name, .cubby-title h1,
+    .subcubby-header h3,
+    .cubby-description,
+    .archive-item-name, .archive-item-source,
+    .search-result-text, .search-result-location,
+    .view-task-text-group .task-text,
+    .view-task-location,
+    .settings-user-info,
+    #nav-user-name,
+    .task-memo-display,
+    .move-subcubby, .move-path,
+    .location-path,
+    .location-picker-item,
+    .location-picker-room,
+    .cubby-room-option,
+    .confirm-message { text-transform: none; }
     .screen { height: 100%; width: 100%; display: none; flex-direction: column; overflow: hidden; position: absolute; top: 0; left: 0; }
     .screen.active { display: flex; }
     @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -18,11 +38,13 @@
     .signout-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); }
     .signout-btn:active { transform: scale(0.95); }
     .room-card { margin-bottom: 16px; background: rgba(255,255,255,0.03); border-radius: 20px; border: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; transition: all 0.2s ease; }
+    .room-card.room-colored { background: rgba(0,0,0,0.4); }
     .room-card-main { flex: 1; padding: 24px; cursor: pointer; display: flex; align-items: center; gap: 16px; }
     .room-card-main:active { background: rgba(255,255,255,0.02); border-radius: 20px 0 0 20px; }
     .room-card .info h2 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
     .room-card .info p { font-size: 14px; color: rgba(255,255,255,0.4); font-weight: 500; }
     .room-card .arrow { margin-left: auto; color: rgba(255,255,255,0.3); }
+    .room-card .arrow svg { transition: stroke 0.06s ease; }
     .room-more-btn { padding: 24px 20px; cursor: pointer; color: rgba(255,255,255,0.3); opacity: 0.6; transition: opacity 0.2s ease; }
     .room-more-btn:hover { opacity: 1; }
     .room-menu-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 99; }
@@ -64,7 +86,7 @@
     .subcubby-header .chevron { transition: transform 0.3s ease; color: var(--cubby-primary); }
     .subcubby-header.collapsed .chevron { transform: rotate(0deg); }
     .subcubby-header.expanded .chevron { transform: rotate(90deg); }
-    .subcubby-header h3 { font-size: 14px; font-weight: 700; color: var(--cubby-primary); text-transform: uppercase; letter-spacing: 0.5px; }
+    .subcubby-header h3 { font-size: 14px; font-weight: 700; color: var(--cubby-primary); text-transform: none; letter-spacing: 0.5px; }
     .subcubby-header .count { font-size: 12px; color: var(--cubby-text-muted); font-weight: 500; }
     .subcubby-tasks { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease, opacity 0.3s ease; opacity: 0; }
     .subcubby-tasks.visible { grid-template-rows: 1fr; opacity: 1; }
@@ -461,7 +483,6 @@
     padding: 8px 12px;
     font-size: 12px;
     font-weight: 700;
-    text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
@@ -1489,7 +1510,6 @@
 .view-group-label {
     font-size: 14px;
     font-weight: 700;
-    text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 .view-group-count {
@@ -1601,7 +1621,7 @@
 .view-task-location {
     font-size: 9px;
     font-weight: 600;
-    text-transform: uppercase;
+    text-transform: none;
     letter-spacing: 0.5px;
     opacity: 0.7;
     line-height: 1.1;
@@ -1696,6 +1716,25 @@
     transition: transform 0.1s ease;
 }
 
+/* Nav tab hover - visible lift */
+.nav-tab:hover {
+    color: rgba(255, 255, 255, 0.6);
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+    transition: all 0.06s ease;
+}
+
+/* Task card hover */
+.task:hover:not(.expanded):not(.subtask) {
+    background: var(--cubby-card-hover);
+    border-color: var(--cubby-border);
+    transition: all 0.06s ease;
+}
+.task.subtask:hover {
+    background: var(--cubby-card-hover);
+    transition: all 0.06s ease;
+}
+
 /* The + New button (dark green theme, wider) */
 .nav-tab-add {
     flex: 1.4;
@@ -1720,7 +1759,6 @@
     font-size: 12px;
     color: rgba(255, 255, 255, 0.4);
     font-weight: 600;
-    text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 8px;
 }
@@ -1878,7 +1916,6 @@
 .settings-section-header {
     font-size: 12px;
     font-weight: 700;
-    text-transform: uppercase;
     letter-spacing: 0.5px;
     color: rgba(255, 255, 255, 0.35);
     margin-bottom: 10px;
@@ -2203,7 +2240,6 @@
 .archive-item-type {
     font-size: 10px;
     font-weight: 700;
-    text-transform: uppercase;
     letter-spacing: 0.5px;
     color: rgba(255, 255, 255, 0.3);
     margin-bottom: 4px;

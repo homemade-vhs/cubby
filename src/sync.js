@@ -150,7 +150,7 @@ async function initializeSupabaseDefaults(userId) {
     try {
         // Create default workspace
         var wsResult = await sb.from('workspaces')
-            .insert({ user_id: userId, name: 'My Room', position: 0 })
+            .insert({ user_id: userId, name: 'My Workspace', position: 0 })
             .select().single();
         if (wsResult.error) { console.error('Error creating workspace:', wsResult.error.message); return false; }
 
