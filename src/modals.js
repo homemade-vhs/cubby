@@ -11,6 +11,7 @@ var modalParentTaskId = null;
 var modalMode = 'task'; // 'task', 'subtask', 'edit', 'editSubcubby', 'newSubcubby', 'editCubbyName', 'newCubby', 'editRoomName', 'newRoom'
 var modalTags = []; // Current tags being edited
 var modalSelectedTagColor = 'blue'; // Default tag color
+var navBarSelectedLocation = null; // Location selected from nav bar picker
 
 // ============================================
 // CREATE MODAL
@@ -290,6 +291,9 @@ function closeModal() {
     modalSubcubbyId = null;
     modalParentTaskId = null;
     modalTags = [];
+    navBarSelectedLocation = null;
+    var picker = document.getElementById('location-picker');
+    if (picker) picker.remove();
 }
 
 // ============================================
@@ -321,6 +325,8 @@ function confirmAddTask() {
         saveEditedRoomName(text);
     } else if (modalMode === 'newRoom') {
         addNewRoom(text);
+    } else if (navBarSelectedLocation) {
+        addTaskToLocation(navBarSelectedLocation, text, dueDate, tags, memo);
     } else {
         addTask(modalSubcubbyId, text, dueDate, tags, memo);
     }
@@ -527,4 +533,269 @@ function setCubbyColor(colorName) {
         renderRoom(currentRoom);
     }
     closeColorModal();
+}
+
+// ============================================
+// NAV BAR - OPEN MODAL WITH LOCATION PICKER
+// ============================================
+
+function openModalFromNavBar() {
+    // Find default location
+    var location = getDefaultLocation();
+    if (!location) return; // No cubbies exist
+
+    navBarSelectedLocation = location;
+
+    // Open the standard task modal
+    createModal();
+    modalMode = 'task';
+    modalSubcubbyId = location.subcubbyId;
+    modalParentTaskId = null;
+    modalTags = [];
+    modalSelectedTagColor = 'blue';
+    document.getElementById('modal-title').textContent = 'New Task';
+    document.getElementById('task-input').placeholder = 'Enter task...';
+    document.getElementById('date-row').style.display = 'flex';
+    document.getElementById('task-date').value = '';
+    document.getElementById('tags-row').style.display = 'block';
+    document.getElementById('tag-input').value = '';
+    document.getElementById('memo-row').style.display = 'block';
+    document.getElementById('task-memo').value = '';
+    renderModalTags();
+    renderTagColorButtons();
+
+    // Insert location picker before the text input
+    insertLocationPicker();
+
+    var modal = document.getElementById('task-modal');
+    modal.classList.add('active');
+    var input = document.getElementById('task-input');
+    input.value = '';
+    setTimeout(function() { input.focus(); }, 100);
+}
+
+// ============================================
+// GET DEFAULT LOCATION
+// ============================================
+
+function getDefaultLocation() {
+    // If currently viewing a cubby, use its first subcubby
+    if (currentCubby && currentRoom) {
+        var cubbyData = appData.cubbies[currentCubby.id];
+        if (cubbyData && cubbyData.subcubbies && cubbyData.subcubbies.length > 0) {
+            return {
+                roomId: currentRoom.id,
+                roomName: currentRoom.name,
+                cubbyId: currentCubby.id,
+                cubbyName: currentCubby.name,
+                cubbyColor: currentCubby.color,
+                subcubbyId: cubbyData.subcubbies[0].id,
+                subcubbyName: cubbyData.subcubbies[0].name
+            };
+        }
+    }
+
+    // Otherwise, use the first available subcubby
+    for (var i = 0; i < appData.rooms.length; i++) {
+        var room = appData.rooms[i];
+        for (var j = 0; j < room.cubbies.length; j++) {
+            var cubbyRef = room.cubbies[j];
+            var cubbyData = appData.cubbies[cubbyRef.id];
+            if (cubbyData && cubbyData.subcubbies && cubbyData.subcubbies.length > 0) {
+                return {
+                    roomId: room.id,
+                    roomName: room.name,
+                    cubbyId: cubbyRef.id,
+                    cubbyName: cubbyRef.name,
+                    cubbyColor: cubbyRef.color,
+                    subcubbyId: cubbyData.subcubbies[0].id,
+                    subcubbyName: cubbyData.subcubbies[0].name
+                };
+            }
+        }
+    }
+
+    return null;
+}
+
+// ============================================
+// LOCATION PICKER
+// ============================================
+
+function insertLocationPicker() {
+    var modalContent = document.querySelector('#task-modal .modal-content');
+    var taskInput = document.getElementById('task-input');
+    if (!modalContent || !taskInput) return;
+
+    // Remove existing picker if any
+    var existing = document.getElementById('location-picker');
+    if (existing) existing.remove();
+
+    var picker = document.createElement('div');
+    picker.id = 'location-picker';
+    picker.className = 'location-picker';
+
+    var pathText = navBarSelectedLocation.cubbyName + ' > ' + navBarSelectedLocation.subcubbyName;
+
+    picker.innerHTML =
+        '<div class="location-picker-label">Add to</div>' +
+        '<button type="button" class="location-picker-btn" onclick="toggleLocationPicker()">' +
+            '<svg class="location-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
+            '<span class="location-path">' + pathText + '</span>' +
+            '<svg class="location-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>' +
+        '</button>' +
+        '<div class="location-picker-list" id="location-picker-list"></div>';
+
+    // Insert before the task input
+    modalContent.insertBefore(picker, taskInput);
+}
+
+function toggleLocationPicker() {
+    var list = document.getElementById('location-picker-list');
+    var btn = document.querySelector('.location-picker-btn');
+    if (!list || !btn) return;
+
+    if (list.classList.contains('open')) {
+        list.classList.remove('open');
+        btn.classList.remove('open');
+    } else {
+        renderLocationPickerList();
+        list.classList.add('open');
+        btn.classList.add('open');
+    }
+}
+
+function renderLocationPickerList() {
+    var list = document.getElementById('location-picker-list');
+    if (!list) return;
+
+    var html = '';
+
+    appData.rooms.forEach(function(room) {
+        html += '<div class="location-picker-room">' + room.name + '</div>';
+
+        room.cubbies.forEach(function(cubbyRef) {
+            var cubbyData = appData.cubbies[cubbyRef.id];
+            if (!cubbyData || !cubbyData.subcubbies) return;
+
+            var theme = colorThemes[cubbyRef.color] || colorThemes.purple;
+
+            cubbyData.subcubbies.forEach(function(sub) {
+                var isSelected = navBarSelectedLocation &&
+                    navBarSelectedLocation.cubbyId === cubbyRef.id &&
+                    navBarSelectedLocation.subcubbyId === sub.id;
+
+                html += '<div class="location-picker-item' + (isSelected ? ' selected' : '') + '" ' +
+                    'onclick="selectLocation(\'' + room.id + '\', \'' + escapeQuotes(room.name) + '\', \'' + cubbyRef.id + '\', \'' + escapeQuotes(cubbyRef.name) + '\', \'' + cubbyRef.color + '\', \'' + sub.id + '\', \'' + escapeQuotes(sub.name) + '\')">' +
+                    '<span class="picker-color-dot" style="background:' + theme.primary + '"></span>' +
+                    cubbyRef.name + ' > ' + sub.name +
+                '</div>';
+            });
+
+            // Add "+ New subcubby" option for this cubby
+            html += '<div class="location-picker-create indent" onclick="createSubcubbyFromPicker(\'' + cubbyRef.id + '\', \'' + escapeQuotes(cubbyRef.name) + '\', \'' + cubbyRef.color + '\', \'' + room.id + '\', \'' + escapeQuotes(room.name) + '\')">' +
+                '+ New subcubby</div>';
+        });
+
+        // Add "+ New cubby" option for this room
+        html += '<div class="location-picker-create" onclick="createCubbyFromPicker(\'' + room.id + '\', \'' + escapeQuotes(room.name) + '\')">' +
+            '+ New cubby</div>';
+    });
+
+    list.innerHTML = html;
+}
+
+function escapeQuotes(str) {
+    return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+}
+
+function selectLocation(roomId, roomName, cubbyId, cubbyName, cubbyColor, subcubbyId, subcubbyName) {
+    navBarSelectedLocation = {
+        roomId: roomId,
+        roomName: roomName,
+        cubbyId: cubbyId,
+        cubbyName: cubbyName,
+        cubbyColor: cubbyColor,
+        subcubbyId: subcubbyId,
+        subcubbyName: subcubbyName
+    };
+    modalSubcubbyId = subcubbyId;
+
+    // Update displayed path
+    var pathEl = document.querySelector('.location-picker-btn .location-path');
+    if (pathEl) {
+        pathEl.textContent = cubbyName + ' > ' + subcubbyName;
+    }
+
+    // Close the picker
+    var list = document.getElementById('location-picker-list');
+    var btn = document.querySelector('.location-picker-btn');
+    if (list) list.classList.remove('open');
+    if (btn) btn.classList.remove('open');
+}
+
+function createCubbyFromPicker(roomId, roomName) {
+    var name = prompt('New cubby name:');
+    if (!name || !name.trim()) return;
+    name = name.trim();
+
+    var room = appData.rooms.find(function(r) { return r.id === roomId; });
+    if (!room) return;
+
+    var newCubbyId = generateUUID();
+    var newSubId = generateUUID();
+
+    // Add to room's cubby list
+    room.cubbies.push({
+        id: newCubbyId,
+        name: name,
+        color: 'purple'
+    });
+
+    // Initialize cubby data
+    appData.cubbies[newCubbyId] = {
+        subcubbies: [{
+            id: newSubId,
+            name: 'General',
+            expanded: true,
+            tasks: []
+        }]
+    };
+
+    saveData();
+    syncInsertCubby(newCubbyId, roomId, name, 'purple', room.cubbies.length - 1);
+    syncInsertSubcubby(newSubId, newCubbyId, 'General', 0);
+
+    // Auto-select the new location
+    selectLocation(roomId, roomName, newCubbyId, name, 'purple', newSubId, 'General');
+
+    // Re-render the picker list to show the new cubby
+    renderLocationPickerList();
+}
+
+function createSubcubbyFromPicker(cubbyId, cubbyName, cubbyColor, roomId, roomName) {
+    var name = prompt('New subcubby name:');
+    if (!name || !name.trim()) return;
+    name = name.trim();
+
+    var cubbyData = appData.cubbies[cubbyId];
+    if (!cubbyData) return;
+
+    var newSubId = generateUUID();
+    var newSub = {
+        id: newSubId,
+        name: name,
+        expanded: true,
+        tasks: []
+    };
+
+    cubbyData.subcubbies.push(newSub);
+    saveData();
+    syncInsertSubcubby(newSubId, cubbyId, name, cubbyData.subcubbies.length - 1);
+
+    // Auto-select the new location
+    selectLocation(roomId, roomName, cubbyId, cubbyName, cubbyColor, newSubId, name);
+
+    // Re-render the picker list to show the new subcubby
+    renderLocationPickerList();
 }

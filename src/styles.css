@@ -1,6 +1,6 @@
 
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    :root { --bg-dark: #0a0a0f; --safe-top: env(safe-area-inset-top, 20px); --safe-bottom: env(safe-area-inset-bottom, 20px); }
+    :root { --bg-dark: #0a0a0f; --safe-top: env(safe-area-inset-top, 20px); --safe-bottom: env(safe-area-inset-bottom, 20px); --nav-height: calc(60px + env(safe-area-inset-bottom, 20px)); }
     html, body { height: 100%; width: 100%; overflow: hidden; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-dark); color: #ffffff; position: fixed; }
     .screen { height: 100%; width: 100%; display: none; flex-direction: column; overflow: hidden; position: absolute; top: 0; left: 0; }
     .screen.active { display: flex; }
@@ -10,7 +10,7 @@
     .delay-1 { animation-delay: 0.05s; opacity: 0; }
     .delay-2 { animation-delay: 0.1s; opacity: 0; }
     .delay-3 { animation-delay: 0.15s; opacity: 0; }
-    #home-screen { padding: calc(var(--safe-top) + 20px) 20px var(--safe-bottom); background: #0a0a0f; overflow-y: auto; }
+    #home-screen { padding: calc(var(--safe-top) + 20px) 20px var(--nav-height); background: #0a0a0f; overflow-y: auto; }
     .home-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; }
     .greeting h1 { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
     .greeting p { font-size: 16px; color: rgba(255,255,255,0.5); font-weight: 500; }
@@ -35,7 +35,7 @@
     
     .logo { text-align: center; padding: 40px 20px; }
     .logo span { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.15); letter-spacing: 2px; }
-    #room-screen { padding: calc(var(--safe-top) + 12px) 16px var(--safe-bottom); background: #0a0a0f; overflow: hidden; }
+    #room-screen { padding: calc(var(--safe-top) + 12px) 16px var(--nav-height); background: #0a0a0f; overflow: hidden; }
     .header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
     .back-btn { padding: 10px 16px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); cursor: pointer; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 600; font-family: inherit; }
     .back-btn:active { background: rgba(255,255,255,0.1); }
@@ -46,7 +46,7 @@
     .cubby-card:active { transform: scale(0.98); }
     .cubby-card .name { font-size: 20px; font-weight: 700; }
     .cubby-card .arrow { margin-left: auto; }
-    #cubby-screen { padding: calc(var(--safe-top) + 12px) 16px var(--safe-bottom); overflow: hidden; }
+    #cubby-screen { padding: calc(var(--safe-top) + 12px) 16px var(--nav-height); overflow: hidden; }
     .cubby-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
     .cubby-header .back-btn { background: var(--cubby-card); border-color: var(--cubby-border); color: var(--cubby-text); }
     .new-task-btn { margin-left: auto; padding: 10px 16px; background: var(--cubby-card); border-radius: 12px; border: 1px solid var(--cubby-border); cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: inherit; }
@@ -171,9 +171,10 @@
     /* Due date styles */
     .task-due-date { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; margin-left: auto; margin-right: 8px; white-space: nowrap; }
     .task-due-date.overdue { background: rgba(255, 107, 107, 0.2); color: #ff6b6b; }
-    .task-due-date.due-today { background: rgba(255, 179, 71, 0.2); color: #ffb347; }
-    .task-due-date.due-soon { background: rgba(91, 142, 255, 0.2); color: #5B8EFF; }
-    .task-due-date.due-later { background: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.5); }
+    .task-due-date.today, .task-due-date.due-today { background: rgba(255, 179, 71, 0.2); color: #ffb347; }
+    .task-due-date.tomorrow { background: rgba(254, 202, 87, 0.2); color: #feca57; }
+    .task-due-date.upcoming, .task-due-date.due-soon { background: rgba(91, 142, 255, 0.2); color: #5B8EFF; }
+    .task-due-date.future, .task-due-date.due-later { background: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.5); }
     .task.completed-task .task-due-date { opacity: 0.5; }
     
     /* Tag styles */
@@ -1301,7 +1302,7 @@
 
 /* Views screen */
 #views-screen {
-    padding: calc(var(--safe-top) + 12px) 16px var(--safe-bottom);
+    padding: calc(var(--safe-top) + 12px) 16px var(--nav-height);
     background: #0a0a0f;
     overflow: hidden;
 }
@@ -1320,6 +1321,35 @@
     overflow-y: auto;
     padding-bottom: 40px;
     padding-right: 12px;
+}
+
+/* View filter buttons */
+.view-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+.view-filter-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: none;
+    color: rgba(255,255,255,0.5);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+.view-filter-btn:active {
+    transform: scale(0.95);
+}
+.view-filter-btn.active {
+    color: var(--filter-color, #fff);
+    border-color: var(--filter-color, rgba(255,255,255,0.4));
+    background: rgba(255,255,255,0.08);
 }
 
 /* Views empty state */
@@ -1369,72 +1399,348 @@
     color: #0a0a0f;
 }
 
-/* View task item */
-.view-task {
+/* View task card (cubby-style) */
+.view-task-card {
+    margin-bottom: 6px;
+}
+.view-task-card .task {
+    background: var(--cubby-card);
+    border: 1px solid var(--cubby-border);
+    border-radius: 14px;
+    padding: 14px;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 12px;
-    padding: 12px;
-    margin-bottom: 4px;
-    border-radius: 12px;
+    flex-wrap: wrap;
+    position: relative;
     transition: all 0.15s ease;
+    cursor: pointer;
 }
-.view-task:hover {
-    background: rgba(255,255,255,0.04);
-}
-.view-task:active {
+.view-task-card .task:active {
     transform: scale(0.99);
 }
-
-/* View task checkbox */
-.view-task-check {
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-    border-radius: 50%;
-    border: 2px solid;
-    flex-shrink: 0;
-    margin-top: 1px;
+.view-task-card .checkbox {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    border-radius: 6px;
+    border: 2px solid var(--cubby-primary);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    flex-shrink: 0;
     transition: all 0.2s ease;
 }
-.view-task-check:hover {
-    transform: scale(1.1);
+.view-task-card .checkbox.checked {
+    background: var(--cubby-primary);
+    border-color: var(--cubby-primary);
 }
-.view-task-check:active {
-    transform: scale(0.9);
+.view-task-card .checkbox.pop {
+    animation: checkPop 0.3s ease;
 }
-
-/* View task content */
-.view-task-content {
+.view-task-card .checkbox svg {
+    opacity: 0;
+}
+.view-task-card .checkbox.checked svg {
+    opacity: 1;
+}
+.view-task-card .task-text {
     flex: 1;
-    min-width: 0;
-    cursor: pointer;
-}
-.view-task-text {
     font-size: 14px;
     font-weight: 500;
-    color: #fff;
+    color: var(--cubby-text);
     word-break: break-word;
-    display: block;
+    min-width: 0;
 }
-
-/* View task meta (reuses search result tag/due styles) */
-.view-task-meta {
+.view-task-card .task-text.completed {
+    text-decoration: line-through;
+    opacity: 0.4;
+}
+.view-task-card .task-meta {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    margin-top: 6px;
+    align-items: center;
+    flex-shrink: 0;
+}
+.view-task-card .task-progress {
+    width: 40px;
+    height: 3px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.view-task-card .task-progress-fill {
+    height: 100%;
+    background: var(--cubby-primary);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+.view-task-card .subtask-counter {
+    font-size: 11px;
+    color: var(--cubby-text-muted);
+    flex-shrink: 0;
+    padding: 0;
+    border: none;
+    background: none;
+}
+.view-task-card .memo-indicator {
+    color: var(--cubby-text-muted);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
 }
 
-/* View task location breadcrumb */
+/* View task location label (inside card) */
 .view-task-location {
-    font-size: 11px;
-    color: rgba(255,255,255,0.3);
+    width: 100%;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.7;
+    padding-bottom: 2px;
+}
+
+/* ============================================ */
+/* BOTTOM NAVIGATION BAR */
+/* ============================================ */
+
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-around;
+    padding: 8px 8px;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 20px));
+    background: rgba(10, 10, 15, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.nav-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 12px;
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.35);
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.nav-tab svg {
+    transition: color 0.2s ease;
+}
+
+/* Per-tab active colors */
+.nav-tab-home.active {
+    color: #6BA3FF;
+    border-color: rgba(107, 163, 255, 0.4);
+    background: rgba(107, 163, 255, 0.08);
+}
+
+.nav-tab-views.active {
+    color: #5AF0E0;
+    border-color: rgba(90, 240, 224, 0.4);
+    background: rgba(90, 240, 224, 0.08);
+}
+
+.nav-tab-search.active {
+    color: #C77DFF;
+    border-color: rgba(199, 125, 255, 0.4);
+    background: rgba(199, 125, 255, 0.08);
+}
+
+.nav-tab-profile.active {
+    color: #FF6BAD;
+    border-color: rgba(255, 107, 173, 0.4);
+    background: rgba(255, 107, 173, 0.08);
+}
+
+.nav-tab:active:not(.nav-tab-add) {
+    transform: scale(0.92);
+    transition: transform 0.1s ease;
+}
+
+/* The + New button (visually prominent) */
+.nav-tab-add {
+    color: rgba(255, 255, 255, 0.5);
+    border-color: transparent;
+    background: none;
+}
+
+.nav-add-btn {
+    width: 44px;
+    height: 36px;
+    border-radius: 14px;
+    background: #6BF5A0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.nav-add-btn svg {
+    color: #082818;
+}
+
+.nav-tab-add:active .nav-add-btn {
+    transform: scale(0.9);
+    background: #55d888;
+}
+
+.nav-tab-add span {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* ============================================ */
+/* LOCATION PICKER (for + Add modal) */
+/* ============================================ */
+
+.location-picker {
+    margin-bottom: 16px;
+}
+
+.location-picker-label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.location-picker-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.location-picker-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.location-picker-btn .location-icon {
+    color: rgba(255, 255, 255, 0.4);
     flex-shrink: 0;
-    margin-top: 3px;
+}
+
+.location-picker-btn .location-path {
+    flex: 1;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.location-picker-btn .location-chevron {
+    color: rgba(255, 255, 255, 0.3);
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.location-picker-btn.open .location-chevron {
+    transform: rotate(180deg);
+}
+
+/* Expandable location list */
+.location-picker-list {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    margin-top: 0;
+}
+
+.location-picker-list.open {
+    max-height: 250px;
+    overflow-y: auto;
+    margin-top: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+}
+
+.location-picker-room {
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.location-picker-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px 10px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.location-picker-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.location-picker-item.selected {
+    color: #C77DFF;
+    background: rgba(199, 125, 255, 0.08);
+}
+
+.location-picker-item .picker-color-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.location-picker-create {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px 10px 24px;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(199, 125, 255, 0.7);
+    cursor: pointer;
+    transition: background 0.15s ease;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.location-picker-create:hover {
+    background: rgba(199, 125, 255, 0.08);
+}
+
+.location-picker-create.indent {
+    padding-left: 44px;
+    border-top: none;
 }

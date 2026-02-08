@@ -118,6 +118,7 @@ function selectRoom(roomId) {
     document.getElementById('room-screen').classList.add('active');
     document.getElementById('cubby-screen').classList.remove('active');
     renderRoom(currentRoom);
+    updateNavBar();
 }
 
 function selectCubby(cubbyId) {
@@ -129,6 +130,7 @@ function selectCubby(cubbyId) {
     document.getElementById('room-screen').classList.remove('active');
     document.getElementById('cubby-screen').classList.add('active');
     renderCubby(currentCubby);
+    updateNavBar();
 }
 
 function goToHome() {
@@ -140,6 +142,7 @@ function goToHome() {
     document.getElementById('room-screen').classList.remove('active');
     document.getElementById('cubby-screen').classList.remove('active');
     renderHome();
+    updateNavBar();
 }
 
 function goToRoom() {
@@ -151,6 +154,7 @@ function goToRoom() {
     document.getElementById('room-screen').classList.add('active');
     document.getElementById('cubby-screen').classList.remove('active');
     renderRoom(currentRoom);
+    updateNavBar();
 }
 
 function openViews() {
@@ -162,6 +166,7 @@ function openViews() {
     document.getElementById('room-screen').classList.remove('active');
     document.getElementById('cubby-screen').classList.remove('active');
     renderViews();
+    updateNavBar();
 }
 
 // ============================================
@@ -179,6 +184,44 @@ function setCubbyTheme(colorName) {
     root.style.setProperty('--cubby-text', theme.text);
     root.style.setProperty('--cubby-text-muted', theme.textMuted);
     root.style.setProperty('--cubby-glow', theme.glow);
+}
+
+// ============================================
+// NAVIGATION BAR
+// ============================================
+
+function updateNavBar() {
+    var tabs = document.querySelectorAll('.nav-tab[data-tab]');
+    tabs.forEach(function(tab) {
+        if (tab.dataset.tab === currentView) {
+            tab.classList.add('active');
+        } else {
+            tab.classList.remove('active');
+        }
+    });
+}
+
+function showNavBar() {
+    var nav = document.getElementById('bottom-nav');
+    if (nav) nav.style.display = 'flex';
+}
+
+function hideNavBar() {
+    var nav = document.getElementById('bottom-nav');
+    if (nav) nav.style.display = 'none';
+}
+
+function updateNavUserName(name) {
+    var el = document.getElementById('nav-user-name');
+    if (el) el.textContent = name;
+}
+
+function openProfileMenu() {
+    // Placeholder — Settings screen will be built in Phase 3
+    // For now, just offer sign out
+    if (confirm('Sign out of Cubby?')) {
+        handleSignOut();
+    }
 }
 
 // ============================================

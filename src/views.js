@@ -16,6 +16,8 @@ var viewGroups = [
     { key: 'no-date',   label: 'No Date',   color: 'rgba(255,255,255,0.3)' }
 ];
 
+var activeViewFilter = 'all'; // 'all' or one of the viewGroup keys
+
 // ============================================
 // CLASSIFY TASK BY DUE DATE
 // ============================================
@@ -102,13 +104,27 @@ function renderViews() {
         }
     });
 
-    // Build HTML
-    var html = '';
+    // Build filter buttons
+    var html = '<div class="view-filters">';
+    html += '<button class="view-filter-btn' + (activeViewFilter === 'all' ? ' active' : '') + '" onclick="setViewFilter(\'all\')">All</button>';
+    viewGroups.forEach(function(group) {
+        var count = grouped[group.key].length;
+        if (count === 0) return; // Skip empty groups
+        var isActive = activeViewFilter === group.key;
+        html += '<button class="view-filter-btn' + (isActive ? ' active' : '') + '" style="--filter-color:' + group.color + '" onclick="setViewFilter(\'' + group.key + '\')">' + group.label + '</button>';
+    });
+    html += '</div>';
+
+    // Build task groups
     var totalTasks = 0;
 
     viewGroups.forEach(function(group) {
         var items = grouped[group.key];
         if (items.length === 0) return;
+
+        // Skip groups that don't match the active filter
+        if (activeViewFilter !== 'all' && activeViewFilter !== group.key) return;
+
         totalTasks += items.length;
 
         html += '<div class="view-group" data-view-group="' + group.key + '">';
@@ -126,8 +142,10 @@ function renderViews() {
         html += '</div>';
     });
 
-    if (totalTasks === 0) {
-        html = '<div class="views-empty">No tasks to show. Add some tasks with due dates to see them here.</div>';
+    if (totalTasks === 0 && activeViewFilter === 'all') {
+        html += '<div class="views-empty">No tasks to show. Add some tasks with due dates to see them here.</div>';
+    } else if (totalTasks === 0) {
+        html += '<div class="views-empty">No tasks in this category.</div>';
     }
 
     container.innerHTML = html;
@@ -141,37 +159,70 @@ function renderViewTask(item, group) {
     var task = item.task;
     var theme = colorThemes[item.cubbyColor] || colorThemes.purple;
 
-    var html = '<div class="view-task" data-view-task-id="' + task.id + '">';
+    // Inline CSS variables so .task styles work outside #cubby-screen
+    var inlineVars = '--cubby-primary:' + theme.primary +
+        ';--cubby-card:' + theme.card +
+        ';--cubby-card-hover:' + theme.cardHover +
+        ';--cubby-border:' + theme.border +
+        ';--cubby-text:' + theme.text +
+        ';--cubby-text-muted:' + theme.textMuted +
+        ';--cubby-glow:' + theme.glow;
+
+    var html = '<div class="view-task-card" style="' + inlineVars + '" data-view-task-id="' + task.id + '">';
+
+    // Task card — reuses .task class structure
+    html += '<div class="task" onclick="navigateToTask(\'' + item.roomId + '\', \'' + item.cubbyId + '\', \'' + item.subcubbyId + '\', \'' + task.id + '\')">';
+
+    // Location label (inside card, above task content)
+    html += '<div class="view-task-location" style="color:' + theme.primary + '">' + item.cubbyName + '</div>';
 
     // Checkbox
-    html += '<div class="view-task-check" style="border-color:' + theme.primary + '" onclick="event.stopPropagation(); toggleViewTask(\'' + task.id + '\')">';
-    html += '</div>';
+    html += '<div class="checkbox" onclick="event.stopPropagation(); toggleViewTask(\'' + task.id + '\')">' +
+        '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8L7 12L13 4" stroke="' + theme.bg + '" stroke-width="2.5" stroke-linecap="round"/></svg></div>';
 
-    // Content (clickable to navigate)
-    html += '<div class="view-task-content" onclick="navigateToTask(\'' + item.roomId + '\', \'' + item.cubbyId + '\', \'' + item.subcubbyId + '\', \'' + task.id + '\')">';
-    html += '<span class="view-task-text">' + task.text + '</span>';
+    // Task text (clickable to navigate)
+    html += '<span class="task-text">' + task.text + '</span>';
 
-    // Meta row (tags + due date)
-    var metaHtml = '';
-    if (task.tags && task.tags.length > 0) {
-        task.tags.forEach(function(tag) {
-            metaHtml += '<span class="search-result-tag" style="background:' + tagColors[tag.color].bg + ';color:' + tagColors[tag.color].text + '">' + tag.text + '</span>';
-        });
+    // Task meta (tags + due date)
+    var hasTags = task.tags && task.tags.length > 0;
+    var hasDueDate = task.dueDate;
+    if (hasTags || hasDueDate) {
+        html += '<div class="task-meta">';
+        if (hasTags) {
+            html += '<div class="task-tags">';
+            task.tags.forEach(function(tag) {
+                html += '<span class="task-tag tag-' + tag.color + '">' + tag.text + '</span>';
+            });
+            html += '</div>';
+        }
+        if (hasDueDate) {
+            var dueDateInfo = formatDueDate(task.dueDate);
+            html += '<span class="task-due-date ' + dueDateInfo.class + '">' + dueDateInfo.text + '</span>';
+        }
+        html += '</div>';
     }
-    if (task.dueDate) {
-        var dueDateInfo = formatDueDate(task.dueDate);
-        metaHtml += '<span class="search-result-due ' + dueDateInfo.class + '">' + dueDateInfo.text + '</span>';
+
+    // Memo indicator
+    var hasMemo = task.memo && task.memo.trim();
+    if (hasMemo) {
+        html += '<div class="memo-indicator"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>';
     }
-    if (metaHtml) {
-        html += '<div class="view-task-meta">' + metaHtml + '</div>';
+
+    // Subtask progress bar + counter
+    var hasSubtasks = task.subtasks && task.subtasks.length > 0;
+    if (hasSubtasks) {
+        var completedCount = task.subtasks.filter(function(st) { return st.completed; }).length;
+        var totalCount = task.subtasks.length;
+        var allComplete = completedCount === totalCount;
+        var pct = Math.round((completedCount / totalCount) * 100);
+        html += '<div class="task-progress"><div class="task-progress-fill' + (allComplete ? ' complete' : '') + '" style="width:' + pct + '%"></div></div>';
+        html += '<div class="subtask-counter' + (allComplete ? ' all-complete' : '') + '">' +
+            '<span class="subtask-count">' + completedCount + '/' + totalCount + '</span></div>';
     }
 
-    html += '</div>';
+    html += '</div>'; // close .task
 
-    // Location breadcrumb
-    html += '<span class="view-task-location">' + item.cubbyName + '</span>';
-
-    html += '</div>';
+    html += '</div>'; // close .view-task-card
     return html;
 }
 
@@ -214,12 +265,13 @@ function toggleViewTask(taskId) {
     // Animate and remove the task element from the view
     var taskEl = document.querySelector('[data-view-task-id="' + taskId + '"]');
     if (taskEl) {
-        var checkEl = taskEl.querySelector('.view-task-check');
+        var checkEl = taskEl.querySelector('.checkbox');
         if (checkEl) {
-            checkEl.style.background = 'var(--cubby-primary, #C77DFF)';
-            checkEl.style.borderColor = 'var(--cubby-primary, #C77DFF)';
-            checkEl.innerHTML = '<svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M3 8L7 12L13 4" stroke="#0a0a0f" stroke-width="2.5" stroke-linecap="round"/></svg>';
+            checkEl.classList.add('checked');
+            checkEl.classList.add('pop');
         }
+        var textEl = taskEl.querySelector('.task-text');
+        if (textEl) textEl.classList.add('completed');
 
         taskEl.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
         taskEl.style.opacity = '0';
@@ -231,7 +283,7 @@ function toggleViewTask(taskId) {
 
             // Update group count or remove empty group
             if (groupEl) {
-                var remaining = groupEl.querySelectorAll('.view-task');
+                var remaining = groupEl.querySelectorAll('.view-task-card');
                 if (remaining.length === 0) {
                     groupEl.style.transition = 'opacity 0.3s ease';
                     groupEl.style.opacity = '0';
@@ -272,4 +324,13 @@ function toggleViewGroup(groupKey) {
         items.style.display = 'none';
         chevron.style.transform = 'rotate(0deg)';
     }
+}
+
+// ============================================
+// SET VIEW FILTER
+// ============================================
+
+function setViewFilter(filterKey) {
+    activeViewFilter = filterKey;
+    renderViews();
 }

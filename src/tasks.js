@@ -326,6 +326,46 @@ function addTask(subcubbyId, text, dueDate, tags, memo) {
 }
 
 // ============================================
+// ADD TASK TO LOCATION (From Nav Bar)
+// ============================================
+
+function addTaskToLocation(location, text, dueDate, tags, memo) {
+    var cubbyData = appData.cubbies[location.cubbyId];
+    if (!cubbyData) return;
+
+    var subcubby = cubbyData.subcubbies.find(function(s) { return s.id === location.subcubbyId; });
+    if (!subcubby) return;
+
+    // Generate unique ID
+    var newId = generateUUID();
+
+    // Create new task
+    var newTask = {
+        id: newId,
+        text: text,
+        completed: false,
+        expanded: false,
+        subtasks: [],
+        dueDate: dueDate || null,
+        tags: tags || [],
+        memo: memo || ''
+    };
+
+    // Add to beginning of task list
+    subcubby.tasks.unshift(newTask);
+
+    // Save and sync
+    saveData();
+    syncInsertTask(newId, location.subcubbyId, text, dueDate, tags, memo, 0);
+    syncUpdatePositions('tasks', buildPositionArray(subcubby.tasks));
+
+    // Only re-render if we're currently viewing this cubby
+    if (currentCubby && currentCubby.id === location.cubbyId) {
+        renderCubby(currentCubby);
+    }
+}
+
+// ============================================
 // ADD SUBTASK
 // ============================================
 
@@ -877,9 +917,12 @@ document.addEventListener('click', function(e) {
     
     // Check if click is on header buttons (back, search, new task)
     var clickedHeader = e.target.closest('.cubby-header');
-    
-    // If clicked outside task area and not on header, collapse
-    if (!clickedInsideTask && !clickedInsideSubtasks && !clickedHeader) {
+
+    // Check if click is on the nav bar
+    var clickedNavBar = e.target.closest('.bottom-nav');
+
+    // If clicked outside task area and not on header or nav bar, collapse
+    if (!clickedInsideTask && !clickedInsideSubtasks && !clickedHeader && !clickedNavBar) {
         toggleTaskExpand(taskId);
     }
 });

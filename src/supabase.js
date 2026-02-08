@@ -183,6 +183,9 @@ async function showApp() {
     if (typeof renderHome === 'function') {
         renderHome();
     }
+
+    showNavBar();
+    updateNavBar();
 }
 
 async function updateGreeting() {
@@ -212,6 +215,11 @@ async function updateGreeting() {
         }
 
         greetingEl.textContent = timeGreeting + ', ' + name + '!';
+
+        // Update nav bar user name
+        if (typeof updateNavUserName === 'function') {
+            updateNavUserName(name);
+        }
     }
 }
 
@@ -225,6 +233,8 @@ function showAuth() {
     document.getElementById('home-screen').classList.remove('active');
     document.getElementById('room-screen').classList.remove('active');
     document.getElementById('cubby-screen').classList.remove('active');
+    document.getElementById('views-screen').classList.remove('active');
+    hideNavBar();
 }
 
 // Check if user is already logged in on page load

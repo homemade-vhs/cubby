@@ -122,7 +122,33 @@
     <div id="tasks-container" class="tasks-container"></div>
   </div>
 
-  <!-- 
+  <!-- Bottom Navigation Bar -->
+  <nav id="bottom-nav" class="bottom-nav" style="display: none;">
+    <button class="nav-tab nav-tab-home" data-tab="home" onclick="goToHome()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="nav-tab nav-tab-views" data-tab="views" onclick="openViews()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      <span>Views</span>
+    </button>
+    <button class="nav-tab nav-tab-add" onclick="openModalFromNavBar()">
+      <div class="nav-add-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <span>New</span>
+    </button>
+    <button class="nav-tab nav-tab-search" onclick="openSearchModal()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <span>Search</span>
+    </button>
+    <button class="nav-tab nav-tab-profile" data-tab="profile" onclick="openProfileMenu()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span id="nav-user-name">You</span>
+    </button>
+  </nav>
+
+  <!--
     Script Loading Order:
     1. app.js - Core data structures, localStorage, navigation, colors (loads data)
     2. animations.js - FLIP animations (no dependencies except app.js variables)
