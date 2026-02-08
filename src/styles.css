@@ -1714,27 +1714,39 @@
 
 .nav-tab:active {
     transform: scale(0.92);
-    background: rgba(0, 0, 0, 0.4);
-    filter: brightness(0.7);
-    transition: transform 0.06s ease, background 0.06s ease, filter 0.06s ease;
+    filter: brightness(0.6);
+    transition: transform 0.06s ease, filter 0.06s ease;
 }
 
-/* Nav tab hover - visible lift */
-.nav-tab:hover {
+/* Per-tab click darken (darker version of that button's color) */
+.nav-tab-home.active:active { background: rgba(107, 163, 255, 0.15); }
+.nav-tab-views.active:active { background: rgba(90, 240, 224, 0.15); }
+.nav-tab-search.active:active { background: rgba(199, 125, 255, 0.15); }
+.nav-tab-profile.active:active { background: rgba(255, 107, 173, 0.15); }
+.nav-tab-cubbies.active:active { background: rgba(255, 176, 90, 0.15); }
+.nav-tab-notebooks.active:active { background: rgba(255, 232, 90, 0.15); }
+.nav-tab-add:active { background: rgba(107, 245, 160, 0.15); }
+
+/* Nav tab hover - visible lift (inactive tabs only) */
+.nav-tab:not(.active):hover {
     color: rgba(255, 255, 255, 0.6);
     border-color: rgba(255, 255, 255, 0.2);
     background: rgba(255, 255, 255, 0.05);
     transition: all 0.06s ease;
 }
 
-/* Active tab hover - slight brighten, not grey */
-.nav-tab-home.active:hover { filter: brightness(1.2) saturate(1.2); transition: filter 0.06s ease; }
-.nav-tab-views.active:hover { filter: brightness(1.2) saturate(1.2); transition: filter 0.06s ease; }
-.nav-tab-search.active:hover { filter: brightness(1.2) saturate(1.2); transition: filter 0.06s ease; }
-.nav-tab-profile.active:hover { filter: brightness(1.2) saturate(1.2); transition: filter 0.06s ease; }
-.nav-tab-cubbies.active:hover { filter: brightness(1.2) saturate(1.2); transition: filter 0.06s ease; }
-.nav-tab-notebooks.active:hover { filter: brightness(1.2) saturate(1.2); transition: filter 0.06s ease; }
-.nav-tab-add:hover { filter: brightness(1.2) saturate(1.2); transition: filter 0.06s ease; }
+/* Active tab hover - brighter version of the selected color */
+.nav-tab.active:hover {
+    filter: brightness(1.25) saturate(1.3);
+    transition: filter 0.06s ease;
+}
+.nav-tab-add:not(.active):hover {
+    color: #6BF5A0;
+    border-color: rgba(107, 245, 160, 0.3);
+    background: rgba(107, 245, 160, 0.06);
+    filter: brightness(1.2) saturate(1.2);
+    transition: all 0.06s ease;
+}
 
 /* Task card hover */
 .task:hover:not(.expanded):not(.subtask) {
@@ -1755,23 +1767,10 @@
     background: rgba(255, 255, 255, 0.03);
 }
 
-.nav-tab-add:hover {
-    color: #6BF5A0;
-    border-color: rgba(107, 245, 160, 0.3);
-    background: rgba(107, 245, 160, 0.06);
-    filter: brightness(1.2) saturate(1.2);
-    transition: all 0.06s ease;
-}
-
 .nav-tab-add.active {
     color: #6BF5A0;
     border-color: rgba(107, 245, 160, 0.4);
     background: rgba(107, 245, 160, 0.08);
-}
-
-.nav-tab-add:active {
-    background: rgba(0, 0, 0, 0.4);
-    filter: brightness(0.7);
 }
 
 /* ============================================ */

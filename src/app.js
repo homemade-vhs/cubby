@@ -350,6 +350,8 @@ function updateNavBar() {
         } else if (tabName === 'home') {
             // Home tab does not highlight — Cubbies covers home/room/cubby
             isActive = false;
+        } else if (tabName === 'profile') {
+            isActive = currentView === 'settings' || currentView === 'archive' || currentView === 'trash';
         } else {
             isActive = tabName === currentView;
         }
