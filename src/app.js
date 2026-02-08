@@ -2,6 +2,16 @@
 // app.js - Core Application Data & State
 // ============================================
 
+// Remove animate-in classes after entrance animations finish
+// so they don't interfere with click animations (clickPop)
+document.addEventListener('animationend', function(e) {
+    if (e.target.classList.contains('animate-in')) {
+        e.target.classList.remove('animate-in');
+        e.target.classList.remove('delay-1', 'delay-2', 'delay-3');
+        e.target.style.opacity = '';
+    }
+});
+
 // Sound stubs (removed functionality, keeping placeholders for compatibility)
 var soundCheck, soundUncheck, soundSubcubbyExpand, soundSubcubbyCollapse, soundSubtaskExpand, soundSubtaskCollapse;
 
