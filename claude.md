@@ -14,74 +14,126 @@ Matt is very technically skilled in graphic design, Photoshop, Premiere, UI desi
 
 ## General Rules to Always Follow During Chats and Development
 
-- Automatically update the version number at the bottom of the Cubby home screen for every new build. Just add one number to the third decimal spot with each new build, no matter how small the changes.
-- Automatically update this document to contain the most up to date information about Cubby, it's features, what is currently implemented, what isn't working fully, and what should be added or improved.
+- Automatically update the version number at the bottom of the Cubby home screen for every new build. Just add one number to the third decimal spot with each new build, no matter how small the changes. The version is displayed via `settings.js` in the `renderSettings()` function.
+- Automatically update this document to contain the most up to date information about Cubby, its features, what is currently implemented, what isn't working fully, and what should be added or improved.
 - Always check and update the .md files before, during, and at the end of sessions.
 
 ### .md files
 
-There are several .md files for you to reference. Please check them at the start of each session, and  continuously update and check them during chats and development sessions. The .md files purposes are:
+There are several .md files for you to reference. Please check them at the start of each session, and continuously update and check them during chats and development sessions. The .md files purposes are:
 
 - **ideas.md** is where Matt writes his ideas for Cubby. Reference it to see what Matt has in his head for new features.
 - **notes.md** is for when Matt has a lot of notes or features to give you, and can organize them better there, so when he instructs you to check there for next steps, do that.
-  - Feel free to reword, rewrite, reorganize, or add to the notes in notes.md. Making checklists or to-do lists is wise so Matt can keep track. 
+  - Feel free to reword, rewrite, reorganize, or add to the notes in notes.md. Making checklists or to-do lists is wise so Matt can keep track.
 - **notes-archive.md** is an archive on the notes Matt gives you. Before changing anything in notes.md, always copy the current notes in notes.md and move them to notes-archive.md
 - **roadmap.md** is a roadmap of what to add next. Update this as much as possible during sessions.
 
 ## Tech Stack
 
 - **Vanilla HTML, CSS, and JavaScript** — no frameworks, no React, no build tools
-- **LocalStorage** for all data persistence (no backend, no database)
-- **PWA features**: manifest file for installability, potential service worker for offline use
+- **Supabase** for authentication (email/password sign-in) and cloud data sync
+- **localStorage** as the local data cache (key: `cubby_data`)
+- **PWA features**: manifest file for installability, works as standalone app on mobile
 - The project was originally a single monolithic HTML file but has been **split into separate files** for maintainability
 
 ## Project Structure
 
 ```
 ~/Projects/Cubby/
+  CLAUDE.md         ← This file (project briefing for Claude)
+  ideas.md          ← Matt's feature ideas and aspirations
+  notes.md          ← Current development notes/instructions from Matt
+  notes-archive.md  ← Archive of past notes
+  roadmap.md        ← Feature roadmap with phases
   src/
     index.html      ← Structure and layout (the skeleton)
     styles.css      ← All styling, dark theme, responsive design (the skin)
+    supabase.js     ← Supabase auth, sign-in/sign-up, session management
+    sync.js         ← Cloud data sync (save/load to Supabase)
     app.js          ← Core data, localStorage, navigation, color themes
+    animations.js   ← FLIP animations for task reordering
+    drag.js         ← Drag-and-drop for task/subcubby reordering
     render.js       ← UI rendering (home, rooms, cubbies, tasks)
-    tasks.js        ← Task operations (toggle, add, delete, move, etc.)
+    tasks.js        ← Task operations (toggle, add, delete, move, archive, trash, auto-archive/trash)
     modals.js       ← All modal dialogs (task, subtask, cubby, color, move)
     menus.js        ← Kebab menus for tasks, subcubbies, cubbies, rooms
-    search.js       ← Global search with filters (⌘K shortcut)
-    animations.js   ← FLIP animations for task reordering
+    search.js       ← Global search with filters (Cmd+K shortcut)
+    views.js        ← Tasks page (all tasks sorted by due date with color modes)
+    settings.js     ← Settings, Archive, and Trash screen rendering and handlers
 ```
 
-> **Note**: The JS has been split into multiple files for maintainability. They load in a specific order defined in index.html.
+> **Note**: The JS files load in a specific order defined in index.html: supabase.js > sync.js > app.js > animations.js > drag.js > render.js > tasks.js > modals.js > menus.js > search.js > views.js > settings.js
 
 ## Current Features
 
-These features exist and work in the current build:
+These features exist and work in the current build (v1.0.1):
 
 ### App Hierarchy
-**Rooms → Cubbies → Subcubbies → Tasks → Subtasks**
+**Rooms > Cubbies > Subcubbies > Tasks > Subtasks**
 - **Rooms**: Top-level organizational containers (e.g., "Work", "Personal")
 - **Cubbies**: Color-themed project lists inside rooms
 - **Subcubbies**: Sections within a cubby (e.g., "General", "Urgent")
-- **Tasks**: Main items with text, due dates, tags, and expandable subtasks
+- **Tasks**: Main items with text, due dates, tags, descriptions, and expandable subtasks
 - **Subtasks**: Nested items under tasks
 
-### Features
-- **Three-screen navigation**: Home → Room → Cubby views with back buttons
-- **8 color themes**: blue, purple, pink, red, orange, yellow, green, teal
-- **Task management**: Create, edit, delete, duplicate, move to top/bottom/other section
-- **Subtasks**: Expandable subtask lists with visual tree connector lines
+### Navigation
+- **Bottom nav bar** with 6 tabs: Home, Tasks, Cubbies, New (+), Search, Profile
+  - Cubbies tab highlights when on home, room, or cubby screens
+  - New button uses dark green theme styling
+  - All nav buttons are uniform size (60x60px)
+  - Search opens a modal overlay while keeping the nav bar visible with the Search tab highlighted
+- **Three-screen navigation**: Home > Room > Cubby views with back buttons
+- **Profile tab** opens Settings screen
+
+### User Accounts & Sync
+- **Supabase authentication**: Email/password sign-in and sign-up
+- **Cloud sync**: Data syncs to Supabase so it persists across devices
+- **Display name**: Users can set a custom display name in settings (used in greeting and nav bar)
+- **Personalized greeting**: Time-based greeting on home screen ("Good morning", "Good evening", etc.)
+
+### Tasks Page (formerly "Views")
+- Shows all tasks across all cubbies sorted by due date
+- **Two color modes**: "color by due date" (default) and "color by cubby"
+- Toggle button switches between modes
+- Filter tabs: Upcoming, All, Overdue
+
+### Task Management
+- Create, edit, delete, duplicate tasks and subtasks
+- Move tasks to top/bottom/other section
 - **Tags**: Colored labels (8 colors) on tasks and subtasks
 - **Due dates**: Smart display (Today, Tomorrow, Overdue, X days, etc.)
-- **Global search**: ⌘K (or Ctrl+K) to search all tasks with filters (all/active/completed/due soon/overdue)
+- **Descriptions**: Optional text descriptions on tasks
+- **Subtasks**: Expandable subtask lists with visual tree connector lines
+- **Task descriptions**: Icon indicator when a task has a description
+
+### Archive & Trash System
+- **Archive**: Completed tasks auto-archive based on user settings
+  - Two modes: "After duration" or "On date change"
+  - Duration options: Immediately, 1 day, 3 days, 1 week (default), 2 weeks, 1 month, custom, never
+  - Date-change options: New day, new week, new month, new year (with configurable week start day)
+- **Trash**: Deleted items go to trash before permanent deletion
+  - Same two modes as archive (duration or date-change)
+  - Duration options include "Immediately" for instant permanent deletion
+  - Items can be restored from trash
+- Both accessible from Settings > Data section
+
+### Customization
+- **8 color themes**: blue, purple, pink, red, orange, yellow, green, teal
+- **Custom theme colors**: Users can customize each color theme's primary color via a color picker in Settings. All derived colors (backgrounds, borders, glows) are auto-generated from the primary color. Reset to defaults available.
+- **Dark theme**: The entire app uses a dark color scheme
+- **Hover effects**: Buttons, task cards, and interactive elements brighten on hover (brightness + saturation filter)
+- **Click pop animation**: Interactive elements shrink, darken, and spring back when clicked for tactile feedback
+
+### Other Features
+- **Global search**: Cmd+K (or Ctrl+K) to search all tasks with filters (all/active/completed/due soon/overdue)
 - **FLIP animations**: Smooth task reordering when completing/uncompleting
+- **Drag and drop**: Reorder tasks and subcubbies by dragging
 - **Kebab menus**: Context menus (three dots) for every item type
-- **Dark theme**: The app uses a dark color scheme throughout
 - **PWA installable**: Can be added to phone home screens and used like a native app
-- **Fully local**: All data stays in the browser via localStorage (key: `cubby_data`) — nothing is sent anywhere
 
 ## What Was Removed (Do NOT Re-Add)
 
-- **Sound effects / audio**: The app previously had sound effects that caused crashes on mobile and bloated the file size. All audio code (Audio objects, playSound functions, audio event handlers, base64 audio data) has been intentionally stripped out. **Do not add any audio functionality unless Matt explicitly asks for it.**
+- **Sound effects / audio**: The app previously had sound effects that caused crashes on mobile and bloated the file size. All audio code has been intentionally stripped out. **Do not add any audio functionality unless Matt explicitly asks for it.**
 
 ## Development Rules
 
@@ -124,15 +176,39 @@ These have caused issues before — be aware of them:
 - **Audio on mobile**: Mobile browsers block autoplay audio and have strict interaction requirements. This is why audio was removed. Don't go down this rabbit hole.
 - **Large file regeneration**: Never output an entire file when only a few lines need to change. This wastes context and has historically caused crashes.
 - **Unasked-for features**: A previous session added a "start screen" that wasn't requested and broke click functionality across the app. Stick to what's asked.
-- **localStorage limits**: The app stores everything in localStorage, which typically has a ~5-10MB limit per origin. If the app grows to support lots of data, this could become an issue eventually, but it's fine for now.
+- **Settings re-render flash**: The settings page previously used `animate-in delay-X` classes on sections. When `renderSettings()` re-rendered after a button click, all sections would flash invisible (opacity: 0) before animating back in. These animation classes have been removed from settings sections to prevent this.
+- **localStorage limits**: The app stores data locally in localStorage (~5-10MB limit). Supabase handles cloud persistence.
+- **appData.settings null safety**: Functions like `runAutoArchive()` and `runAutoTrashPurge()` must check for `appData.settings` existence before accessing properties, because Supabase-loaded data may not include the settings field.
 
-## Future Aspirations (Not Yet Implemented)
+## Key Data Structures
 
-Matt has mentioned interest in these but they are NOT current priorities unless he brings them up:
-
-- PWA manifest and service worker setup for better installability and offline support
-- Possible collaboration features (sharing with others)
-- GitHub-based version control workflow (Matt has GitHub Desktop installed)
+### appData (stored in localStorage as `cubby_data`)
+```javascript
+{
+    rooms: [...],           // Array of room objects with cubbies
+    cubbies: {...},         // Cubby data keyed by cubby ID
+    archive: [...],         // Archived tasks
+    trash: [...],           // Deleted tasks (with deletedAt timestamp)
+    settings: {
+        userName: '',       // Display name for greeting
+        customColors: {},   // Custom color overrides { colorName: '#hex' }
+        autoArchive: {
+            mode: 'duration',       // 'duration' or 'date-change'
+            duration: '1week',      // 'immediate', '1day', '3days', '1week', '2weeks', '1month', 'custom', 'never'
+            customDays: 7,
+            dateChange: 'new-week', // 'new-day', 'new-week', 'new-month', 'new-year'
+            weekStart: 'monday'     // 'monday' or 'sunday'
+        },
+        autoTrash: {
+            mode: 'duration',
+            duration: '1month',
+            customDays: 30,
+            dateChange: 'new-week',
+            weekStart: 'monday'
+        }
+    }
+}
+```
 
 ## Quick Reference for File Decisions
 
@@ -142,10 +218,17 @@ Matt has mentioned interest in these but they are NOT current priorities unless 
 | Change colors, fonts, spacing, layout | styles.css |
 | Change how something looks on mobile | styles.css |
 | Change app data structure or localStorage | app.js |
+| Change color themes or add theme features | app.js + settings.js |
 | Change how things are displayed/rendered | render.js |
 | Change task/subtask behavior (complete, add, delete, move) | tasks.js |
+| Change auto-archive or auto-trash logic | tasks.js |
 | Change modal dialogs (add/edit popups) | modals.js |
 | Change context menus (kebab/three-dot menus) | menus.js |
 | Change search functionality | search.js |
+| Change the Tasks page (all tasks by due date) | views.js |
+| Change Settings, Archive, or Trash screens | settings.js |
 | Change animations | animations.js |
+| Change drag-and-drop behavior | drag.js |
+| Change auth or sign-in flow | supabase.js |
+| Change cloud sync behavior | sync.js |
 | New feature (complex) | Multiple files — work through it step by step |

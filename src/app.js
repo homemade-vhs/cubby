@@ -27,6 +27,48 @@ var colorThemes = {
     teal: { primary: '#5AF0E0', bg: '#082824', card: 'rgba(90, 240, 224, 0.15)', cardHover: 'rgba(90, 240, 224, 0.25)', border: 'rgba(90, 240, 224, 0.45)', text: '#c0fff8', textMuted: 'rgba(90, 240, 224, 0.7)', glow: 'rgba(90, 240, 224, 0.5)' }
 };
 
+// Store defaults for reset
+var defaultColorThemes = JSON.parse(JSON.stringify(colorThemes));
+
+// Generate a full color theme from a single hex color
+function generateThemeFromHex(hex) {
+    var r = parseInt(hex.slice(1, 3), 16);
+    var g = parseInt(hex.slice(3, 5), 16);
+    var b = parseInt(hex.slice(5, 7), 16);
+    // bg: very dark tinted version
+    var bgR = Math.round(r * 0.04 + 4);
+    var bgG = Math.round(g * 0.04 + 4);
+    var bgB = Math.round(b * 0.04 + 4);
+    var bgHex = '#' + bgR.toString(16).padStart(2, '0') + bgG.toString(16).padStart(2, '0') + bgB.toString(16).padStart(2, '0');
+    // text: light tinted version (mix with white at ~75%)
+    var tR = Math.min(255, Math.round(r * 0.3 + 180));
+    var tG = Math.min(255, Math.round(g * 0.3 + 180));
+    var tB = Math.min(255, Math.round(b * 0.3 + 180));
+    var textHex = '#' + tR.toString(16).padStart(2, '0') + tG.toString(16).padStart(2, '0') + tB.toString(16).padStart(2, '0');
+    return {
+        primary: hex,
+        bg: bgHex,
+        card: 'rgba(' + r + ', ' + g + ', ' + b + ', 0.15)',
+        cardHover: 'rgba(' + r + ', ' + g + ', ' + b + ', 0.25)',
+        border: 'rgba(' + r + ', ' + g + ', ' + b + ', 0.45)',
+        text: textHex,
+        textMuted: 'rgba(' + r + ', ' + g + ', ' + b + ', 0.7)',
+        glow: 'rgba(' + r + ', ' + g + ', ' + b + ', 0.5)'
+    };
+}
+
+// Apply custom colors from settings
+function applyCustomColors() {
+    if (appData.settings && appData.settings.customColors) {
+        var custom = appData.settings.customColors;
+        Object.keys(custom).forEach(function(name) {
+            if (colorThemes[name]) {
+                colorThemes[name] = generateThemeFromHex(custom[name]);
+            }
+        });
+    }
+}
+
 // Tag colors for task tags
 var tagColors = {
     red: { bg: 'rgba(255, 107, 107, 0.3)', text: '#ff6b6b' },
@@ -297,6 +339,9 @@ function updateNavBar() {
         var isActive = false;
         if (tabName === 'cubbies') {
             isActive = currentView === 'home' || currentView === 'room' || currentView === 'cubby';
+        } else if (tabName === 'home') {
+            // Home tab does not highlight — Cubbies covers home/room/cubby
+            isActive = false;
         } else {
             isActive = tabName === currentView;
         }
@@ -407,3 +452,4 @@ var dueDateColorThemes = {
 
 // Load data on page load
 loadData();
+applyCustomColors();

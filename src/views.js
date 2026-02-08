@@ -97,12 +97,16 @@ function renderViews() {
     });
     html += '</div>';
 
-    // Color mode toggle
-    var isDueDate = viewColorMode === 'due-date';
-    html += '<button class="view-color-toggle' + (isDueDate ? ' active' : '') + '" onclick="toggleViewColorMode()" title="Toggle color mode">';
-    html += '<span>' + (isDueDate ? 'color by cubby' : 'color by due date') + '</span>';
-    html += '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
-    html += '</button>';
+    // Color mode toggle is in the header now — update active state
+    var toggleBtns = document.querySelectorAll('.view-mode-btn');
+    toggleBtns.forEach(function(btn) {
+        if (btn.dataset.mode === viewColorMode) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
     html += '</div>';
 
     // Build task groups
@@ -339,7 +343,7 @@ function setViewFilter(filterKey) {
 // TOGGLE VIEW COLOR MODE
 // ============================================
 
-function toggleViewColorMode() {
-    viewColorMode = viewColorMode === 'cubby' ? 'due-date' : 'cubby';
+function setViewColorMode(mode) {
+    viewColorMode = mode;
     renderViews();
 }

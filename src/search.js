@@ -110,7 +110,11 @@ function matchesSearch(task, queryLower, filters) {
 
 function openSearchModal() {
     searchOpen = true;
-    
+
+    // Highlight search nav tab
+    var searchTab = document.querySelector('.nav-tab-search');
+    if (searchTab) searchTab.classList.add('active');
+
     // Remove existing modal if any
     var existing = document.getElementById('search-modal');
     if (existing) existing.remove();
@@ -401,6 +405,11 @@ function navigateToTask(roomId, cubbyId, subcubbyId, taskId) {
 
 function closeSearchModal() {
     searchOpen = false;
+
+    // Remove search nav tab highlight
+    var searchTab = document.querySelector('.nav-tab-search');
+    if (searchTab) searchTab.classList.remove('active');
+
     var modal = document.getElementById('search-modal');
     if (modal) {
         modal.classList.remove('active');

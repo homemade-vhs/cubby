@@ -98,6 +98,7 @@
     
     /* Modal styles */
     .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: none; z-index: 1000; }
+    .modal#search-modal { height: calc(100% - var(--nav-height)); }
     .modal.active { display: block; }
     .modal-backdrop { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
     .modal-content { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1a1a24; border-radius: 20px; padding: 24px; width: calc(100% - 40px); max-width: 400px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 60px rgba(0,0,0,0.5); max-height: calc(100vh - 80px); overflow-y: auto; }
@@ -1395,29 +1396,26 @@
     margin-bottom: 0;
 }
 
-/* View color mode toggle */
-.view-color-toggle {
-    padding: 6px 14px;
-    border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.15);
-    background: none;
-    color: rgba(255,255,255,0.35);
+/* View color mode toggle (in header) */
+.view-mode-toggle {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    -webkit-tap-highlight-color: transparent;
-    flex-shrink: 0;
+    gap: 6px;
+}
+.view-mode-btn {
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.03);
+    color: rgba(255,255,255,0.35);
     font-family: inherit;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
     white-space: nowrap;
 }
-.view-color-toggle:active {
-    transform: scale(0.92);
-}
-.view-color-toggle.active {
+.view-mode-btn.active {
     color: #feca57;
     border-color: rgba(254,202,87,0.4);
     background: rgba(254,202,87,0.1);
@@ -1431,8 +1429,10 @@
     margin-bottom: 20px;
 }
 .view-filter-btn {
-    padding: 6px 14px;
-    border-radius: 20px;
+    flex: 1;
+    min-width: 0;
+    padding: 8px 4px;
+    border-radius: 12px;
     border: 1px solid rgba(255,255,255,0.15);
     background: none;
     color: rgba(255,255,255,0.5);
@@ -1440,8 +1440,9 @@
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
     -webkit-tap-highlight-color: transparent;
+    text-align: center;
 }
 .view-filter-btn:active {
     transform: scale(0.95);
@@ -1633,7 +1634,8 @@
     align-items: center;
     justify-content: center;
     gap: 2px;
-    width: 60px;
+    flex: 1;
+    min-width: 0;
     height: 50px;
     padding: 4px 0;
     background: none;
@@ -1683,13 +1685,20 @@
     background: rgba(255, 176, 90, 0.08);
 }
 
+.nav-tab-notebooks.active {
+    color: #FFE85A;
+    border-color: rgba(255, 232, 90, 0.4);
+    background: rgba(255, 232, 90, 0.08);
+}
+
 .nav-tab:active {
     transform: scale(0.92);
     transition: transform 0.1s ease;
 }
 
-/* The + New button (dark green theme) */
+/* The + New button (dark green theme, wider) */
 .nav-tab-add {
+    flex: 1.4;
     color: #6BF5A0;
     border-color: rgba(107, 245, 160, 0.3);
     background: rgba(107, 245, 160, 0.06);
@@ -2255,4 +2264,121 @@
 }
 .archive-action-btn.delete:hover {
     background: rgba(255, 107, 107, 0.08);
+}
+
+/* ============================================ */
+/* COLOR EDITOR */
+/* ============================================ */
+.color-editor-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+.color-editor-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+.color-editor-swatch {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+.color-editor-swatch:hover {
+    transform: scale(1.12);
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.15);
+}
+.color-editor-swatch:active {
+    transform: scale(0.95);
+}
+.color-custom-dot {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #0a0a0f;
+}
+.color-editor-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: capitalize;
+}
+/* ============================================ */
+/* GLOBAL HOVER & CLICK EFFECTS */
+/* ============================================ */
+
+/* Hover: brighten and saturate — near-instant transition */
+.room-card:hover,
+.cubby-card:hover,
+.task-card:hover,
+.nav-tab:hover,
+.back-btn:hover,
+.signout-btn:hover,
+.settings-option-btn:hover,
+.settings-mode-btn:hover,
+.settings-link-btn:hover,
+.settings-action-btn:hover,
+.add-room-btn:hover,
+.add-cubby-btn:hover,
+.add-task-btn:hover,
+.views-btn:hover,
+.search-btn:hover,
+.filter-btn:hover,
+.view-filter-btn:hover,
+.view-mode-btn:hover,
+.modal-btn:hover,
+.room-more-btn:hover,
+.kebab-btn:hover,
+.header-search-btn:hover,
+.archive-action-btn:hover,
+.color-editor-swatch:hover {
+    filter: brightness(1.2) saturate(1.25);
+    transition: filter 0.06s ease;
+}
+
+/* Click pop: quick shrink, darken, then spring back */
+@keyframes clickPop {
+    0% { transform: scale(1); filter: brightness(1); }
+    40% { transform: scale(0.93); filter: brightness(0.85); }
+    100% { transform: scale(1); filter: brightness(1); }
+}
+
+.room-card:active,
+.cubby-card:active,
+.task-card:active,
+.settings-link-btn:active,
+.add-room-btn:active,
+.add-cubby-btn:active,
+.add-task-btn:active,
+.views-btn:active,
+.search-btn:active {
+    animation: clickPop 0.25s ease;
+}
+
+.nav-tab:active,
+.back-btn:active,
+.settings-option-btn:active,
+.settings-mode-btn:active,
+.settings-action-btn:active,
+.filter-btn:active,
+.view-filter-btn:active,
+.view-mode-btn:active,
+.modal-btn:active,
+.signout-btn:active,
+.room-more-btn:active,
+.kebab-btn:active,
+.header-search-btn:active,
+.archive-action-btn:active {
+    transform: scale(0.93);
+    filter: brightness(0.85);
+    transition: transform 0.08s ease, filter 0.08s ease;
 }

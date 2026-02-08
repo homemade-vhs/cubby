@@ -12,12 +12,12 @@ function renderSettings() {
 
     var settings = appData.settings || {};
     var autoArchive = settings.autoArchive || { mode: 'duration', duration: '1week', customDays: 7, dateChange: 'new-week', weekStart: 'monday' };
-    var autoTrash = settings.autoTrash || { duration: '1month', customDays: 30 };
+    var autoTrash = settings.autoTrash || { mode: 'duration', duration: '1month', customDays: 30, dateChange: 'new-week', weekStart: 'monday' };
 
     var html = '';
 
     // ---- User Profile Section ----
-    html += '<div class="settings-section animate-in delay-1">';
+    html += '<div class="settings-section">';
     html += '<div class="settings-section-header">Account</div>';
     html += '<div class="settings-card">';
     html += '<div class="settings-user-row">';
@@ -33,7 +33,7 @@ function renderSettings() {
     html += '</div>';
 
     // ---- Archive & Trash Links ----
-    html += '<div class="settings-section animate-in delay-2">';
+    html += '<div class="settings-section">';
     html += '<div class="settings-section-header">Data</div>';
     html += '<div class="settings-card">';
     html += '<button class="settings-link-btn" onclick="openArchive()">';
@@ -52,7 +52,7 @@ function renderSettings() {
     html += '</div>';
 
     // ---- Auto-Archive Settings ----
-    html += '<div class="settings-section animate-in delay-2">';
+    html += '<div class="settings-section">';
     html += '<div class="settings-section-header">Auto-Archive</div>';
     html += '<p class="settings-description">Completed tasks are automatically moved to the Archive after this period.</p>';
     html += '<div class="settings-card">';
@@ -114,7 +114,7 @@ function renderSettings() {
     html += '</div>';
 
     // ---- Auto-Trash Settings ----
-    html += '<div class="settings-section animate-in delay-3">';
+    html += '<div class="settings-section">';
     html += '<div class="settings-section-header">Auto-Delete Trash</div>';
     html += '<p class="settings-description">Items in Trash are permanently deleted after this period.</p>';
     html += '<div class="settings-card">';
@@ -128,6 +128,7 @@ function renderSettings() {
     // Duration options (shown when mode = duration)
     html += '<div id="trash-duration-options" style="' + (autoTrash.mode === 'duration' || !autoTrash.mode ? '' : 'display:none') + '">';
     var trashDurations = [
+        { value: 'immediate', label: 'Immediately' },
         { value: '1day', label: '1 day' },
         { value: '3days', label: '3 days' },
         { value: '1week', label: '1 week' },
@@ -174,8 +175,35 @@ function renderSettings() {
     html += '</div>';
     html += '</div>';
 
+    // ---- Custom Colors ----
+    html += '<div class="settings-section">';
+    html += '<div class="settings-section-header">Theme Colors</div>';
+    html += '<p class="settings-description">Click a color to customize it. Changes apply to all cubbies using that color.</p>';
+    html += '<div class="settings-card">';
+    html += '<div class="color-editor-grid">';
+    var colorNames = ['blue', 'purple', 'pink', 'red', 'orange', 'yellow', 'green', 'teal'];
+    var customColors = (settings.customColors) || {};
+    colorNames.forEach(function(name) {
+        var currentColor = colorThemes[name].primary;
+        var isCustom = customColors[name] ? true : false;
+        html += '<div class="color-editor-item">';
+        html += '<div class="color-editor-swatch" style="background: ' + currentColor + ';" onclick="document.getElementById(\'color-pick-' + name + '\').click()">';
+        if (isCustom) html += '<span class="color-custom-dot"></span>';
+        html += '</div>';
+        html += '<span class="color-editor-label">' + name.charAt(0).toUpperCase() + name.slice(1) + '</span>';
+        html += '<input type="color" id="color-pick-' + name + '" value="' + currentColor + '" style="display:none" onchange="setCustomColor(\'' + name + '\', this.value)">';
+        html += '</div>';
+    });
+    html += '</div>';
+    var hasCustom = Object.keys(customColors).length > 0;
+    if (hasCustom) {
+        html += '<button class="settings-action-btn" onclick="resetAllColors()" style="margin-top: 12px;">Reset All to Defaults</button>';
+    }
+    html += '</div>';
+    html += '</div>';
+
     // ---- Version ----
-    html += '<div class="settings-version">CUBBY v1.0.0</div>';
+    html += '<div class="settings-version">CUBBY v1.0.2</div>';
 
     container.innerHTML = html;
 
@@ -253,6 +281,24 @@ function setUserName(name) {
     saveData();
     // Update greeting and nav bar immediately
     if (typeof updateGreeting === 'function') updateGreeting();
+}
+
+function setCustomColor(name, hex) {
+    if (!appData.settings.customColors) appData.settings.customColors = {};
+    appData.settings.customColors[name] = hex;
+    colorThemes[name] = generateThemeFromHex(hex);
+    saveData();
+    renderSettings();
+}
+
+function resetAllColors(name) {
+    delete appData.settings.customColors;
+    // Restore defaults
+    Object.keys(defaultColorThemes).forEach(function(key) {
+        colorThemes[key] = JSON.parse(JSON.stringify(defaultColorThemes[key]));
+    });
+    saveData();
+    renderSettings();
 }
 
 // ============================================

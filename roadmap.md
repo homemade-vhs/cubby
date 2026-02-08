@@ -1,22 +1,31 @@
 # Cubby — Feature Roadmap
 
-## Phase 1: Enhance What's Already Built
+## Phase 1: Enhance What's Already Built (Mostly Complete)
 
 - [x] **Task Details / Memos** — Add a description or notes field to tasks and subtasks
 - [x] **Progress Bars on Tasks** — Show completion percentage based on subtask progress
-- [x] **Views (Today, This Week, etc.)** — Smart filtered perspectives of tasks across all Cubbies by due date
+- [x] **Views / Tasks Page** — Smart filtered perspectives of tasks across all Cubbies by due date
+- [x] **Archive System** — Auto-archive completed tasks with configurable duration/date-change modes
+- [x] **Trash System** — Soft-delete with configurable auto-purge, restore from trash
+- [x] **Settings Screen** — User profile, auto-archive/trash config, theme color customization
+- [x] **Central Navigation Bar** — 6-tab bottom nav (Home, Tasks, Cubbies, New, Search, Profile)
+- [x] **Custom Theme Colors** — Color picker to customize each of the 8 theme colors
+- [ ] **Views refinements** — Due date positioning, fixed-width date boxes, highlight selected task in cubby (see notes.md)
+- [ ] **Cubby creation improvements** — Color picker during creation, workspace selection, cubby description
+- [ ] **Cubby settings button** — In-cubby settings menu (color, description, share, move, duplicate, archive, delete)
+- [ ] **Due date color mode in cubbies** — Toggle for due-date-based task coloring within individual cubbies
 
-## Phase 2: Navigation and Home Improvements
+## Phase 2: Home & UI Improvements
 
-- [ ] **Central Navigation Bar** — Persistent nav bar across all pages for quick access to sections
 - [ ] **App Home Upgrades** — Widgets, quick-add buttons, upcoming task summaries on the home screen
 - [ ] **Icons for Tasks / Cubbies** — Choose or upload icons to assign to tasks, cubbies, rooms, etc.
+- [ ] **Overdue styling** — More vivid red border for overdue tasks, thicker border
 
 ## Phase 3: Major New Features
 
 - [ ] **Calendar** — Visual calendar view for tasks, deadlines, and reminders with filtering options
 - [ ] **Notebooks** — Document system with formatting, checklists, templates, sketching, and image support
-- [ ] **Settings / Themes** — Customize colors, fonts, sizes; create and switch between themes
+- [ ] **Advanced Themes** — Full theme presets, create and switch between complete themes
 
 ## Phase 4: Ambitious Additions
 
