@@ -6,13 +6,14 @@
 // HOME VIEW RENDER
 // ============================================
 
-function renderHome() {
+function renderHome(skipAnimation) {
     var html = '';
     appData.rooms.forEach(function(room, i) {
         var roomColor = room.color;
         var roomTheme = roomColor ? (colorThemes[roomColor] || colorThemes.purple) : null;
         var roomStyle = roomTheme ? 'border-color:' + roomTheme.border + ';' : '';
-        var roomClass = 'room-card animate-in delay-' + (i + 1) + (roomTheme ? ' room-colored' : '');
+        var animClass = skipAnimation ? '' : ' animate-in delay-' + (i + 1);
+        var roomClass = 'room-card' + animClass + (roomTheme ? ' room-colored' : '');
         var nameStyle = roomTheme ? ' style="color:' + roomTheme.text + '"' : '';
         var countStyle = roomTheme ? ' style="color:' + roomTheme.textMuted + '"' : '';
         var arrowColor = roomTheme ? roomTheme.textMuted : 'currentColor';
@@ -25,7 +26,8 @@ function renderHome() {
             '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="18" r="1.5" fill="currentColor"/></svg></div></div>';
     });
     // Add new room button
-    html += '<div class="add-room-btn animate-in delay-' + (appData.rooms.length + 1) + '" onclick="openNewRoomModal()"><span class="plus">+</span><span class="text">new workspace</span></div>';
+    var addAnimClass = skipAnimation ? '' : ' animate-in delay-' + (appData.rooms.length + 1);
+    html += '<div class="add-room-btn' + addAnimClass + '" onclick="openNewRoomModal()"><span class="plus">+</span><span class="text">new workspace</span></div>';
     document.getElementById('rooms-container').innerHTML = html;
 }
 

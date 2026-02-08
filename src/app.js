@@ -372,8 +372,7 @@ function hideNavBar() {
 }
 
 function updateNavUserName(name) {
-    var el = document.getElementById('nav-user-name');
-    if (el) el.textContent = name;
+    // Nav tab always shows "user" — display name is used in greeting only
 }
 
 function openProfileMenu() {

@@ -753,7 +753,7 @@ function moveRoomToTop() {
         appData.rooms.unshift(room);
         saveData();
         syncUpdatePositions('workspaces', buildPositionArray(appData.rooms));
-        renderHome();
+        renderHome(true);
     }
 }
 
@@ -767,7 +767,7 @@ function moveRoomToBottom() {
         appData.rooms.push(room);
         saveData();
         syncUpdatePositions('workspaces', buildPositionArray(appData.rooms));
-        renderHome();
+        renderHome(true);
     }
 }
 
@@ -821,7 +821,34 @@ function setRoomColor(colorName) {
             delete room.color;
         }
         saveData();
-        renderHome();
+        // Update the card in place instead of re-rendering all cards
+        var card = document.querySelector('.room-card[data-room-id="' + roomId + '"]');
+        if (card) {
+            var roomTheme = room.color ? (colorThemes[room.color] || colorThemes.purple) : null;
+            if (roomTheme) {
+                card.classList.add('room-colored');
+                card.style.borderColor = roomTheme.border;
+                var h2 = card.querySelector('.info h2');
+                var p = card.querySelector('.info p');
+                var arrow = card.querySelector('.arrow svg');
+                var moreBtn = card.querySelector('.room-more-btn');
+                if (h2) h2.style.color = roomTheme.text;
+                if (p) p.style.color = roomTheme.textMuted;
+                if (arrow) arrow.setAttribute('stroke', roomTheme.textMuted);
+                if (moreBtn) moreBtn.style.color = roomTheme.textMuted;
+            } else {
+                card.classList.remove('room-colored');
+                card.style.borderColor = '';
+                var h2 = card.querySelector('.info h2');
+                var p = card.querySelector('.info p');
+                var arrow = card.querySelector('.arrow svg');
+                var moreBtn = card.querySelector('.room-more-btn');
+                if (h2) h2.style.color = '';
+                if (p) p.style.color = '';
+                if (arrow) arrow.setAttribute('stroke', 'currentColor');
+                if (moreBtn) moreBtn.style.color = '';
+            }
+        }
     }
     closeColorModal();
 }
@@ -849,6 +876,6 @@ function deleteRoom() {
         appData.rooms = appData.rooms.filter(function(r) { return r.id !== roomId; });
         saveData();
         syncDeleteWorkspace(roomId);
-        renderHome();
+        renderHome(true);
     });
 }

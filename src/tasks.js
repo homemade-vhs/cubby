@@ -894,7 +894,7 @@ function saveEditedRoomName(newName) {
         room.name = newName;
         saveData();
         syncUpdateWorkspace(activeRoomId, { name: newName });
-        renderHome();
+        renderHome(true);
     }
 }
 
@@ -912,7 +912,7 @@ function addNewRoom(name) {
             syncInsertWorkspace(newRoomId, user.id, name, appData.rooms.length - 1);
         }
     });
-    renderHome();
+    renderHome(true);
 }
 
 // ============================================
