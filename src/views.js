@@ -173,15 +173,15 @@ function renderViewTask(item, group) {
     // Task card — reuses .task class structure
     html += '<div class="task" onclick="navigateToTask(\'' + item.roomId + '\', \'' + item.cubbyId + '\', \'' + item.subcubbyId + '\', \'' + task.id + '\')">';
 
-    // Location label (inside card, above task content)
-    html += '<div class="view-task-location" style="color:' + theme.primary + '">' + item.cubbyName + '</div>';
-
     // Checkbox
     html += '<div class="checkbox" onclick="event.stopPropagation(); toggleViewTask(\'' + task.id + '\')">' +
         '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8L7 12L13 4" stroke="' + theme.bg + '" stroke-width="2.5" stroke-linecap="round"/></svg></div>';
 
-    // Task text (clickable to navigate)
+    // Text group: cubby name stacked above task name
+    html += '<div class="view-task-text-group">';
+    html += '<div class="view-task-location" style="color:' + theme.primary + '">' + item.cubbyName + '</div>';
     html += '<span class="task-text">' + task.text + '</span>';
+    html += '</div>';
 
     // Task meta (tags + due date)
     var hasTags = task.tags && task.tags.length > 0;
