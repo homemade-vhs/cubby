@@ -24,6 +24,10 @@ function renderSettings() {
     html += '<div class="settings-user-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>';
     html += '<div class="settings-user-info" id="settings-user-email">Loading...</div>';
     html += '</div>';
+    html += '<div class="settings-name-row">';
+    html += '<label class="settings-name-label">Display Name</label>';
+    html += '<input type="text" class="settings-name-input" id="settings-user-name" value="' + escapeHtml(settings.userName || '') + '" placeholder="Enter your name" onchange="setUserName(this.value)" onkeydown="if(event.key===\'Enter\'){this.blur();}">';
+    html += '</div>';
     html += '<button class="settings-action-btn settings-signout" onclick="handleSignOut()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sign Out</button>';
     html += '</div>';
     html += '</div>';
@@ -115,6 +119,14 @@ function renderSettings() {
     html += '<p class="settings-description">Items in Trash are permanently deleted after this period.</p>';
     html += '<div class="settings-card">';
 
+    // Mode toggle
+    html += '<div class="settings-toggle-row">';
+    html += '<button class="settings-mode-btn' + (autoTrash.mode === 'duration' ? ' active' : '') + '" onclick="setTrashMode(\'duration\')">After duration</button>';
+    html += '<button class="settings-mode-btn' + (autoTrash.mode === 'date-change' ? ' active' : '') + '" onclick="setTrashMode(\'date-change\')">On date change</button>';
+    html += '</div>';
+
+    // Duration options (shown when mode = duration)
+    html += '<div id="trash-duration-options" style="' + (autoTrash.mode === 'duration' || !autoTrash.mode ? '' : 'display:none') + '">';
     var trashDurations = [
         { value: '1day', label: '1 day' },
         { value: '3days', label: '3 days' },
@@ -129,11 +141,34 @@ function renderSettings() {
         html += '<button class="settings-option-btn' + (autoTrash.duration === d.value ? ' active' : '') + '" onclick="setTrashDuration(\'' + d.value + '\')">' + d.label + '</button>';
     });
     html += '</div>';
-
     // Custom days input for trash
     html += '<div class="settings-custom-row" id="trash-custom-days" style="' + (autoTrash.duration === 'custom' ? '' : 'display:none') + '">';
     html += '<label>Days:</label>';
     html += '<input type="number" id="trash-custom-input" value="' + (autoTrash.customDays || 30) + '" min="1" max="365" onchange="setTrashCustomDays(this.value)">';
+    html += '</div>';
+    html += '</div>';
+
+    // Date-change options (shown when mode = date-change)
+    html += '<div id="trash-datechange-options" style="' + (autoTrash.mode === 'date-change' ? '' : 'display:none') + '">';
+    var trashDateChanges = [
+        { value: 'new-day', label: 'New day' },
+        { value: 'new-week', label: 'New week' },
+        { value: 'new-month', label: 'New month' },
+        { value: 'new-year', label: 'New year' }
+    ];
+    html += '<div class="settings-option-grid">';
+    trashDateChanges.forEach(function(d) {
+        html += '<button class="settings-option-btn' + ((autoTrash.dateChange || 'new-week') === d.value ? ' active' : '') + '" onclick="setTrashDateChange(\'' + d.value + '\')">' + d.label + '</button>';
+    });
+    html += '</div>';
+    // Week start (only when new-week)
+    html += '<div class="settings-custom-row" id="trash-week-start" style="' + ((autoTrash.dateChange || 'new-week') === 'new-week' ? '' : 'display:none') + '">';
+    html += '<label>Week starts on:</label>';
+    html += '<div class="settings-toggle-row compact">';
+    html += '<button class="settings-mode-btn' + ((autoTrash.weekStart || 'monday') === 'monday' ? ' active' : '') + '" onclick="setTrashWeekStart(\'monday\')">Monday</button>';
+    html += '<button class="settings-mode-btn' + ((autoTrash.weekStart || 'monday') === 'sunday' ? ' active' : '') + '" onclick="setTrashWeekStart(\'sunday\')">Sunday</button>';
+    html += '</div>';
+    html += '</div>';
     html += '</div>';
 
     html += '</div>';
@@ -193,6 +228,31 @@ function setTrashDuration(duration) {
 function setTrashCustomDays(days) {
     appData.settings.autoTrash.customDays = parseInt(days) || 30;
     saveData();
+}
+
+function setTrashMode(mode) {
+    appData.settings.autoTrash.mode = mode;
+    saveData();
+    renderSettings();
+}
+
+function setTrashDateChange(dateChange) {
+    appData.settings.autoTrash.dateChange = dateChange;
+    saveData();
+    renderSettings();
+}
+
+function setTrashWeekStart(day) {
+    appData.settings.autoTrash.weekStart = day;
+    saveData();
+    renderSettings();
+}
+
+function setUserName(name) {
+    appData.settings.userName = name.trim();
+    saveData();
+    // Update greeting and nav bar immediately
+    if (typeof updateGreeting === 'function') updateGreeting();
 }
 
 // ============================================

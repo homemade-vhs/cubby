@@ -67,8 +67,8 @@
     </button>
     <button class="views-btn animate-in delay-1" onclick="openViews()">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-      <span>Views</span>
-      <span class="views-subtitle">Tasks by due date</span>
+      <span>Tasks</span>
+      <span class="views-subtitle">All tasks by due date</span>
     </button>
     <div id="rooms-container"></div>
     <div class="logo animate-in delay-3"><span>CUBBY</span><span class="version">v1.0.0</span></div>
@@ -82,7 +82,7 @@
         back
       </button>
     </div>
-    <div class="views-title animate-in delay-1"><h1>Views</h1></div>
+    <div class="views-title animate-in delay-1"><h1>Tasks</h1></div>
     <div id="views-container" class="views-container"></div>
   </div>
   
@@ -172,12 +172,14 @@
     </button>
     <button class="nav-tab nav-tab-views" data-tab="views" onclick="openViews()">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-      <span>Views</span>
+      <span>Tasks</span>
+    </button>
+    <button class="nav-tab nav-tab-cubbies" data-tab="cubbies" onclick="goToHome()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <span>Cubbies</span>
     </button>
     <button class="nav-tab nav-tab-add" onclick="openModalFromNavBar()">
-      <div class="nav-add-btn">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      </div>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       <span>New</span>
     </button>
     <button class="nav-tab nav-tab-search" onclick="openSearchModal()">

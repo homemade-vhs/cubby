@@ -197,10 +197,14 @@ async function updateGreeting() {
     var greetingEl = document.getElementById('greeting-text');
 
     if (user && greetingEl) {
-        // Get name from email (part before @)
-        var name = user.email.split('@')[0];
-        // Capitalize first letter
-        name = name.charAt(0).toUpperCase() + name.slice(1);
+        // Use stored name if set, otherwise derive from email
+        var name;
+        if (appData.settings && appData.settings.userName) {
+            name = appData.settings.userName;
+        } else {
+            name = user.email.split('@')[0];
+            name = name.charAt(0).toUpperCase() + name.slice(1);
+        }
 
         // Time-based greeting
         var hour = new Date().getHours();

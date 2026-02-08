@@ -83,9 +83,20 @@ function loadData() {
             }
             if (!appData.settings.autoTrash) {
                 appData.settings.autoTrash = {
+                    mode: 'duration',
                     duration: '1month',
-                    customDays: 30
+                    customDays: 30,
+                    dateChange: 'new-week',
+                    weekStart: 'monday'
                 };
+            }
+            if (!appData.settings.autoTrash.mode) {
+                appData.settings.autoTrash.mode = 'duration';
+                appData.settings.autoTrash.dateChange = appData.settings.autoTrash.dateChange || 'new-week';
+                appData.settings.autoTrash.weekStart = appData.settings.autoTrash.weekStart || 'monday';
+            }
+            if (appData.settings.userName === undefined) {
+                appData.settings.userName = '';
             }
         } catch (e) {
             console.error('Error loading data:', e);
@@ -124,6 +135,7 @@ function initializeDefaultData() {
         archive: [],
         trash: [],
         settings: {
+            userName: '',
             autoArchive: {
                 mode: 'duration',
                 duration: '1week',
@@ -132,8 +144,11 @@ function initializeDefaultData() {
                 weekStart: 'monday'
             },
             autoTrash: {
+                mode: 'duration',
                 duration: '1month',
-                customDays: 30
+                customDays: 30,
+                dateChange: 'new-week',
+                weekStart: 'monday'
             }
         }
     };
@@ -278,7 +293,14 @@ function toggleCubbyDateColorMode() {
 function updateNavBar() {
     var tabs = document.querySelectorAll('.nav-tab[data-tab]');
     tabs.forEach(function(tab) {
-        if (tab.dataset.tab === currentView) {
+        var tabName = tab.dataset.tab;
+        var isActive = false;
+        if (tabName === 'cubbies') {
+            isActive = currentView === 'home' || currentView === 'room' || currentView === 'cubby';
+        } else {
+            isActive = tabName === currentView;
+        }
+        if (isActive) {
             tab.classList.add('active');
         } else {
             tab.classList.remove('active');

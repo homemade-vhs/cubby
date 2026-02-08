@@ -1380,21 +1380,13 @@ function getArchiveThresholdDate(settings, now) {
 function runAutoTrashPurge() {
     if (!appData.settings) return;
     var settings = appData.settings.autoTrash;
-    if (!settings || settings.duration === 'never') return;
+    if (!settings) return;
+    if (settings.mode === 'duration' && settings.duration === 'never') return;
 
     var now = new Date();
-    var ms = 0;
-    switch (settings.duration) {
-        case '1day': ms = 24 * 60 * 60 * 1000; break;
-        case '3days': ms = 3 * 24 * 60 * 60 * 1000; break;
-        case '1week': ms = 7 * 24 * 60 * 60 * 1000; break;
-        case '2weeks': ms = 14 * 24 * 60 * 60 * 1000; break;
-        case '1month': ms = 30 * 24 * 60 * 60 * 1000; break;
-        case 'custom': ms = (settings.customDays || 30) * 24 * 60 * 60 * 1000; break;
-        default: ms = 30 * 24 * 60 * 60 * 1000;
-    }
+    var threshold = getArchiveThresholdDate(settings, now);
+    if (!threshold) return;
 
-    var threshold = new Date(now.getTime() - ms);
     var purged = false;
 
     appData.trash = appData.trash.filter(function(entry) {

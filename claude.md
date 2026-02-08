@@ -10,6 +10,24 @@ Matt is a creative professional (YouTuber, video producer, musician) who is **no
 
 Matt works on a Mac Studio.
 
+Matt is very technically skilled in graphic design, Photoshop, Premiere, UI design, music production, etc. Don't hesitate to ask him to create mock-ups or design things.
+
+## General Rules to Always Follow During Chats and Development
+
+- Automatically update the version number at the bottom of the Cubby home screen for every new build. Just add one number to the third decimal spot with each new build, no matter how small the changes.
+- Automatically update this document to contain the most up to date information about Cubby, it's features, what is currently implemented, what isn't working fully, and what should be added or improved.
+- Always check and update the .md files before, during, and at the end of sessions.
+
+### .md files
+
+There are several .md files for you to reference. Please check them at the start of each session, and  continuously update and check them during chats and development sessions. The .md files purposes are:
+
+- **ideas.md** is where Matt writes his ideas for Cubby. Reference it to see what Matt has in his head for new features.
+- **notes.md** is for when Matt has a lot of notes or features to give you, and can organize them better there, so when he instructs you to check there for next steps, do that.
+  - Feel free to reword, rewrite, reorganize, or add to the notes in notes.md. Making checklists or to-do lists is wise so Matt can keep track. 
+- **notes-archive.md** is an archive on the notes Matt gives you. Before changing anything in notes.md, always copy the current notes in notes.md and move them to notes-archive.md
+- **roadmap.md** is a roadmap of what to add next. Update this as much as possible during sessions.
+
 ## Tech Stack
 
 - **Vanilla HTML, CSS, and JavaScript** — no frameworks, no React, no build tools
