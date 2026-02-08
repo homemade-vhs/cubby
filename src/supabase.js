@@ -184,6 +184,10 @@ async function showApp() {
         renderHome();
     }
 
+    // Run auto-archive and auto-trash-purge
+    if (typeof runAutoArchive === 'function') runAutoArchive();
+    if (typeof runAutoTrashPurge === 'function') runAutoTrashPurge();
+
     showNavBar();
     updateNavBar();
 }
@@ -234,6 +238,9 @@ function showAuth() {
     document.getElementById('room-screen').classList.remove('active');
     document.getElementById('cubby-screen').classList.remove('active');
     document.getElementById('views-screen').classList.remove('active');
+    document.getElementById('settings-screen').classList.remove('active');
+    document.getElementById('archive-screen').classList.remove('active');
+    document.getElementById('trash-screen').classList.remove('active');
     hideNavBar();
 }
 

@@ -50,6 +50,9 @@ function openTaskMenu(event, taskId, isSubtask, parentTaskId) {
         '<div class="task-menu-item" onclick="openMoveTaskModal()">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 9l-3 3 3 3"/><path d="M9 5l3-3 3 3"/><path d="M15 19l3 3 3-3"/><path d="M19 9l3 3-3 3"/><path d="M2 12h20"/><path d="M12 2v20"/></svg>' +
             '<span>Move to section</span></div>' +
+        '<div class="task-menu-item" onclick="archiveTask()">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>' +
+            '<span>Archive</span></div>' +
         '<div class="task-menu-item delete" onclick="deleteTask()">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' +
             '<span>Delete</span></div>';
@@ -165,12 +168,15 @@ function openSubcubbyMenu(event, subcubbyId) {
         '<div class="task-menu-item" onclick="openMoveSubcubbyModal()">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 9l-3 3 3 3"/><path d="M9 5l3-3 3 3"/><path d="M15 19l3 3 3-3"/><path d="M19 9l3 3-3 3"/><path d="M2 12h20"/><path d="M12 2v20"/></svg>' +
             '<span>Move to cubby</span></div>' +
+        '<div class="task-menu-item" onclick="archiveSubcubby()">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>' +
+            '<span>Archive</span></div>' +
         '<div class="task-menu-item delete" onclick="deleteSubcubby()">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' +
             '<span>Delete</span></div>';
-    
+
     document.body.appendChild(menu);
-    
+
     var menuHeight = menu.offsetHeight;
     var spaceBelow = window.innerHeight - rect.bottom;
     
@@ -294,11 +300,21 @@ function deleteSubcubby() {
     var subcubbyId = activeSubcubbyId;
     closeSubcubbyMenu();
 
-    var cubbyData = appData.cubbies[currentCubby.id];
-    cubbyData.subcubbies = cubbyData.subcubbies.filter(function(s) { return s.id !== subcubbyId; });
-    saveData();
-    syncDeleteSubcubby(subcubbyId);
-    renderCubby(currentCubby);
+    showConfirmDialog('Delete subcubby?', 'This will move the subcubby and all its tasks to Trash.', function() {
+        var cubbyData = appData.cubbies[currentCubby.id];
+        var index = cubbyData.subcubbies.findIndex(function(s) { return s.id === subcubbyId; });
+        if (index === -1) return;
+        var subcubby = cubbyData.subcubbies.splice(index, 1)[0];
+        trashItem('subcubby', subcubby, {
+            roomId: currentRoom.id, roomName: currentRoom.name,
+            cubbyId: currentCubby.id, cubbyName: currentCubby.name,
+            subcubbyId: '', subcubbyName: '',
+            parentTaskId: ''
+        });
+        saveData();
+        syncDeleteSubcubby(subcubbyId);
+        renderCubby(currentCubby);
+    });
 }
 
 function moveSubcubbyTo(targetCubbyId) {
@@ -364,12 +380,15 @@ function openCubbyMenu(event, cubbyId) {
         '<div class="task-menu-item" onclick="openMoveCubbyModal()">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 9l-3 3 3 3"/><path d="M9 5l3-3 3 3"/><path d="M15 19l3 3 3-3"/><path d="M19 9l3 3-3 3"/><path d="M2 12h20"/><path d="M12 2v20"/></svg>' +
             '<span>Move to room</span></div>' +
+        '<div class="task-menu-item" onclick="archiveCubbyFromMenu()">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>' +
+            '<span>Archive</span></div>' +
         '<div class="task-menu-item delete" onclick="deleteCubby()">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' +
             '<span>Delete</span></div>';
-    
+
     document.body.appendChild(menu);
-    
+
     var menuHeight = menu.offsetHeight;
     var spaceBelow = window.innerHeight - rect.bottom;
     
@@ -442,11 +461,20 @@ function deleteCubby() {
     var cubbyId = activeCubbyId;
     closeCubbyMenu();
 
-    currentRoom.cubbies = currentRoom.cubbies.filter(function(c) { return c.id !== cubbyId; });
-    delete appData.cubbies[cubbyId];
-    saveData();
-    syncDeleteCubby(cubbyId);
-    renderRoom(currentRoom);
+    showConfirmDialog('Delete cubby?', 'This will move the cubby and all its contents to Trash.', function() {
+        var cubbyRef = currentRoom.cubbies.find(function(c) { return c.id === cubbyId; });
+        currentRoom.cubbies = currentRoom.cubbies.filter(function(c) { return c.id !== cubbyId; });
+        trashItem('cubby', { ref: cubbyRef, data: appData.cubbies[cubbyId] || { subcubbies: [] } }, {
+            roomId: currentRoom.id, roomName: currentRoom.name,
+            cubbyId: '', cubbyName: '',
+            subcubbyId: '', subcubbyName: '',
+            parentTaskId: ''
+        });
+        delete appData.cubbies[cubbyId];
+        saveData();
+        syncDeleteCubby(cubbyId);
+        renderRoom(currentRoom);
+    });
 }
 
 function moveCubbyToRoom(targetRoomId) {
@@ -465,7 +493,170 @@ function moveCubbyToRoom(targetRoomId) {
     closeMoveModal();
     saveData();
     syncUpdateCubby(cubbyId, { workspace_id: targetRoomId, position: targetRoom ? targetRoom.cubbies.length - 1 : 0 });
+
+    // If we were viewing this cubby, go back to room
+    if (currentCubby && currentCubby.id === cubbyId) {
+        goToRoom();
+    } else {
+        renderRoom(currentRoom);
+    }
+}
+
+// ============================================
+// CUBBY SETTINGS MENU (Inside Cubby)
+// ============================================
+
+function openCubbySettingsMenu(event) {
+    event.stopPropagation();
+    closeCubbySettingsMenu();
+
+    if (!currentCubby) return;
+
+    var btn = event.currentTarget;
+    var rect = btn.getBoundingClientRect();
+
+    // Create backdrop
+    var backdrop = document.createElement('div');
+    backdrop.className = 'cubby-settings-menu-backdrop';
+    backdrop.onclick = closeCubbySettingsMenu;
+    document.body.appendChild(backdrop);
+
+    // Create menu
+    var menu = document.createElement('div');
+    menu.className = 'task-menu active';
+    menu.id = 'cubby-settings-menu';
+    menu.innerHTML =
+        '<div class="task-menu-item" onclick="editCubbyColorFromSettings()">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/></svg>' +
+            '<span>Color theme</span></div>' +
+        '<div class="task-menu-item" onclick="editCubbyDescription()">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>' +
+            '<span>Edit description</span></div>' +
+        '<div class="task-menu-item" style="opacity:0.3;pointer-events:none">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>' +
+            '<span>Share cubby</span></div>' +
+        '<div class="task-menu-item" onclick="openMoveCubbyFromSettings()">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 9l-3 3 3 3"/><path d="M9 5l3-3 3 3"/><path d="M15 19l3 3 3-3"/><path d="M19 9l3 3-3 3"/><path d="M2 12h20"/><path d="M12 2v20"/></svg>' +
+            '<span>Move to room</span></div>' +
+        '<div class="task-menu-item" onclick="duplicateCubbyFromSettings()">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>' +
+            '<span>Duplicate cubby</span></div>' +
+        '<div class="task-menu-item" onclick="archiveCubbyFromSettings()">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>' +
+            '<span>Archive cubby</span></div>' +
+        '<div class="task-menu-item delete" onclick="deleteCubbyFromSettings()">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' +
+            '<span>Delete cubby</span></div>';
+
+    document.body.appendChild(menu);
+
+    var menuHeight = menu.offsetHeight;
+    var spaceBelow = window.innerHeight - rect.bottom;
+
+    if (spaceBelow < menuHeight && rect.top > spaceBelow) {
+        menu.style.top = (rect.top - menuHeight - 4) + 'px';
+    } else {
+        menu.style.top = (rect.bottom + 4) + 'px';
+    }
+    menu.style.right = (window.innerWidth - rect.right) + 'px';
+}
+
+function closeCubbySettingsMenu() {
+    var backdrop = document.querySelector('.cubby-settings-menu-backdrop');
+    if (backdrop) backdrop.remove();
+    var menu = document.getElementById('cubby-settings-menu');
+    if (menu) menu.remove();
+}
+
+function editCubbyColorFromSettings() {
+    closeCubbySettingsMenu();
+    activeCubbyId = currentCubby.id;
+    openEditCubbyColorModal();
+}
+
+function editCubbyDescription() {
+    closeCubbySettingsMenu();
+
+    createModal();
+    modalMode = 'editCubbyDescription';
+    document.getElementById('modal-title').textContent = 'Edit Description';
+    document.getElementById('task-input').placeholder = 'Enter description...';
+    document.getElementById('date-row').style.display = 'none';
+    document.getElementById('tags-row').style.display = 'none';
+    document.getElementById('memo-row').style.display = 'none';
+    var modal = document.getElementById('task-modal');
+    modal.classList.add('active');
+    var input = document.getElementById('task-input');
+    input.value = currentCubby.description || '';
+    setTimeout(function() { input.focus(); input.select(); }, 100);
+}
+
+function openMoveCubbyFromSettings() {
+    closeCubbySettingsMenu();
+    activeCubbyId = currentCubby.id;
+    openMoveCubbyModal();
+}
+
+function duplicateCubbyFromSettings() {
+    closeCubbySettingsMenu();
+    if (!currentCubby || !currentRoom) return;
+
+    var newCubbyId = generateUUID();
+    var cubbyRef = {
+        id: newCubbyId,
+        name: currentCubby.name + ' (copy)',
+        color: currentCubby.color
+    };
+    if (currentCubby.description) cubbyRef.description = currentCubby.description;
+    currentRoom.cubbies.push(cubbyRef);
+
+    // Deep copy cubby data
+    var originalData = appData.cubbies[currentCubby.id];
+    if (originalData) {
+        appData.cubbies[newCubbyId] = JSON.parse(JSON.stringify(originalData));
+        // Regenerate all IDs
+        appData.cubbies[newCubbyId].subcubbies.forEach(function(sub) {
+            sub.id = generateUUID();
+            sub.tasks.forEach(function(task) {
+                task.id = generateUUID();
+                task.completed = false;
+                if (task.subtasks) {
+                    task.subtasks.forEach(function(st) {
+                        st.id = generateUUID();
+                        st.completed = false;
+                    });
+                }
+            });
+        });
+    } else {
+        appData.cubbies[newCubbyId] = {
+            subcubbies: [{ id: generateUUID(), name: 'General', expanded: true, tasks: [] }]
+        };
+    }
+    saveData();
     renderRoom(currentRoom);
+    goToRoom();
+}
+
+function deleteCubbyFromSettings() {
+    closeCubbySettingsMenu();
+    if (!currentCubby || !currentRoom) return;
+
+    showConfirmDialog('Delete cubby?', 'This will move the cubby and all its contents to Trash.', function() {
+        var cubbyId = currentCubby.id;
+        var cubbyRef = currentRoom.cubbies.find(function(c) { return c.id === cubbyId; });
+        currentRoom.cubbies = currentRoom.cubbies.filter(function(c) { return c.id !== cubbyId; });
+        trashItem('cubby', { ref: cubbyRef, data: appData.cubbies[cubbyId] || { subcubbies: [] } }, {
+            roomId: currentRoom.id, roomName: currentRoom.name,
+            cubbyId: '', cubbyName: '',
+            subcubbyId: '', subcubbyName: '',
+            parentTaskId: ''
+        });
+        delete appData.cubbies[cubbyId];
+        saveData();
+        syncDeleteCubby(cubbyId);
+        goToRoom();
+    });
 }
 
 // ============================================
@@ -581,15 +772,25 @@ function deleteRoom() {
     var roomId = activeRoomId;
     closeRoomMenu();
 
-    var room = appData.rooms.find(function(r) { return r.id === roomId; });
-    if (room) {
-        room.cubbies.forEach(function(c) {
-            delete appData.cubbies[c.id];
-        });
-    }
+    showConfirmDialog('Delete room?', 'This will move the room and all its cubbies to Trash.', function() {
+        var room = appData.rooms.find(function(r) { return r.id === roomId; });
+        if (room) {
+            var cubbyData = [];
+            room.cubbies.forEach(function(c) {
+                cubbyData.push({ ref: c, data: appData.cubbies[c.id] || { subcubbies: [] } });
+                delete appData.cubbies[c.id];
+            });
+            trashItem('room', { room: { id: room.id, name: room.name, cubbies: [] }, cubbies: cubbyData }, {
+                roomId: '', roomName: '',
+                cubbyId: '', cubbyName: '',
+                subcubbyId: '', subcubbyName: '',
+                parentTaskId: ''
+            });
+        }
 
-    appData.rooms = appData.rooms.filter(function(r) { return r.id !== roomId; });
-    saveData();
-    syncDeleteWorkspace(roomId);
-    renderHome();
+        appData.rooms = appData.rooms.filter(function(r) { return r.id !== roomId; });
+        saveData();
+        syncDeleteWorkspace(roomId);
+        renderHome();
+    });
 }

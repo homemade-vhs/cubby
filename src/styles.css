@@ -49,11 +49,15 @@
     #cubby-screen { padding: calc(var(--safe-top) + 12px) 16px var(--nav-height); overflow: hidden; }
     .cubby-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
     .cubby-header .back-btn { background: var(--cubby-card); border-color: var(--cubby-border); color: var(--cubby-text); }
+    .cubby-settings-btn { padding: 10px; background: var(--cubby-card); border-radius: 12px; border: 1px solid var(--cubby-border); cursor: pointer; color: var(--cubby-text-muted); display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; font-family: inherit; }
+    .cubby-settings-btn:hover { background: var(--cubby-card-hover); color: var(--cubby-text); }
+    .cubby-settings-btn:active { transform: scale(0.9); }
     .new-task-btn { margin-left: auto; padding: 10px 16px; background: var(--cubby-card); border-radius: 12px; border: 1px solid var(--cubby-border); cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: inherit; }
     .new-task-btn .plus { color: var(--cubby-primary); font-size: 16px; font-weight: 700; }
     .new-task-btn .text { color: var(--cubby-text); font-size: 14px; font-weight: 600; }
-    .cubby-title { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .cubby-title { display: flex; flex-direction: column; gap: 4px; margin-bottom: 24px; }
     .cubby-title h1 { font-size: 36px; font-weight: 800; color: var(--cubby-text); }
+    .cubby-description { font-size: 14px; font-weight: 500; color: var(--cubby-text-muted); line-height: 1.4; }
     .tasks-container { flex: 1; overflow-y: auto; padding-bottom: 40px; }
     .subcubby { margin-bottom: 24px; }
     .subcubby-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; cursor: pointer; user-select: none; }
@@ -64,11 +68,11 @@
     .subcubby-header .count { font-size: 12px; color: var(--cubby-text-muted); font-weight: 500; }
     .subcubby-tasks { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease, opacity 0.3s ease; opacity: 0; }
     .subcubby-tasks.visible { grid-template-rows: 1fr; opacity: 1; }
-    .subcubby-tasks-inner { overflow: hidden; }
+    .subcubby-tasks-inner { overflow: hidden; padding: 0 4px; margin: 0 -4px; }
     .task { display: flex; align-items: center; gap: 12px; padding: 14px 16px; margin-bottom: 8px; background: var(--cubby-card); border-radius: 12px; border: 1px solid transparent; transition: all 0.2s ease; }
     .task.expanded { background: var(--cubby-card-hover); border-color: var(--cubby-border); }
     .task.completed-task { background: rgba(0,0,0,0.3); opacity: 0.6; }
-    .task.task-overdue { border-color: rgba(255, 107, 107, 0.5); }
+    .task.task-overdue { border: 2px solid #ff4444; }
     .task.subtask { padding: 10px 14px; margin-left: 32px; position: relative; }
     .task.subtask::before { content: ''; position: absolute; left: -20px; top: 50%; width: 16px; height: 2px; background: var(--cubby-border); }
     .checkbox { width: 24px; height: 24px; min-width: 24px; border-radius: 6px; border: 2px solid var(--cubby-border); background: rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; }
@@ -96,7 +100,7 @@
     .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: none; z-index: 1000; }
     .modal.active { display: block; }
     .modal-backdrop { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
-    .modal-content { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1a1a24; border-radius: 20px; padding: 24px; width: calc(100% - 40px); max-width: 400px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+    .modal-content { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1a1a24; border-radius: 20px; padding: 24px; width: calc(100% - 40px); max-width: 400px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 60px rgba(0,0,0,0.5); max-height: calc(100vh - 80px); overflow-y: auto; }
     .modal-content h2 { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 16px; }
     .modal-content input { width: 100%; padding: 14px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; color: #fff; font-size: 16px; font-family: inherit; outline: none; transition: border-color 0.2s ease; }
     .modal-content input:focus { border-color: rgba(255,255,255,0.3); }
@@ -107,6 +111,10 @@
     .modal-btn.cancel:active { background: rgba(255,255,255,0.1); }
     .modal-btn.confirm { background: #5B8EFF; border: none; color: #fff; }
     .modal-btn.confirm:active { background: #4a7de8; }
+    .modal-btn.delete-confirm { background: #ff4444; }
+    .modal-btn.delete-confirm:active { background: #cc3333; }
+    .confirm-message { font-size: 14px; color: rgba(255,255,255,0.6); margin-bottom: 20px; line-height: 1.5; }
+    .confirm-dialog-content { max-width: 340px; }
     
     /* Add subtask button */
     .add-subtask-btn { display: flex; align-items: center; gap: 8px; padding: 8px 12px; margin-left: 32px; margin-top: 4px; margin-bottom: 12px; background: transparent; border-radius: 8px; border: 1px dashed var(--cubby-border); cursor: pointer; opacity: 0.7; transition: opacity 0.2s ease; }
@@ -152,6 +160,11 @@
     .cubby-more-btn { padding: 20px 16px; cursor: pointer; opacity: 0.5; transition: opacity 0.2s ease; }
     .cubby-more-btn:hover { opacity: 1; }
     .cubby-menu-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 99; }
+    .cubby-date-toggle { padding: 10px; background: var(--cubby-card); border-radius: 12px; border: 1px solid var(--cubby-border); cursor: pointer; color: var(--cubby-text-muted); display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; font-family: inherit; }
+    .cubby-date-toggle:hover { background: var(--cubby-card-hover); color: var(--cubby-text); }
+    .cubby-date-toggle:active { transform: scale(0.9); }
+    .cubby-date-toggle.active { background: rgba(254,202,87,0.15); border-color: rgba(254,202,87,0.4); color: #feca57; }
+    .cubby-settings-menu-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 99; }
     
     /* Add cubby button */
     .add-cubby-btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 20px; margin-top: 12px; background: rgba(255,255,255,0.03); border-radius: 16px; border: 1px dashed rgba(255,255,255,0.15); cursor: pointer; opacity: 0.6; transition: all 0.2s ease; }
@@ -170,16 +183,18 @@
     .subcubby-header { display: flex; align-items: center; }
     
     /* Due date styles */
-    .task-due-date { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; margin-left: auto; margin-right: 8px; white-space: nowrap; }
+    .task-due-date { font-size: 11px; font-weight: 600; padding: 3px 0; border-radius: 6px; white-space: nowrap; width: 64px; min-width: 64px; text-align: center; flex-shrink: 0; }
     .task-due-date.overdue { background: rgba(255, 107, 107, 0.2); color: #ff6b6b; }
-    .task-due-date.today, .task-due-date.due-today { background: rgba(255, 255, 255, 0.15); color: #ffffff; }
-    .task-due-date.tomorrow { background: rgba(254, 202, 87, 0.2); color: #feca57; }
+    .task-due-date.today, .task-due-date.due-today { background: rgba(254, 202, 87, 0.2); color: #feca57; }
+    .task-due-date.tomorrow { background: rgba(46, 213, 115, 0.2); color: #2ed573; }
     .task-due-date.upcoming, .task-due-date.due-soon { background: rgba(91, 142, 255, 0.2); color: #5B8EFF; }
-    .task-due-date.future, .task-due-date.due-later { background: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.5); }
+    .task-due-date.next-week { background: rgba(165, 94, 234, 0.2); color: #a55eea; }
+    .task-due-date.future, .task-due-date.due-later { background: rgba(255, 255, 255, 0.12); color: #ffffff; }
+    .task-due-date.no-date { background: rgba(255, 255, 255, 0.04); }
     .task.completed-task .task-due-date { opacity: 0.5; }
     
     /* Tag styles */
-    .task-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-left: auto; margin-right: 8px; }
+    .task-tags { display: flex; flex-wrap: wrap; gap: 4px; flex-shrink: 0; }
     .task-tag { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 10px; white-space: nowrap; text-transform: lowercase; }
     .task-tag.tag-red { background: rgba(255, 107, 107, 0.25); color: #ff6b6b; }
     .task-tag.tag-orange { background: rgba(255, 159, 67, 0.25); color: #ff9f43; }
@@ -190,13 +205,7 @@
     .task-tag.tag-pink { background: rgba(255, 107, 181, 0.25); color: #ff6bb5; }
     .task-tag.tag-gray { background: rgba(255, 255, 255, 0.15); color: rgba(255, 255, 255, 0.7); }
     .task.completed-task .task-tag { opacity: 0.5; }
-    .task.subtask .task-tags { margin-left: 0; }
-    
-    /* Task meta container - holds tags and due date */
-    .task-meta { display: flex; align-items: center; gap: 6px; margin-left: auto; margin-right: 8px; }
-    .task-meta .task-tags { margin: 0; }
-    .task-meta .task-due-date { margin: 0; }
-    
+
     /* Tags input in modal */
     .tags-row { margin-top: 12px; }
     .tags-row label { display: block; font-size: 14px; color: rgba(255,255,255,0.6); font-weight: 500; margin-bottom: 8px; }
@@ -222,6 +231,29 @@
     .modal-content input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.6; cursor: pointer; }
     .clear-date-btn { padding: 8px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: rgba(255,255,255,0.5); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s ease; }
     .clear-date-btn:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); }
+
+/* Cubby creation modal fields */
+.cubby-description-row { margin-top: 12px; }
+.cubby-description-row label { display: block; font-size: 14px; color: rgba(255,255,255,0.6); font-weight: 500; margin-bottom: 8px; }
+.cubby-description-row textarea { width: 100%; padding: 12px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; color: #fff; font-size: 14px; font-family: inherit; outline: none; resize: vertical; min-height: 50px; transition: border-color 0.2s ease; }
+.cubby-description-row textarea:focus { border-color: rgba(255,255,255,0.3); }
+.cubby-description-row textarea::placeholder { color: rgba(255,255,255,0.3); }
+
+.cubby-color-row { margin-top: 12px; }
+.cubby-color-row label { display: block; font-size: 14px; color: rgba(255,255,255,0.6); font-weight: 500; margin-bottom: 8px; }
+.cubby-color-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.cubby-color-option { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 10px; border: 2px solid transparent; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.15s ease; }
+.cubby-color-option:hover { transform: scale(1.02); }
+.cubby-color-option.selected { border-color: currentColor; }
+.cubby-color-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+
+.cubby-room-row { margin-top: 12px; }
+.cubby-room-row label { display: block; font-size: 14px; color: rgba(255,255,255,0.6); font-weight: 500; margin-bottom: 8px; }
+.cubby-room-options { display: flex; flex-wrap: wrap; gap: 8px; }
+.cubby-room-option { padding: 8px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.15s ease; }
+.cubby-room-option:hover { background: rgba(255,255,255,0.08); }
+.cubby-room-option.selected { border-color: #C77DFF; color: #C77DFF; background: rgba(199, 125, 255, 0.1); }
+
 /* ============================================ */
 /* SEARCH STYLES */
 /* ============================================ */
@@ -554,11 +586,6 @@
     50% { box-shadow: 0 0 0 4px var(--cubby-glow, rgba(179, 102, 255, 0.4)); }
 }
 
-.search-highlight {
-    animation: highlightPulse 0.5s ease 3;
-    background: var(--cubby-card-hover) !important;
-}
-
 /* Header search button (Room & Cubby screens) */
 .header-search-btn {
     padding: 10px;
@@ -650,8 +677,11 @@
 .subtask-counter {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 4px;
-    padding: 4px 10px;
+    width: 44px;
+    min-width: 44px;
+    padding: 4px 0;
     background: var(--cubby-card);
     border: 1px solid var(--cubby-border);
     border-radius: 12px;
@@ -719,6 +749,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 20px;
+    min-width: 20px;
     flex-shrink: 0;
     color: var(--cubby-text-muted);
     opacity: 0.5;
@@ -864,6 +896,33 @@
 /* Expanded task with subtasks - just a nice border, no glow for now */
 .task.expanded.has-subtasks {
     border-color: var(--cubby-primary);
+}
+
+/* When a task is highlighted from search/views navigation, dim other elements */
+.tasks-container.has-highlighted-task .subcubby-header,
+.tasks-container.has-highlighted-task .task:not(.highlight-target):not(.subtask),
+.tasks-container.has-highlighted-task .add-task-btn,
+.tasks-container.has-highlighted-task .add-subcubby-btn {
+    opacity: 0.2;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+/* Keep highlighted task and its subtasks fully visible */
+.tasks-container.has-highlighted-task .task.highlight-target,
+.tasks-container.has-highlighted-task .task.highlight-target + .subtasks-container,
+.tasks-container.has-highlighted-task .task.highlight-target + .subtasks-container .task.subtask,
+.tasks-container.has-highlighted-task .task.highlight-target + .subtasks-container .add-subtask-btn {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Search highlight - ensure border/glow isn't clipped */
+.search-highlight {
+    animation: highlightPulse 0.5s ease 3;
+    background: var(--cubby-card-hover) !important;
+    z-index: 2;
+    position: relative;
 }
 
 /* Subtasks container */
@@ -1332,25 +1391,28 @@
     margin-bottom: 20px;
 }
 .view-controls .view-filters {
+    flex: 1;
     margin-bottom: 0;
 }
 
 /* View color mode toggle */
 .view-color-toggle {
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-    border-radius: 10px;
+    padding: 6px 14px;
+    border-radius: 20px;
     border: 1px solid rgba(255,255,255,0.15);
     background: none;
     color: rgba(255,255,255,0.35);
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
     -webkit-tap-highlight-color: transparent;
     flex-shrink: 0;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
 }
 .view-color-toggle:active {
     transform: scale(0.92);
@@ -1454,7 +1516,7 @@
     cursor: pointer;
 }
 .view-task-card .task.task-overdue {
-    border-color: rgba(255, 107, 107, 0.5);
+    border: 2px solid #ff4444;
 }
 .view-task-card .task:active {
     transform: scale(0.99);
@@ -1496,13 +1558,6 @@
 .view-task-card .task-text.completed {
     text-decoration: line-through;
     opacity: 0.4;
-}
-.view-task-card .task-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    align-items: center;
-    flex-shrink: 0;
 }
 .view-task-card .task-progress {
     width: 40px;
@@ -1790,4 +1845,394 @@
 .location-picker-create.indent {
     padding-left: 44px;
     border-top: none;
+}
+
+/* ============================================ */
+/* SETTINGS SCREEN STYLES */
+/* ============================================ */
+
+#settings-screen {
+    padding: calc(var(--safe-top) + 12px) 16px var(--nav-height);
+    background: #0a0a0f;
+    overflow: hidden;
+}
+.settings-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+.settings-title h1 {
+    font-size: 32px;
+    font-weight: 800;
+}
+.settings-container {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 40px;
+    padding-right: 12px;
+}
+
+/* Settings sections */
+.settings-section {
+    margin-bottom: 28px;
+}
+.settings-section-header {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.35);
+    margin-bottom: 10px;
+    padding-left: 4px;
+}
+.settings-description {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.35);
+    margin-bottom: 12px;
+    padding-left: 4px;
+    line-height: 1.4;
+}
+.settings-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 16px;
+}
+
+/* User row */
+.settings-user-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+.settings-user-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(199, 125, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #C77DFF;
+    flex-shrink: 0;
+}
+.settings-user-info {
+    font-size: 15px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    word-break: break-all;
+}
+
+/* Action buttons */
+.settings-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.5);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.settings-action-btn:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+.settings-action-btn:active {
+    transform: scale(0.98);
+}
+.settings-signout {
+    color: #ff6b6b;
+    border-color: rgba(255, 107, 107, 0.15);
+}
+.settings-signout:hover {
+    background: rgba(255, 107, 107, 0.08);
+}
+
+/* Link buttons (Archive, Trash) */
+.settings-link-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 4px;
+    background: none;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.7);
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+}
+.settings-link-btn:last-child {
+    border-bottom: none;
+}
+.settings-link-btn:hover {
+    color: rgba(255, 255, 255, 0.9);
+}
+.settings-link-btn:active {
+    transform: scale(0.99);
+}
+.settings-link-btn svg:first-child {
+    opacity: 0.5;
+    flex-shrink: 0;
+}
+.settings-link-btn span:first-of-type {
+    flex: 1;
+}
+.settings-link-count {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.4);
+}
+.settings-link-chevron {
+    opacity: 0.3;
+    flex-shrink: 0;
+}
+
+/* Mode toggle (Duration / Date Change) */
+.settings-toggle-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+.settings-toggle-row.compact {
+    margin-bottom: 0;
+}
+.settings-mode-btn {
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.4);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.settings-mode-btn:active {
+    transform: scale(0.97);
+}
+.settings-mode-btn.active {
+    border-color: rgba(199, 125, 255, 0.4);
+    background: rgba(199, 125, 255, 0.1);
+    color: #C77DFF;
+}
+
+/* Option grid */
+.settings-option-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+.settings-option-btn {
+    padding: 10px 8px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+    color: rgba(255, 255, 255, 0.45);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: center;
+}
+.settings-option-btn:active {
+    transform: scale(0.95);
+}
+.settings-option-btn.active {
+    border-color: rgba(91, 142, 255, 0.4);
+    background: rgba(91, 142, 255, 0.12);
+    color: #5B8EFF;
+}
+
+/* Custom days input */
+.settings-custom-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+}
+.settings-custom-row label {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+    white-space: nowrap;
+}
+.settings-custom-row input[type="number"] {
+    width: 80px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    outline: none;
+}
+.settings-custom-row input[type="number"]:focus {
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Version */
+.settings-version {
+    text-align: center;
+    padding: 30px 20px;
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.1);
+    letter-spacing: 2px;
+}
+
+/* ============================================ */
+/* ARCHIVE & TRASH SCREEN STYLES */
+/* ============================================ */
+
+#archive-screen {
+    padding: calc(var(--safe-top) + 12px) 16px var(--nav-height);
+    background: #0a0a0f;
+    overflow: hidden;
+}
+#trash-screen {
+    padding: calc(var(--safe-top) + 12px) 16px var(--nav-height);
+    background: #0a0a0f;
+    overflow: hidden;
+}
+.archive-container, .trash-container {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 40px;
+    padding-right: 12px;
+}
+
+/* Empty state */
+.archive-empty {
+    padding: 60px 20px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.25);
+    font-size: 15px;
+    font-weight: 500;
+}
+
+/* Summary row */
+.archive-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 4px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* Empty trash button */
+.empty-trash-btn {
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 107, 107, 0.25);
+    background: rgba(255, 107, 107, 0.08);
+    color: #ff6b6b;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.empty-trash-btn:hover {
+    background: rgba(255, 107, 107, 0.15);
+}
+.empty-trash-btn:active {
+    transform: scale(0.95);
+}
+
+/* Archive/Trash item card */
+.archive-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+}
+.archive-item-type {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.3);
+    margin-bottom: 4px;
+}
+.archive-item-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 4px;
+    word-break: break-word;
+}
+.archive-item-source {
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.25);
+    margin-bottom: 4px;
+}
+.archive-item-date {
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.2);
+    margin-bottom: 10px;
+}
+
+/* Item actions */
+.archive-item-actions {
+    display: flex;
+    gap: 8px;
+}
+.archive-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.5);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.archive-action-btn:active {
+    transform: scale(0.95);
+}
+.archive-action-btn.restore {
+    color: #5AE890;
+    border-color: rgba(90, 232, 144, 0.15);
+}
+.archive-action-btn.restore:hover {
+    background: rgba(90, 232, 144, 0.08);
+}
+.archive-action-btn.delete {
+    color: #ff6b6b;
+    border-color: rgba(255, 107, 107, 0.15);
+}
+.archive-action-btn.delete:hover {
+    background: rgba(255, 107, 107, 0.08);
 }

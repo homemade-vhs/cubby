@@ -47,8 +47,25 @@ function renderRoom(room) {
 // ============================================
 
 function renderCubby(cubby) {
-    setCubbyTheme(cubby.color || 'purple');
-    document.getElementById('cubby-title').innerHTML = '<h1>' + cubby.name + '</h1>';
+    if (cubbyDateColorMode) {
+        // Keep greyscale theme when date color mode is active
+        var root = document.getElementById('cubby-screen');
+        root.style.background = '#0a0a0f';
+        root.style.setProperty('--cubby-primary', 'rgba(255,255,255,0.5)');
+        root.style.setProperty('--cubby-card', 'rgba(255,255,255,0.05)');
+        root.style.setProperty('--cubby-card-hover', 'rgba(255,255,255,0.08)');
+        root.style.setProperty('--cubby-border', 'rgba(255,255,255,0.12)');
+        root.style.setProperty('--cubby-text', '#ffffff');
+        root.style.setProperty('--cubby-text-muted', 'rgba(255,255,255,0.5)');
+        root.style.setProperty('--cubby-glow', 'rgba(255,255,255,0.1)');
+    } else {
+        setCubbyTheme(cubby.color || 'purple');
+    }
+    var titleHtml = '<h1>' + cubby.name + '</h1>';
+    if (cubby.description) {
+        titleHtml += '<p class="cubby-description">' + cubby.description.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</p>';
+    }
+    document.getElementById('cubby-title').innerHTML = titleHtml;
     var cubbyData = appData.cubbies[cubby.id];
     
     // Initialize cubby data if it doesn't exist
@@ -108,6 +125,22 @@ function renderCubby(cubby) {
 function renderTask(task) {
     var hasSubtasks = task.subtasks && task.subtasks.length > 0;
     var theme = colorThemes[currentCubby.color];
+
+    // When cubbyDateColorMode is active, pick theme by due date category
+    var taskTheme = theme;
+    var inlineVars = '';
+    if (cubbyDateColorMode && !task.completed) {
+        var dateGroup = classifyDueDate(task);
+        taskTheme = dueDateColorThemes[dateGroup] || dueDateColorThemes['no-date'];
+        inlineVars = '--cubby-primary:' + taskTheme.primary +
+            ';--cubby-card:' + taskTheme.card +
+            ';--cubby-card-hover:' + taskTheme.cardHover +
+            ';--cubby-border:' + taskTheme.border +
+            ';--cubby-text:' + taskTheme.text +
+            ';--cubby-text-muted:' + taskTheme.textMuted +
+            ';--cubby-glow:' + taskTheme.glow;
+    }
+
     var isOverdue = false;
     if (task.dueDate && !task.completed) {
         var today = new Date();
@@ -115,39 +148,28 @@ function renderTask(task) {
         var due = new Date(task.dueDate + 'T00:00:00');
         isOverdue = due < today;
     }
-    var html = '<div class="task ' + (task.expanded ? 'expanded' : '') + (task.completed ? ' completed-task' : '') + (hasSubtasks ? ' has-subtasks' : '') + (isOverdue ? ' task-overdue' : '') + '" data-task-id="' + task.id + '">' +
+    var html = '<div class="task ' + (task.expanded ? 'expanded' : '') + (task.completed ? ' completed-task' : '') + (hasSubtasks ? ' has-subtasks' : '') + (isOverdue ? ' task-overdue' : '') + '" data-task-id="' + task.id + '"' + (inlineVars ? ' style="' + inlineVars + '"' : '') + '>' +
         '<div class="checkbox ' + (task.completed ? 'checked' : '') + '" onclick="toggleTask(\'' + task.id + '\')">' +
-        '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8L7 12L13 4" stroke="' + theme.bg + '" stroke-width="2.5" stroke-linecap="round"/></svg></div>' +
+        '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8L7 12L13 4" stroke="' + taskTheme.bg + '" stroke-width="2.5" stroke-linecap="round"/></svg></div>' +
         '<span class="task-text ' + (task.completed ? 'completed' : '') + '">' + task.text + '</span>';
-    
-    // Task meta (tags + due date)
+
+    // Tags
     var hasTags = task.tags && task.tags.length > 0;
-    var hasDueDate = task.dueDate;
-    if (hasTags || hasDueDate) {
-        html += '<div class="task-meta">';
-        // Tags display
-        if (hasTags) {
-            html += '<div class="task-tags">';
-            task.tags.forEach(function(tag) {
-                html += '<span class="task-tag tag-' + tag.color + '">' + tag.text + '</span>';
-            });
-            html += '</div>';
-        }
-        // Due date display
-        if (hasDueDate) {
-            var dueDateInfo = formatDueDate(task.dueDate);
-            html += '<span class="task-due-date ' + dueDateInfo.class + '">' + dueDateInfo.text + '</span>';
-        }
+    if (hasTags) {
+        html += '<div class="task-tags">';
+        task.tags.forEach(function(tag) {
+            html += '<span class="task-tag tag-' + tag.color + '">' + tag.text + '</span>';
+        });
         html += '</div>';
     }
 
-    // Memo indicator icon (small note icon if task has a memo)
+    // Memo indicator icon
     var hasMemo = task.memo && task.memo.trim();
     if (hasMemo) {
         html += '<div class="memo-indicator"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>';
     }
 
-    // Subtask counter with progress bar (only show if has subtasks)
+    // Subtask progress bar + counter
     if (hasSubtasks) {
         var completedCount = task.subtasks.filter(function(st) { return st.completed; }).length;
         var totalCount = task.subtasks.length;
@@ -158,8 +180,16 @@ function renderTask(task) {
             '<span class="subtask-count">' + completedCount + '/' + totalCount + '</span>' +
             '</div>';
     }
-    
-    // Always show expand button for adding/viewing subtasks
+
+    // Due date (always shown — blank box if no date)
+    var dueDateInfo = formatDueDate(task.dueDate);
+    if (dueDateInfo.text) {
+        html += '<span class="task-due-date ' + dueDateInfo.class + '">' + dueDateInfo.text + '</span>';
+    } else {
+        html += '<span class="task-due-date no-date"></span>';
+    }
+
+    // Expand and kebab buttons
     html += '<div class="expand-btn ' + (task.expanded ? 'expanded' : '') + '" onclick="toggleTaskExpand(\'' + task.id + '\')">' +
         '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6L15 12L9 18"/></svg></div>';
     html += '<div class="more-btn" onclick="openTaskMenu(event, \'' + task.id + '\', false)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="18" r="1.5" fill="currentColor"/></svg></div>';
@@ -187,10 +217,7 @@ function renderTask(task) {
 // ============================================
 
 function renderSubtask(st, parentTaskId, theme) {
-    // Build subtask meta HTML (tags + due date)
-    var subtaskMetaHtml = '';
     var stHasTags = st.tags && st.tags.length > 0;
-    var stHasDueDate = st.dueDate;
     var stIsOverdue = false;
     if (st.dueDate && !st.completed) {
         var today = new Date();
@@ -198,26 +225,44 @@ function renderSubtask(st, parentTaskId, theme) {
         var due = new Date(st.dueDate + 'T00:00:00');
         stIsOverdue = due < today;
     }
-    if (stHasTags || stHasDueDate) {
-        subtaskMetaHtml += '<div class="task-meta">';
-        if (stHasTags) {
-            subtaskMetaHtml += '<div class="task-tags">';
-            st.tags.forEach(function(tag) {
-                subtaskMetaHtml += '<span class="task-tag tag-' + tag.color + '">' + tag.text + '</span>';
-            });
-            subtaskMetaHtml += '</div>';
-        }
-        if (stHasDueDate) {
-            var stDueDateInfo = formatDueDate(st.dueDate);
-            subtaskMetaHtml += '<span class="task-due-date ' + stDueDateInfo.class + '">' + stDueDateInfo.text + '</span>';
-        }
-        subtaskMetaHtml += '</div>';
+
+    // When cubbyDateColorMode is active, pick theme by due date category
+    var stTheme = theme;
+    var stInlineVars = '';
+    if (cubbyDateColorMode && !st.completed) {
+        var dateGroup = classifyDueDate(st);
+        stTheme = dueDateColorThemes[dateGroup] || dueDateColorThemes['no-date'];
+        stInlineVars = '--cubby-primary:' + stTheme.primary +
+            ';--cubby-card:' + stTheme.card +
+            ';--cubby-card-hover:' + stTheme.cardHover +
+            ';--cubby-border:' + stTheme.border +
+            ';--cubby-text:' + stTheme.text +
+            ';--cubby-text-muted:' + stTheme.textMuted +
+            ';--cubby-glow:' + stTheme.glow;
     }
-    
-    return '<div class="task subtask ' + (st.completed ? 'completed-task' : '') + (stIsOverdue ? ' task-overdue' : '') + '" data-task-id="' + st.id + '" data-parent="' + parentTaskId + '">' +
+
+    // Build subtask elements in order: Tags → Due Date → Kebab
+    var tagsHtml = '';
+    if (stHasTags) {
+        tagsHtml += '<div class="task-tags">';
+        st.tags.forEach(function(tag) {
+            tagsHtml += '<span class="task-tag tag-' + tag.color + '">' + tag.text + '</span>';
+        });
+        tagsHtml += '</div>';
+    }
+
+    var stDueDateInfo = formatDueDate(st.dueDate);
+    var dueDateHtml = '';
+    if (stDueDateInfo.text) {
+        dueDateHtml = '<span class="task-due-date ' + stDueDateInfo.class + '">' + stDueDateInfo.text + '</span>';
+    } else {
+        dueDateHtml = '<span class="task-due-date no-date"></span>';
+    }
+
+    return '<div class="task subtask ' + (st.completed ? 'completed-task' : '') + (stIsOverdue ? ' task-overdue' : '') + '" data-task-id="' + st.id + '" data-parent="' + parentTaskId + '"' + (stInlineVars ? ' style="' + stInlineVars + '"' : '') + '>' +
         '<div class="checkbox small ' + (st.completed ? 'checked' : '') + '" onclick="toggleSubtask(\'' + parentTaskId + '\',\'' + st.id + '\')">' +
-        '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8L7 12L13 4" stroke="' + theme.bg + '" stroke-width="2.5" stroke-linecap="round"/></svg></div>' +
+        '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8L7 12L13 4" stroke="' + stTheme.bg + '" stroke-width="2.5" stroke-linecap="round"/></svg></div>' +
         '<span class="task-text ' + (st.completed ? 'completed' : '') + '">' + st.text + '</span>' +
-        subtaskMetaHtml +
+        tagsHtml + dueDateHtml +
         '<div class="more-btn" onclick="openTaskMenu(event, \'' + st.id + '\', true, \'' + parentTaskId + '\')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="18" r="1.5" fill="currentColor"/></svg></div></div>';
 }

@@ -52,6 +52,7 @@ function toggleTask(taskId) {
                 checkbox.classList.add('checked');
                 text.classList.add('completed');
                 taskEl.classList.add('completed-task');
+                task.completed_at = new Date().toISOString();
                 playCheckSound();
 
                 // Get all elements and their positions before move
@@ -82,6 +83,7 @@ function toggleTask(taskId) {
                 checkbox.classList.remove('checked');
                 text.classList.remove('completed');
                 taskEl.classList.remove('completed-task');
+                task.completed_at = null;
                 playUncheckSound();
 
                 // Get all elements and their positions before move
@@ -148,6 +150,7 @@ function toggleSubtask(parentId, subtaskId) {
                     checkbox.classList.add('checked');
                     text.classList.add('completed');
                     subtaskEl.classList.add('completed-task');
+                    subtask.completed_at = new Date().toISOString();
                     playCheckSound();
 
                     // Get positions before move
@@ -175,6 +178,7 @@ function toggleSubtask(parentId, subtaskId) {
                     checkbox.classList.remove('checked');
                     text.classList.remove('completed');
                     subtaskEl.classList.remove('completed-task');
+                    subtask.completed_at = null;
                     playUncheckSound();
 
                     // Get positions before move
@@ -501,27 +505,47 @@ function deleteTask() {
     var isSubtask = activeMenuIsSubtask;
     var parentId = activeMenuParentId;
     closeTaskMenu();
-    var cubbyData = appData.cubbies[currentCubby.id];
 
-    if (isSubtask) {
-        // Delete subtask
-        cubbyData.subcubbies.forEach(function(sub) {
-            var parentTask = sub.tasks.find(function(t) { return t.id === parentId; });
-            if (parentTask && parentTask.subtasks) {
-                parentTask.subtasks = parentTask.subtasks.filter(function(st) { return st.id !== taskId; });
-            }
-        });
-        syncDeleteSubtask(taskId);
-    } else {
-        // Delete task (CASCADE deletes subtasks in Supabase)
-        cubbyData.subcubbies.forEach(function(sub) {
-            sub.tasks = sub.tasks.filter(function(t) { return t.id !== taskId; });
-        });
-        syncDeleteTask(taskId);
-    }
+    var itemLabel = isSubtask ? 'subtask' : 'task';
+    showConfirmDialog('Delete ' + itemLabel + '?', 'This will move the ' + itemLabel + ' to Trash.', function() {
+        var cubbyData = appData.cubbies[currentCubby.id];
 
-    saveData();
-    renderCubby(currentCubby);
+        if (isSubtask) {
+            cubbyData.subcubbies.forEach(function(sub) {
+                var parentTask = sub.tasks.find(function(t) { return t.id === parentId; });
+                if (parentTask && parentTask.subtasks) {
+                    var index = parentTask.subtasks.findIndex(function(st) { return st.id === taskId; });
+                    if (index !== -1) {
+                        var subtask = parentTask.subtasks.splice(index, 1)[0];
+                        trashItem('subtask', subtask, {
+                            roomId: currentRoom.id, roomName: currentRoom.name,
+                            cubbyId: currentCubby.id, cubbyName: currentCubby.name,
+                            subcubbyId: sub.id, subcubbyName: sub.name,
+                            parentTaskId: parentId
+                        });
+                    }
+                }
+            });
+            syncDeleteSubtask(taskId);
+        } else {
+            cubbyData.subcubbies.forEach(function(sub) {
+                var index = sub.tasks.findIndex(function(t) { return t.id === taskId; });
+                if (index !== -1) {
+                    var task = sub.tasks.splice(index, 1)[0];
+                    trashItem('task', task, {
+                        roomId: currentRoom.id, roomName: currentRoom.name,
+                        cubbyId: currentCubby.id, cubbyName: currentCubby.name,
+                        subcubbyId: sub.id, subcubbyName: sub.name,
+                        parentTaskId: ''
+                    });
+                }
+            });
+            syncDeleteTask(taskId);
+        }
+
+        saveData();
+        renderCubby(currentCubby);
+    });
 }
 
 // ============================================
@@ -827,15 +851,21 @@ function saveEditedCubbyName(newName) {
     }
 }
 
-function addNewCubby(name) {
+function addNewCubby(name, color, roomId, description) {
+    color = color || 'purple';
+    var targetRoom = roomId ? appData.rooms.find(function(r) { return r.id === roomId; }) : currentRoom;
+    if (!targetRoom) targetRoom = currentRoom;
+
     var newCubbyId = generateUUID();
     var newSubId = generateUUID();
     // Add to room's cubby list
-    currentRoom.cubbies.push({
+    var cubbyRef = {
         id: newCubbyId,
         name: name,
-        color: 'purple'
-    });
+        color: color
+    };
+    if (description) cubbyRef.description = description;
+    targetRoom.cubbies.push(cubbyRef);
     // Initialize cubby data
     appData.cubbies[newCubbyId] = {
         subcubbies: [{
@@ -846,9 +876,12 @@ function addNewCubby(name) {
         }]
     };
     saveData();
-    syncInsertCubby(newCubbyId, currentRoom.id, name, 'purple', currentRoom.cubbies.length - 1);
+    syncInsertCubby(newCubbyId, targetRoom.id, name, color, targetRoom.cubbies.length - 1);
     syncInsertSubcubby(newSubId, newCubbyId, 'General', 0);
-    renderRoom(currentRoom);
+    // Re-render the appropriate room
+    if (currentRoom && currentRoom.id === targetRoom.id) {
+        renderRoom(currentRoom);
+    }
 }
 
 // ============================================
@@ -926,3 +959,450 @@ document.addEventListener('click', function(e) {
         toggleTaskExpand(taskId);
     }
 });
+
+// ============================================
+// ARCHIVE FUNCTIONS
+// ============================================
+
+function getItemSource(taskId, isSubtask, parentId) {
+    var source = { roomId: '', roomName: '', cubbyId: '', cubbyName: '', subcubbyId: '', subcubbyName: '', parentTaskId: '' };
+    appData.rooms.forEach(function(room) {
+        room.cubbies.forEach(function(cubbyRef) {
+            var cubbyData = appData.cubbies[cubbyRef.id];
+            if (!cubbyData) return;
+            cubbyData.subcubbies.forEach(function(sub) {
+                if (isSubtask) {
+                    sub.tasks.forEach(function(t) {
+                        if (t.id === parentId && t.subtasks) {
+                            var st = t.subtasks.find(function(s) { return s.id === taskId; });
+                            if (st) {
+                                source = { roomId: room.id, roomName: room.name, cubbyId: cubbyRef.id, cubbyName: cubbyRef.name, subcubbyId: sub.id, subcubbyName: sub.name, parentTaskId: parentId };
+                            }
+                        }
+                    });
+                } else {
+                    var task = sub.tasks.find(function(t) { return t.id === taskId; });
+                    if (task) {
+                        source = { roomId: room.id, roomName: room.name, cubbyId: cubbyRef.id, cubbyName: cubbyRef.name, subcubbyId: sub.id, subcubbyName: sub.name, parentTaskId: '' };
+                    }
+                }
+            });
+        });
+    });
+    return source;
+}
+
+function archiveTask() {
+    var taskId = activeMenuTaskId;
+    var isSubtask = activeMenuIsSubtask;
+    var parentId = activeMenuParentId;
+    closeTaskMenu();
+
+    var cubbyData = appData.cubbies[currentCubby.id];
+    var archivedItem = null;
+
+    if (isSubtask) {
+        cubbyData.subcubbies.forEach(function(sub) {
+            var parentTask = sub.tasks.find(function(t) { return t.id === parentId; });
+            if (parentTask && parentTask.subtasks) {
+                var index = parentTask.subtasks.findIndex(function(st) { return st.id === taskId; });
+                if (index !== -1) {
+                    var subtask = parentTask.subtasks.splice(index, 1)[0];
+                    archivedItem = {
+                        type: 'subtask',
+                        item: subtask,
+                        archivedAt: new Date().toISOString(),
+                        source: {
+                            roomId: currentRoom.id, roomName: currentRoom.name,
+                            cubbyId: currentCubby.id, cubbyName: currentCubby.name,
+                            subcubbyId: sub.id, subcubbyName: sub.name,
+                            parentTaskId: parentId
+                        }
+                    };
+                }
+            }
+        });
+    } else {
+        cubbyData.subcubbies.forEach(function(sub) {
+            var index = sub.tasks.findIndex(function(t) { return t.id === taskId; });
+            if (index !== -1) {
+                var task = sub.tasks.splice(index, 1)[0];
+                archivedItem = {
+                    type: 'task',
+                    item: task,
+                    archivedAt: new Date().toISOString(),
+                    source: {
+                        roomId: currentRoom.id, roomName: currentRoom.name,
+                        cubbyId: currentCubby.id, cubbyName: currentCubby.name,
+                        subcubbyId: sub.id, subcubbyName: sub.name,
+                        parentTaskId: ''
+                    }
+                };
+            }
+        });
+    }
+
+    if (archivedItem) {
+        appData.archive.push(archivedItem);
+        saveData();
+        renderCubby(currentCubby);
+    }
+}
+
+function archiveSubcubby() {
+    var subcubbyId = activeSubcubbyId;
+    closeSubcubbyMenu();
+
+    var cubbyData = appData.cubbies[currentCubby.id];
+    var index = cubbyData.subcubbies.findIndex(function(s) { return s.id === subcubbyId; });
+    if (index === -1) return;
+
+    var subcubby = cubbyData.subcubbies.splice(index, 1)[0];
+    appData.archive.push({
+        type: 'subcubby',
+        item: subcubby,
+        archivedAt: new Date().toISOString(),
+        source: {
+            roomId: currentRoom.id, roomName: currentRoom.name,
+            cubbyId: currentCubby.id, cubbyName: currentCubby.name,
+            subcubbyId: '', subcubbyName: '',
+            parentTaskId: ''
+        }
+    });
+
+    saveData();
+    renderCubby(currentCubby);
+}
+
+function archiveCubbyFromMenu() {
+    var cubbyId = activeCubbyId;
+    closeCubbyMenu();
+
+    var cubbyRef = currentRoom.cubbies.find(function(c) { return c.id === cubbyId; });
+    if (!cubbyRef) return;
+
+    // Remove from room
+    currentRoom.cubbies = currentRoom.cubbies.filter(function(c) { return c.id !== cubbyId; });
+
+    // Archive it
+    appData.archive.push({
+        type: 'cubby',
+        item: { ref: cubbyRef, data: appData.cubbies[cubbyId] || { subcubbies: [] } },
+        archivedAt: new Date().toISOString(),
+        source: {
+            roomId: currentRoom.id, roomName: currentRoom.name,
+            cubbyId: '', cubbyName: '',
+            subcubbyId: '', subcubbyName: '',
+            parentTaskId: ''
+        }
+    });
+
+    // Remove cubby data
+    delete appData.cubbies[cubbyId];
+    saveData();
+    renderRoom(currentRoom);
+}
+
+function archiveCubbyFromSettings() {
+    closeCubbySettingsMenu();
+    if (!currentCubby || !currentRoom) return;
+
+    var cubbyId = currentCubby.id;
+    var cubbyRef = currentRoom.cubbies.find(function(c) { return c.id === cubbyId; });
+    if (!cubbyRef) return;
+
+    currentRoom.cubbies = currentRoom.cubbies.filter(function(c) { return c.id !== cubbyId; });
+
+    appData.archive.push({
+        type: 'cubby',
+        item: { ref: cubbyRef, data: appData.cubbies[cubbyId] || { subcubbies: [] } },
+        archivedAt: new Date().toISOString(),
+        source: {
+            roomId: currentRoom.id, roomName: currentRoom.name,
+            cubbyId: '', cubbyName: '',
+            subcubbyId: '', subcubbyName: '',
+            parentTaskId: ''
+        }
+    });
+
+    delete appData.cubbies[cubbyId];
+    saveData();
+    goToRoom();
+}
+
+// ============================================
+// TRASH FUNCTIONS
+// ============================================
+
+function trashItem(type, item, source) {
+    appData.trash.push({
+        type: type,
+        item: item,
+        deletedAt: new Date().toISOString(),
+        source: source
+    });
+}
+
+function restoreFromTrash(trashIndex) {
+    var entry = appData.trash[trashIndex];
+    if (!entry) return;
+
+    if (entry.type === 'task') {
+        var cubbyData = appData.cubbies[entry.source.cubbyId];
+        if (cubbyData) {
+            var sub = cubbyData.subcubbies.find(function(s) { return s.id === entry.source.subcubbyId; });
+            if (sub) {
+                entry.item.completed = false;
+                entry.item.completed_at = null;
+                sub.tasks.unshift(entry.item);
+            }
+        }
+    } else if (entry.type === 'subtask') {
+        var cubbyData = appData.cubbies[entry.source.cubbyId];
+        if (cubbyData) {
+            cubbyData.subcubbies.forEach(function(sub) {
+                var parentTask = sub.tasks.find(function(t) { return t.id === entry.source.parentTaskId; });
+                if (parentTask) {
+                    if (!parentTask.subtasks) parentTask.subtasks = [];
+                    entry.item.completed = false;
+                    entry.item.completed_at = null;
+                    parentTask.subtasks.unshift(entry.item);
+                }
+            });
+        }
+    } else if (entry.type === 'subcubby') {
+        var cubbyData = appData.cubbies[entry.source.cubbyId];
+        if (cubbyData) {
+            cubbyData.subcubbies.push(entry.item);
+        }
+    } else if (entry.type === 'cubby') {
+        var room = appData.rooms.find(function(r) { return r.id === entry.source.roomId; });
+        if (room) {
+            room.cubbies.push(entry.item.ref);
+            appData.cubbies[entry.item.ref.id] = entry.item.data;
+        }
+    } else if (entry.type === 'room') {
+        appData.rooms.push(entry.item.room);
+        entry.item.cubbies.forEach(function(c) {
+            appData.cubbies[c.ref.id] = c.data;
+        });
+    }
+
+    appData.trash.splice(trashIndex, 1);
+    saveData();
+}
+
+function restoreFromArchive(archiveIndex) {
+    var entry = appData.archive[archiveIndex];
+    if (!entry) return;
+
+    if (entry.type === 'task') {
+        var cubbyData = appData.cubbies[entry.source.cubbyId];
+        if (cubbyData) {
+            var sub = cubbyData.subcubbies.find(function(s) { return s.id === entry.source.subcubbyId; });
+            if (sub) {
+                sub.tasks.unshift(entry.item);
+            }
+        }
+    } else if (entry.type === 'subtask') {
+        var cubbyData = appData.cubbies[entry.source.cubbyId];
+        if (cubbyData) {
+            cubbyData.subcubbies.forEach(function(sub) {
+                var parentTask = sub.tasks.find(function(t) { return t.id === entry.source.parentTaskId; });
+                if (parentTask) {
+                    if (!parentTask.subtasks) parentTask.subtasks = [];
+                    parentTask.subtasks.unshift(entry.item);
+                }
+            });
+        }
+    } else if (entry.type === 'subcubby') {
+        var cubbyData = appData.cubbies[entry.source.cubbyId];
+        if (cubbyData) {
+            cubbyData.subcubbies.push(entry.item);
+        }
+    } else if (entry.type === 'cubby') {
+        var room = appData.rooms.find(function(r) { return r.id === entry.source.roomId; });
+        if (room) {
+            room.cubbies.push(entry.item.ref);
+            appData.cubbies[entry.item.ref.id] = entry.item.data;
+        }
+    }
+
+    appData.archive.splice(archiveIndex, 1);
+    saveData();
+}
+
+function permanentlyDeleteTrashItem(trashIndex) {
+    appData.trash.splice(trashIndex, 1);
+    saveData();
+}
+
+function emptyTrash() {
+    appData.trash = [];
+    saveData();
+}
+
+// ============================================
+// AUTO-ARCHIVE LOGIC
+// ============================================
+
+function runAutoArchive() {
+    var settings = appData.settings.autoArchive;
+    if (!settings || settings.duration === 'never') return;
+
+    var now = new Date();
+    var archiveThreshold = getArchiveThresholdDate(settings, now);
+    if (!archiveThreshold) return;
+
+    var archived = false;
+
+    appData.rooms.forEach(function(room) {
+        room.cubbies.forEach(function(cubbyRef) {
+            var cubbyData = appData.cubbies[cubbyRef.id];
+            if (!cubbyData) return;
+
+            cubbyData.subcubbies.forEach(function(sub) {
+                var toArchive = [];
+
+                sub.tasks.forEach(function(task) {
+                    if (!task.completed || !task.completed_at) return;
+                    var completedDate = new Date(task.completed_at);
+                    if (completedDate <= archiveThreshold) {
+                        toArchive.push(task);
+                    }
+                });
+
+                toArchive.forEach(function(task) {
+                    var index = sub.tasks.indexOf(task);
+                    if (index !== -1) {
+                        sub.tasks.splice(index, 1);
+                        appData.archive.push({
+                            type: 'task',
+                            item: task,
+                            archivedAt: now.toISOString(),
+                            source: {
+                                roomId: room.id, roomName: room.name,
+                                cubbyId: cubbyRef.id, cubbyName: cubbyRef.name,
+                                subcubbyId: sub.id, subcubbyName: sub.name,
+                                parentTaskId: ''
+                            }
+                        });
+                        archived = true;
+                    }
+                });
+
+                // Also check subtasks
+                sub.tasks.forEach(function(task) {
+                    if (!task.subtasks) return;
+                    var stToArchive = [];
+
+                    task.subtasks.forEach(function(st) {
+                        if (!st.completed || !st.completed_at) return;
+                        var completedDate = new Date(st.completed_at);
+                        if (completedDate <= archiveThreshold) {
+                            stToArchive.push(st);
+                        }
+                    });
+
+                    stToArchive.forEach(function(st) {
+                        var stIndex = task.subtasks.indexOf(st);
+                        if (stIndex !== -1) {
+                            task.subtasks.splice(stIndex, 1);
+                            appData.archive.push({
+                                type: 'subtask',
+                                item: st,
+                                archivedAt: now.toISOString(),
+                                source: {
+                                    roomId: room.id, roomName: room.name,
+                                    cubbyId: cubbyRef.id, cubbyName: cubbyRef.name,
+                                    subcubbyId: sub.id, subcubbyName: sub.name,
+                                    parentTaskId: task.id
+                                }
+                            });
+                            archived = true;
+                        }
+                    });
+                });
+            });
+        });
+    });
+
+    if (archived) saveData();
+}
+
+function getArchiveThresholdDate(settings, now) {
+    if (settings.mode === 'duration') {
+        var ms = 0;
+        switch (settings.duration) {
+            case 'immediate': return now;
+            case '1day': ms = 24 * 60 * 60 * 1000; break;
+            case '3days': ms = 3 * 24 * 60 * 60 * 1000; break;
+            case '1week': ms = 7 * 24 * 60 * 60 * 1000; break;
+            case '2weeks': ms = 14 * 24 * 60 * 60 * 1000; break;
+            case '1month': ms = 30 * 24 * 60 * 60 * 1000; break;
+            case 'custom': ms = (settings.customDays || 7) * 24 * 60 * 60 * 1000; break;
+            case 'never': return null;
+            default: ms = 7 * 24 * 60 * 60 * 1000;
+        }
+        return new Date(now.getTime() - ms);
+    } else if (settings.mode === 'date-change') {
+        // Archive tasks completed before the most recent boundary
+        var threshold = new Date(now);
+        switch (settings.dateChange) {
+            case 'new-day':
+                threshold.setHours(0, 0, 0, 0);
+                break;
+            case 'new-week':
+                var dayOfWeek = threshold.getDay();
+                var weekStart = settings.weekStart === 'monday' ? 1 : 0;
+                var diff = dayOfWeek - weekStart;
+                if (diff < 0) diff += 7;
+                threshold.setDate(threshold.getDate() - diff);
+                threshold.setHours(0, 0, 0, 0);
+                break;
+            case 'new-month':
+                threshold.setDate(1);
+                threshold.setHours(0, 0, 0, 0);
+                break;
+            case 'new-year':
+                threshold.setMonth(0, 1);
+                threshold.setHours(0, 0, 0, 0);
+                break;
+            default:
+                threshold.setHours(0, 0, 0, 0);
+        }
+        return threshold;
+    }
+    return null;
+}
+
+function runAutoTrashPurge() {
+    var settings = appData.settings.autoTrash;
+    if (!settings || settings.duration === 'never') return;
+
+    var now = new Date();
+    var ms = 0;
+    switch (settings.duration) {
+        case '1day': ms = 24 * 60 * 60 * 1000; break;
+        case '3days': ms = 3 * 24 * 60 * 60 * 1000; break;
+        case '1week': ms = 7 * 24 * 60 * 60 * 1000; break;
+        case '2weeks': ms = 14 * 24 * 60 * 60 * 1000; break;
+        case '1month': ms = 30 * 24 * 60 * 60 * 1000; break;
+        case 'custom': ms = (settings.customDays || 30) * 24 * 60 * 60 * 1000; break;
+        default: ms = 30 * 24 * 60 * 60 * 1000;
+    }
+
+    var threshold = new Date(now.getTime() - ms);
+    var purged = false;
+
+    appData.trash = appData.trash.filter(function(entry) {
+        var deletedDate = new Date(entry.deletedAt);
+        if (deletedDate <= threshold) {
+            purged = true;
+            return false; // Remove
+        }
+        return true;
+    });
+
+    if (purged) saveData();
+}

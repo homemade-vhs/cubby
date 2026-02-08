@@ -12,6 +12,8 @@ var modalMode = 'task'; // 'task', 'subtask', 'edit', 'editSubcubby', 'newSubcub
 var modalTags = []; // Current tags being edited
 var modalSelectedTagColor = 'blue'; // Default tag color
 var navBarSelectedLocation = null; // Location selected from nav bar picker
+var modalSelectedCubbyColor = 'purple'; // Default cubby color for new cubby modal
+var modalSelectedRoom = null; // Room selected for new cubby
 
 // ============================================
 // CREATE MODAL
@@ -42,6 +44,18 @@ function createModal() {
             '<div class="memo-row" id="memo-row">' +
                 '<label for="task-memo">Notes</label>' +
                 '<textarea id="task-memo" placeholder="Add notes..." rows="3"></textarea>' +
+            '</div>' +
+            '<div class="cubby-description-row" id="cubby-description-row" style="display:none">' +
+                '<label for="cubby-description">Description</label>' +
+                '<textarea id="cubby-description" placeholder="Add a description..." rows="2"></textarea>' +
+            '</div>' +
+            '<div class="cubby-color-row" id="cubby-color-row" style="display:none">' +
+                '<label>Color</label>' +
+                '<div class="cubby-color-options" id="cubby-color-options"></div>' +
+            '</div>' +
+            '<div class="cubby-room-row" id="cubby-room-row" style="display:none">' +
+                '<label>Room</label>' +
+                '<div class="cubby-room-options" id="cubby-room-options"></div>' +
             '</div>' +
             '<div class="modal-buttons">' +
                 '<button class="modal-btn cancel" onclick="closeModal()">Cancel</button>' +
@@ -250,11 +264,19 @@ function openNewSubcubbyModal() {
 function openNewCubbyModal() {
     createModal();
     modalMode = 'newCubby';
+    modalSelectedCubbyColor = 'purple';
+    modalSelectedRoom = currentRoom ? currentRoom.id : (appData.rooms.length > 0 ? appData.rooms[0].id : null);
     document.getElementById('modal-title').textContent = 'New Cubby';
     document.getElementById('task-input').placeholder = 'Enter name...';
     document.getElementById('date-row').style.display = 'none';
     document.getElementById('tags-row').style.display = 'none';
     document.getElementById('memo-row').style.display = 'none';
+    document.getElementById('cubby-description-row').style.display = 'block';
+    document.getElementById('cubby-color-row').style.display = 'block';
+    document.getElementById('cubby-room-row').style.display = 'block';
+    document.getElementById('cubby-description').value = '';
+    renderCubbyColorOptions();
+    renderCubbyRoomOptions();
     var modal = document.getElementById('task-modal');
     modal.classList.add('active');
     var input = document.getElementById('task-input');
@@ -292,8 +314,63 @@ function closeModal() {
     modalParentTaskId = null;
     modalTags = [];
     navBarSelectedLocation = null;
+    modalSelectedCubbyColor = 'purple';
+    modalSelectedRoom = null;
+    // Hide cubby-specific fields
+    var descRow = document.getElementById('cubby-description-row');
+    var colorRow = document.getElementById('cubby-color-row');
+    var roomRow = document.getElementById('cubby-room-row');
+    if (descRow) descRow.style.display = 'none';
+    if (colorRow) colorRow.style.display = 'none';
+    if (roomRow) roomRow.style.display = 'none';
     var picker = document.getElementById('location-picker');
     if (picker) picker.remove();
+}
+
+// ============================================
+// CUBBY CREATION HELPERS
+// ============================================
+
+function renderCubbyColorOptions() {
+    var container = document.getElementById('cubby-color-options');
+    if (!container) return;
+    var html = '';
+    var colorNames = Object.keys(colorThemes);
+    colorNames.forEach(function(color) {
+        var theme = colorThemes[color];
+        var isSelected = color === modalSelectedCubbyColor;
+        html += '<div class="cubby-color-option' + (isSelected ? ' selected' : '') + '" ' +
+            'style="background:' + theme.card + ';border-color:' + (isSelected ? theme.primary : theme.border) + ';color:' + theme.text + '" ' +
+            'onclick="selectCubbyColor(\'' + color + '\')">' +
+            '<span class="cubby-color-dot" style="background:' + theme.primary + '"></span>' +
+            '<span>' + color.charAt(0).toUpperCase() + color.slice(1) + '</span>' +
+            '</div>';
+    });
+    container.innerHTML = html;
+}
+
+function selectCubbyColor(color) {
+    modalSelectedCubbyColor = color;
+    renderCubbyColorOptions();
+}
+
+function renderCubbyRoomOptions() {
+    var container = document.getElementById('cubby-room-options');
+    if (!container) return;
+    var html = '';
+    appData.rooms.forEach(function(room) {
+        var isSelected = room.id === modalSelectedRoom;
+        html += '<div class="cubby-room-option' + (isSelected ? ' selected' : '') + '" ' +
+            'onclick="selectCubbyRoom(\'' + room.id + '\')">' +
+            room.name +
+            '</div>';
+    });
+    container.innerHTML = html;
+}
+
+function selectCubbyRoom(roomId) {
+    modalSelectedRoom = roomId;
+    renderCubbyRoomOptions();
 }
 
 // ============================================
@@ -319,8 +396,15 @@ function confirmAddTask() {
         addNewSubcubby(text);
     } else if (modalMode === 'editCubbyName') {
         saveEditedCubbyName(text);
+    } else if (modalMode === 'editCubbyDescription') {
+        if (currentCubby) {
+            currentCubby.description = text;
+            saveData();
+            renderCubby(currentCubby);
+        }
     } else if (modalMode === 'newCubby') {
-        addNewCubby(text);
+        var cubbyDescription = (document.getElementById('cubby-description').value || '').trim();
+        addNewCubby(text, modalSelectedCubbyColor, modalSelectedRoom, cubbyDescription);
     } else if (modalMode === 'editRoomName') {
         saveEditedRoomName(text);
     } else if (modalMode === 'newRoom') {
@@ -530,7 +614,12 @@ function setCubbyColor(colorName) {
         cubby.color = colorName;
         saveData();
         syncUpdateCubby(activeCubbyId, { color: colorName });
-        renderRoom(currentRoom);
+        // If in the cubby, re-render it to update theme
+        if (currentCubby && currentCubby.id === activeCubbyId) {
+            renderCubby(currentCubby);
+        } else {
+            renderRoom(currentRoom);
+        }
     }
     closeColorModal();
 }
@@ -798,4 +887,39 @@ function createSubcubbyFromPicker(cubbyId, cubbyName, cubbyColor, roomId, roomNa
 
     // Re-render the picker list to show the new subcubby
     renderLocationPickerList();
+}
+
+// ============================================
+// CONFIRM DIALOG
+// ============================================
+
+function showConfirmDialog(title, message, onConfirm) {
+    var existing = document.getElementById('confirm-dialog');
+    if (existing) existing.remove();
+
+    var dialog = document.createElement('div');
+    dialog.id = 'confirm-dialog';
+    dialog.className = 'modal active';
+    dialog.innerHTML =
+        '<div class="modal-backdrop" onclick="closeConfirmDialog()"></div>' +
+        '<div class="modal-content confirm-dialog-content">' +
+            '<h2>' + title + '</h2>' +
+            '<p class="confirm-message">' + message + '</p>' +
+            '<div class="modal-buttons">' +
+                '<button class="modal-btn cancel" onclick="closeConfirmDialog()">Cancel</button>' +
+                '<button class="modal-btn confirm delete-confirm" id="confirm-dialog-btn">Delete</button>' +
+            '</div>' +
+        '</div>';
+
+    document.body.appendChild(dialog);
+
+    document.getElementById('confirm-dialog-btn').onclick = function() {
+        closeConfirmDialog();
+        if (onConfirm) onConfirm();
+    };
+}
+
+function closeConfirmDialog() {
+    var dialog = document.getElementById('confirm-dialog');
+    if (dialog) dialog.remove();
 }

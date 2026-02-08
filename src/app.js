@@ -57,6 +57,7 @@ var appData = {
 var currentView = 'home';
 var currentRoom = null;
 var currentCubby = null;
+var cubbyDateColorMode = false; // When true, tasks in cubby use due-date-based colors
 
 // ============================================
 // LOCALSTORAGE FUNCTIONS
@@ -67,6 +68,25 @@ function loadData() {
     if (stored) {
         try {
             appData = JSON.parse(stored);
+            // Migrate: ensure archive, trash, and settings exist
+            if (!appData.archive) appData.archive = [];
+            if (!appData.trash) appData.trash = [];
+            if (!appData.settings) appData.settings = {};
+            if (!appData.settings.autoArchive) {
+                appData.settings.autoArchive = {
+                    mode: 'duration',
+                    duration: '1week',
+                    customDays: 7,
+                    dateChange: 'new-week',
+                    weekStart: 'monday'
+                };
+            }
+            if (!appData.settings.autoTrash) {
+                appData.settings.autoTrash = {
+                    duration: '1month',
+                    customDays: 30
+                };
+            }
         } catch (e) {
             console.error('Error loading data:', e);
             initializeDefaultData();
@@ -100,6 +120,21 @@ function initializeDefaultData() {
                     tasks: []
                 }]
             }
+        },
+        archive: [],
+        trash: [],
+        settings: {
+            autoArchive: {
+                mode: 'duration',
+                duration: '1week',
+                customDays: 7,
+                dateChange: 'new-week',
+                weekStart: 'monday'
+            },
+            autoTrash: {
+                duration: '1month',
+                customDays: 30
+            }
         }
     };
     saveData();
@@ -113,10 +148,8 @@ function selectRoom(roomId) {
     currentRoom = appData.rooms.find(function(r) { return r.id === roomId; });
     if (!currentRoom) return;
     currentView = 'room';
-    document.getElementById('home-screen').classList.remove('active');
-    document.getElementById('views-screen').classList.remove('active');
+    hideAllScreens();
     document.getElementById('room-screen').classList.add('active');
-    document.getElementById('cubby-screen').classList.remove('active');
     renderRoom(currentRoom);
     updateNavBar();
 }
@@ -125,9 +158,7 @@ function selectCubby(cubbyId) {
     currentCubby = currentRoom.cubbies.find(function(c) { return c.id === cubbyId; });
     if (!currentCubby) return;
     currentView = 'cubby';
-    document.getElementById('home-screen').classList.remove('active');
-    document.getElementById('views-screen').classList.remove('active');
-    document.getElementById('room-screen').classList.remove('active');
+    hideAllScreens();
     document.getElementById('cubby-screen').classList.add('active');
     renderCubby(currentCubby);
     updateNavBar();
@@ -137,10 +168,8 @@ function goToHome() {
     currentView = 'home';
     currentRoom = null;
     currentCubby = null;
+    hideAllScreens();
     document.getElementById('home-screen').classList.add('active');
-    document.getElementById('views-screen').classList.remove('active');
-    document.getElementById('room-screen').classList.remove('active');
-    document.getElementById('cubby-screen').classList.remove('active');
     renderHome();
     updateNavBar();
 }
@@ -149,10 +178,8 @@ function goToRoom() {
     if (!currentRoom) return goToHome();
     currentView = 'room';
     currentCubby = null;
-    document.getElementById('home-screen').classList.remove('active');
-    document.getElementById('views-screen').classList.remove('active');
+    hideAllScreens();
     document.getElementById('room-screen').classList.add('active');
-    document.getElementById('cubby-screen').classList.remove('active');
     renderRoom(currentRoom);
     updateNavBar();
 }
@@ -161,11 +188,45 @@ function openViews() {
     currentView = 'views';
     currentRoom = null;
     currentCubby = null;
-    document.getElementById('home-screen').classList.remove('active');
+    hideAllScreens();
     document.getElementById('views-screen').classList.add('active');
+    renderViews();
+    updateNavBar();
+}
+
+function hideAllScreens() {
+    document.getElementById('home-screen').classList.remove('active');
+    document.getElementById('views-screen').classList.remove('active');
     document.getElementById('room-screen').classList.remove('active');
     document.getElementById('cubby-screen').classList.remove('active');
-    renderViews();
+    document.getElementById('settings-screen').classList.remove('active');
+    document.getElementById('archive-screen').classList.remove('active');
+    document.getElementById('trash-screen').classList.remove('active');
+}
+
+function openSettings() {
+    currentView = 'settings';
+    currentRoom = null;
+    currentCubby = null;
+    hideAllScreens();
+    document.getElementById('settings-screen').classList.add('active');
+    renderSettings();
+    updateNavBar();
+}
+
+function openArchive() {
+    currentView = 'archive';
+    hideAllScreens();
+    document.getElementById('archive-screen').classList.add('active');
+    renderArchive();
+    updateNavBar();
+}
+
+function openTrash() {
+    currentView = 'trash';
+    hideAllScreens();
+    document.getElementById('trash-screen').classList.add('active');
+    renderTrash();
     updateNavBar();
 }
 
@@ -184,6 +245,30 @@ function setCubbyTheme(colorName) {
     root.style.setProperty('--cubby-text', theme.text);
     root.style.setProperty('--cubby-text-muted', theme.textMuted);
     root.style.setProperty('--cubby-glow', theme.glow);
+}
+
+function toggleCubbyDateColorMode() {
+    cubbyDateColorMode = !cubbyDateColorMode;
+    var toggle = document.getElementById('cubby-date-toggle');
+    if (toggle) {
+        toggle.classList.toggle('active', cubbyDateColorMode);
+    }
+    if (cubbyDateColorMode) {
+        // Switch to greyscale background
+        var root = document.getElementById('cubby-screen');
+        root.style.background = '#0a0a0f';
+        root.style.setProperty('--cubby-primary', 'rgba(255,255,255,0.5)');
+        root.style.setProperty('--cubby-card', 'rgba(255,255,255,0.05)');
+        root.style.setProperty('--cubby-card-hover', 'rgba(255,255,255,0.08)');
+        root.style.setProperty('--cubby-border', 'rgba(255,255,255,0.12)');
+        root.style.setProperty('--cubby-text', '#ffffff');
+        root.style.setProperty('--cubby-text-muted', 'rgba(255,255,255,0.5)');
+        root.style.setProperty('--cubby-glow', 'rgba(255,255,255,0.1)');
+    } else {
+        // Restore cubby theme
+        if (currentCubby) setCubbyTheme(currentCubby.color || 'purple');
+    }
+    if (currentCubby) renderCubby(currentCubby);
 }
 
 // ============================================
@@ -217,11 +302,7 @@ function updateNavUserName(name) {
 }
 
 function openProfileMenu() {
-    // Placeholder — Settings screen will be built in Phase 3
-    // For now, just offer sign out
-    if (confirm('Sign out of Cubby?')) {
-        handleSignOut();
-    }
+    openSettings();
 }
 
 // ============================================
@@ -253,6 +334,9 @@ function formatDueDate(dateString) {
     } else if (diffDays <= 7) {
         text = diffDays + ' days';
         className = 'upcoming';
+    } else if (diffDays <= 14) {
+        text = diffDays + ' days';
+        className = 'next-week';
     } else {
         var options = { month: 'short', day: 'numeric' };
         text = dueDate.toLocaleDateString('en-US', options);
@@ -261,6 +345,39 @@ function formatDueDate(dateString) {
     
     return { text: text, class: className };
 }
+
+// ============================================
+// CLASSIFY TASK BY DUE DATE
+// ============================================
+
+function classifyDueDate(task) {
+    if (!task.dueDate) return 'no-date';
+
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    var dueDate = new Date(task.dueDate + 'T00:00:00');
+    var diffTime = dueDate - today;
+    var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) return 'overdue';
+    if (diffDays === 0) return 'today';
+    if (diffDays === 1) return 'tomorrow';
+    if (diffDays <= 7) return 'this-week';
+    if (diffDays <= 14) return 'next-week';
+    return 'later';
+}
+
+// Due-date-based color themes
+var dueDateColorThemes = {
+    'overdue':   { primary: '#ff6b6b', bg: '#0a0a0f', card: 'rgba(255,107,107,0.08)', cardHover: 'rgba(255,107,107,0.12)', border: 'rgba(255,107,107,0.2)', text: '#ffffff', textMuted: 'rgba(255,255,255,0.5)', glow: 'rgba(255,107,107,0.4)' },
+    'today':     { primary: '#feca57', bg: '#0a0a0f', card: 'rgba(254,202,87,0.06)', cardHover: 'rgba(254,202,87,0.1)', border: 'rgba(254,202,87,0.18)', text: '#ffffff', textMuted: 'rgba(255,255,255,0.5)', glow: 'rgba(254,202,87,0.3)' },
+    'tomorrow':  { primary: '#2ed573', bg: '#0a0a0f', card: 'rgba(46,213,115,0.06)', cardHover: 'rgba(46,213,115,0.1)', border: 'rgba(46,213,115,0.18)', text: '#ffffff', textMuted: 'rgba(255,255,255,0.5)', glow: 'rgba(46,213,115,0.3)' },
+    'this-week': { primary: '#5B8EFF', bg: '#0a0a0f', card: 'rgba(91,142,255,0.06)', cardHover: 'rgba(91,142,255,0.1)', border: 'rgba(91,142,255,0.18)', text: '#ffffff', textMuted: 'rgba(255,255,255,0.5)', glow: 'rgba(91,142,255,0.3)' },
+    'next-week': { primary: '#a55eea', bg: '#0a0a0f', card: 'rgba(165,94,234,0.06)', cardHover: 'rgba(165,94,234,0.1)', border: 'rgba(165,94,234,0.18)', text: '#ffffff', textMuted: 'rgba(255,255,255,0.5)', glow: 'rgba(165,94,234,0.3)' },
+    'later':     { primary: '#ffffff', bg: '#0a0a0f', card: 'rgba(255,255,255,0.05)', cardHover: 'rgba(255,255,255,0.08)', border: 'rgba(255,255,255,0.12)', text: '#ffffff', textMuted: 'rgba(255,255,255,0.5)', glow: 'rgba(255,255,255,0.1)' },
+    'no-date':   { primary: 'rgba(255,255,255,0.3)', bg: '#0a0a0f', card: 'rgba(255,255,255,0.03)', cardHover: 'rgba(255,255,255,0.06)', border: 'rgba(255,255,255,0.08)', text: '#ffffff', textMuted: 'rgba(255,255,255,0.35)', glow: 'rgba(255,255,255,0.05)' }
+};
 
 // ============================================
 // INITIALIZATION

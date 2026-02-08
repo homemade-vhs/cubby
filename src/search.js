@@ -357,22 +357,40 @@ function navigateToTask(roomId, cubbyId, subcubbyId, taskId) {
     }
     
     // Show cubby screen
+    currentView = 'cubby';
     document.getElementById('home-screen').classList.remove('active');
+    document.getElementById('views-screen').classList.remove('active');
     document.getElementById('room-screen').classList.remove('active');
     document.getElementById('cubby-screen').classList.add('active');
-    
+    updateNavBar();
+
     // Render and highlight
     renderCubby(currentCubby);
-    
+
     // Scroll to and highlight the task after a brief delay
     setTimeout(function() {
         var taskEl = document.querySelector('[data-task-id="' + taskId + '"]');
         if (taskEl) {
             taskEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
             taskEl.classList.add('search-highlight');
-            setTimeout(function() {
+
+            // Dim other tasks to focus on highlighted one
+            var tasksContainer = document.getElementById('tasks-container');
+            tasksContainer.classList.add('has-highlighted-task');
+            taskEl.classList.add('highlight-target');
+
+            // Click anywhere to dismiss highlight and restore normal view
+            function dismissHighlight() {
                 taskEl.classList.remove('search-highlight');
-            }, 2000);
+                taskEl.classList.remove('highlight-target');
+                tasksContainer.classList.remove('has-highlighted-task');
+                document.removeEventListener('click', dismissHighlight);
+            }
+
+            // Use setTimeout so this click handler doesn't fire immediately
+            setTimeout(function() {
+                document.addEventListener('click', dismissHighlight);
+            }, 50);
         }
     }, 100);
 }

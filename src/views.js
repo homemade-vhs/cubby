@@ -8,49 +8,18 @@
 
 var viewGroups = [
     { key: 'overdue',   label: 'Overdue',   color: '#ff6b6b' },
-    { key: 'today',     label: 'Today',     color: '#ffffff' },
-    { key: 'tomorrow',  label: 'Tomorrow',  color: '#feca57' },
+    { key: 'today',     label: 'Today',     color: '#feca57' },
+    { key: 'tomorrow',  label: 'Tomorrow',  color: '#2ed573' },
     { key: 'this-week', label: 'This Week', color: '#5B8EFF' },
-    { key: 'next-week', label: 'Next Week', color: 'rgba(255,255,255,0.5)' },
-    { key: 'later',     label: 'Later',     color: 'rgba(255,255,255,0.5)' },
+    { key: 'next-week', label: 'Next Week', color: '#a55eea' },
+    { key: 'later',     label: 'Later',     color: '#ffffff' },
     { key: 'no-date',   label: 'No Date',   color: 'rgba(255,255,255,0.3)' }
 ];
 
 var activeViewFilter = 'all'; // 'all' or one of the viewGroup keys
 var viewColorMode = 'cubby'; // 'cubby' or 'due-date'
 
-// Due-date-based color themes (used when viewColorMode === 'due-date')
-var dueDateColorThemes = {
-    'overdue':   { primary: '#ff6b6b', bg: '#0a0a0f', card: 'rgba(255,107,107,0.08)', cardHover: 'rgba(255,107,107,0.12)', border: 'rgba(255,107,107,0.2)', text: '#ffffff', textMuted: 'rgba(255,255,255,0.5)', glow: 'rgba(255,107,107,0.4)' },
-    'today':     { primary: '#ffffff', bg: '#0a0a0f', card: 'rgba(255,255,255,0.06)', cardHover: 'rgba(255,255,255,0.1)', border: 'rgba(255,255,255,0.15)', text: '#ffffff', textMuted: 'rgba(255,255,255,0.5)', glow: 'rgba(255,255,255,0.15)' },
-    'tomorrow':  { primary: '#feca57', bg: '#0a0a0f', card: 'rgba(254,202,87,0.06)', cardHover: 'rgba(254,202,87,0.1)', border: 'rgba(254,202,87,0.18)', text: '#ffffff', textMuted: 'rgba(255,255,255,0.5)', glow: 'rgba(254,202,87,0.3)' },
-    'this-week': { primary: '#5B8EFF', bg: '#0a0a0f', card: 'rgba(91,142,255,0.06)', cardHover: 'rgba(91,142,255,0.1)', border: 'rgba(91,142,255,0.18)', text: '#ffffff', textMuted: 'rgba(255,255,255,0.5)', glow: 'rgba(91,142,255,0.3)' },
-    'next-week': { primary: 'rgba(255,255,255,0.5)', bg: '#0a0a0f', card: 'rgba(255,255,255,0.04)', cardHover: 'rgba(255,255,255,0.07)', border: 'rgba(255,255,255,0.1)', text: '#ffffff', textMuted: 'rgba(255,255,255,0.4)', glow: 'rgba(255,255,255,0.1)' },
-    'later':     { primary: 'rgba(255,255,255,0.5)', bg: '#0a0a0f', card: 'rgba(255,255,255,0.04)', cardHover: 'rgba(255,255,255,0.07)', border: 'rgba(255,255,255,0.1)', text: '#ffffff', textMuted: 'rgba(255,255,255,0.4)', glow: 'rgba(255,255,255,0.1)' },
-    'no-date':   { primary: 'rgba(255,255,255,0.3)', bg: '#0a0a0f', card: 'rgba(255,255,255,0.03)', cardHover: 'rgba(255,255,255,0.06)', border: 'rgba(255,255,255,0.08)', text: '#ffffff', textMuted: 'rgba(255,255,255,0.35)', glow: 'rgba(255,255,255,0.05)' }
-};
-
-// ============================================
-// CLASSIFY TASK BY DUE DATE
-// ============================================
-
-function classifyDueDate(task) {
-    if (!task.dueDate) return 'no-date';
-
-    var today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    var dueDate = new Date(task.dueDate + 'T00:00:00');
-    var diffTime = dueDate - today;
-    var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays < 0) return 'overdue';
-    if (diffDays === 0) return 'today';
-    if (diffDays === 1) return 'tomorrow';
-    if (diffDays <= 7) return 'this-week';
-    if (diffDays <= 14) return 'next-week';
-    return 'later';
-}
+// classifyDueDate() and dueDateColorThemes are defined in app.js
 
 // ============================================
 // COLLECT ALL INCOMPLETE TASKS
@@ -131,6 +100,7 @@ function renderViews() {
     // Color mode toggle
     var isDueDate = viewColorMode === 'due-date';
     html += '<button class="view-color-toggle' + (isDueDate ? ' active' : '') + '" onclick="toggleViewColorMode()" title="Color by due date">';
+    html += '<span>color by due date</span>';
     html += '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
     html += '</button>';
     html += '</div>';
@@ -213,22 +183,13 @@ function renderViewTask(item, group) {
     html += '<span class="task-text">' + task.text + '</span>';
     html += '</div>';
 
-    // Task meta (tags + due date)
+    // Tags
     var hasTags = task.tags && task.tags.length > 0;
-    var hasDueDate = task.dueDate;
-    if (hasTags || hasDueDate) {
-        html += '<div class="task-meta">';
-        if (hasTags) {
-            html += '<div class="task-tags">';
-            task.tags.forEach(function(tag) {
-                html += '<span class="task-tag tag-' + tag.color + '">' + tag.text + '</span>';
-            });
-            html += '</div>';
-        }
-        if (hasDueDate) {
-            var dueDateInfo = formatDueDate(task.dueDate);
-            html += '<span class="task-due-date ' + dueDateInfo.class + '">' + dueDateInfo.text + '</span>';
-        }
+    if (hasTags) {
+        html += '<div class="task-tags">';
+        task.tags.forEach(function(tag) {
+            html += '<span class="task-tag tag-' + tag.color + '">' + tag.text + '</span>';
+        });
         html += '</div>';
     }
 
@@ -248,6 +209,14 @@ function renderViewTask(item, group) {
         html += '<div class="task-progress"><div class="task-progress-fill' + (allComplete ? ' complete' : '') + '" style="width:' + pct + '%"></div></div>';
         html += '<div class="subtask-counter' + (allComplete ? ' all-complete' : '') + '">' +
             '<span class="subtask-count">' + completedCount + '/' + totalCount + '</span></div>';
+    }
+
+    // Due date (always shown — blank box if no date, always rightmost)
+    var dueDateInfo = formatDueDate(task.dueDate);
+    if (dueDateInfo.text) {
+        html += '<span class="task-due-date ' + dueDateInfo.class + '">' + dueDateInfo.text + '</span>';
+    } else {
+        html += '<span class="task-due-date no-date"></span>';
     }
 
     html += '</div>'; // close .task
@@ -275,6 +244,7 @@ function toggleViewTask(taskId) {
                 var task = sub.tasks.find(function(t) { return t.id === taskId; });
                 if (task) {
                     task.completed = true;
+                    task.completed_at = new Date().toISOString();
                     found = true;
 
                     // Move to end of list (same as toggleTask logic)
