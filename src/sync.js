@@ -115,6 +115,13 @@ async function loadFromSupabase() {
         });
 
         // Step 5: Build appData
+        // Preserve local room colors in case Supabase doesn't have a color column yet
+        var localRoomColors = {};
+        if (appData && appData.rooms) {
+            appData.rooms.forEach(function(r) {
+                if (r.color) localRoomColors[r.id] = r.color;
+            });
+        }
         appData = {
             rooms: workspaces.map(function(w) {
                 var room = {
@@ -122,7 +129,11 @@ async function loadFromSupabase() {
                     name: w.name,
                     cubbies: cubbiesByWorkspace[w.id] || []
                 };
-                if (w.color) room.color = w.color;
+                if (w.color) {
+                    room.color = w.color;
+                } else if (localRoomColors[w.id]) {
+                    room.color = localRoomColors[w.id];
+                }
                 return room;
             }),
             cubbies: {}
