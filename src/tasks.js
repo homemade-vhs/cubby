@@ -898,18 +898,21 @@ function saveEditedRoomName(newName) {
     }
 }
 
-function addNewRoom(name) {
+function addNewRoom(name, color) {
     var newRoomId = generateUUID();
-    appData.rooms.push({
+    var room = {
         id: newRoomId,
         name: name,
         cubbies: []
-    });
+    };
+    if (color) room.color = color;
+    appData.rooms.push(room);
     saveData();
     // Need user ID for workspace insert
     getCurrentUser().then(function(user) {
         if (user) {
             syncInsertWorkspace(newRoomId, user.id, name, appData.rooms.length - 1);
+            if (color) syncUpdateWorkspace(newRoomId, { color: color });
         }
     });
     renderHome(true);

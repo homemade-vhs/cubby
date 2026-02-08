@@ -14,6 +14,7 @@ var modalSelectedTagColor = 'blue'; // Default tag color
 var navBarSelectedLocation = null; // Location selected from nav bar picker
 var modalSelectedCubbyColor = 'purple'; // Default cubby color for new cubby modal
 var modalSelectedRoom = null; // Room selected for new cubby
+var modalSelectedRoomColor = null; // Color selected for new workspace (null = no color)
 
 // ============================================
 // CREATE MODAL
@@ -291,11 +292,14 @@ function openNewCubbyModal() {
 function openNewRoomModal() {
     createModal();
     modalMode = 'newRoom';
+    modalSelectedRoomColor = null;
     document.getElementById('modal-title').textContent = 'New Workspace';
     document.getElementById('task-input').placeholder = 'Enter name...';
     document.getElementById('date-row').style.display = 'none';
     document.getElementById('tags-row').style.display = 'none';
     document.getElementById('memo-row').style.display = 'none';
+    document.getElementById('cubby-color-row').style.display = 'block';
+    renderRoomColorOptions();
     var modal = document.getElementById('task-modal');
     modal.classList.add('active');
     var input = document.getElementById('task-input');
@@ -319,6 +323,7 @@ function closeModal() {
     navBarSelectedLocation = null;
     modalSelectedCubbyColor = 'purple';
     modalSelectedRoom = null;
+    modalSelectedRoomColor = null;
     // Hide cubby-specific fields
     var descRow = document.getElementById('cubby-description-row');
     var colorRow = document.getElementById('cubby-color-row');
@@ -355,6 +360,36 @@ function renderCubbyColorOptions() {
 function selectCubbyColor(color) {
     modalSelectedCubbyColor = color;
     renderCubbyColorOptions();
+}
+
+function renderRoomColorOptions() {
+    var container = document.getElementById('cubby-color-options');
+    if (!container) return;
+    var html = '';
+    // "None" option
+    var noneSelected = modalSelectedRoomColor === null;
+    html += '<div class="cubby-color-option' + (noneSelected ? ' selected' : '') + '" ' +
+        'style="background:rgba(255,255,255,0.05);border-color:' + (noneSelected ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.15)') + ';color:rgba(255,255,255,0.5)" ' +
+        'onclick="selectRoomColor(null)">' +
+        '<span>None</span>' +
+        '</div>';
+    var colorNames = Object.keys(colorThemes);
+    colorNames.forEach(function(color) {
+        var theme = colorThemes[color];
+        var isSelected = color === modalSelectedRoomColor;
+        html += '<div class="cubby-color-option' + (isSelected ? ' selected' : '') + '" ' +
+            'style="background:' + theme.card + ';border-color:' + (isSelected ? theme.primary : theme.border) + ';color:' + theme.text + '" ' +
+            'onclick="selectRoomColor(\'' + color + '\')">' +
+            '<span class="cubby-color-dot" style="background:' + theme.primary + '"></span>' +
+            '<span>' + color.charAt(0).toUpperCase() + color.slice(1) + '</span>' +
+            '</div>';
+    });
+    container.innerHTML = html;
+}
+
+function selectRoomColor(color) {
+    modalSelectedRoomColor = color;
+    renderRoomColorOptions();
 }
 
 function renderCubbyRoomOptions() {
@@ -411,7 +446,7 @@ function confirmAddTask() {
     } else if (modalMode === 'editRoomName') {
         saveEditedRoomName(text);
     } else if (modalMode === 'newRoom') {
-        addNewRoom(text);
+        addNewRoom(text, modalSelectedRoomColor);
     } else if (navBarSelectedLocation) {
         addTaskToLocation(navBarSelectedLocation, text, dueDate, tags, memo);
     } else {

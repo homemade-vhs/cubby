@@ -11,7 +11,7 @@ function renderHome(skipAnimation) {
     appData.rooms.forEach(function(room, i) {
         var roomColor = room.color;
         var roomTheme = roomColor ? (colorThemes[roomColor] || colorThemes.purple) : null;
-        var roomStyle = roomTheme ? 'border-color:' + roomTheme.border + ';' : '';
+        var roomStyle = roomTheme ? 'border-color:' + roomTheme.border + ';background:' + roomTheme.bg + ';' : '';
         var animClass = skipAnimation ? '' : ' animate-in delay-' + (i + 1);
         var roomClass = 'room-card' + animClass + (roomTheme ? ' room-colored' : '');
         var nameStyle = roomTheme ? ' style="color:' + roomTheme.text + '"' : '';

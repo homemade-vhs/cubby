@@ -829,6 +829,7 @@ function setRoomColor(colorName) {
             if (roomTheme) {
                 card.classList.add('room-colored');
                 card.style.borderColor = roomTheme.border;
+                card.style.background = roomTheme.bg;
                 var h2 = card.querySelector('.info h2');
                 var p = card.querySelector('.info p');
                 var arrow = card.querySelector('.arrow svg');
@@ -840,6 +841,7 @@ function setRoomColor(colorName) {
             } else {
                 card.classList.remove('room-colored');
                 card.style.borderColor = '';
+                card.style.background = '';
                 var h2 = card.querySelector('.info h2');
                 var p = card.querySelector('.info p');
                 var arrow = card.querySelector('.arrow svg');

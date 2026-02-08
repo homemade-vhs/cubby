@@ -37,7 +37,7 @@
     .signout-btn { padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; color: rgba(255,255,255,0.4); cursor: pointer; transition: all 0.2s ease; }
     .signout-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); }
     .signout-btn:active { transform: scale(0.95); }
-    .room-card { margin-bottom: 16px; background: rgba(255,255,255,0.03); border-radius: 20px; border: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; transition: all 0.2s ease; }
+    .room-card { margin-bottom: 16px; background: rgba(255,255,255,0.03); border-radius: 20px; border: 2px solid rgba(255,255,255,0.06); display: flex; align-items: center; transition: all 0.2s ease; }
     .room-card.room-colored { background: rgba(0,0,0,0.4); }
     .room-card-main { flex: 1; padding: 24px; cursor: pointer; display: flex; align-items: center; gap: 16px; }
     .room-card-main:active { background: rgba(255,255,255,0.02); border-radius: 20px 0 0 20px; }
@@ -855,7 +855,7 @@
 }
 
 /* Room card press */
-.room-card-main:active {
+.room-card:active {
     transform: scale(0.98);
     transition: transform 0.1s ease;
 }
@@ -1014,7 +1014,7 @@
 /* ============================================ */
 
 /* Room cards */
-.room-card-main:active {
+.room-card:active {
     transform: scale(0.98);
     background: rgba(255,255,255,0.06);
 }
@@ -1426,7 +1426,7 @@
 .view-mode-btn {
     padding: 8px 12px;
     border-radius: 10px;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.1);
     background: rgba(255,255,255,0.03);
     color: rgba(255,255,255,0.35);
     font-family: inherit;
@@ -1455,7 +1455,7 @@
     min-width: 0;
     padding: 8px 4px;
     border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.15);
     background: none;
     color: rgba(255,255,255,0.5);
     font-family: inherit;
@@ -1527,7 +1527,7 @@
 }
 .view-task-card .task {
     background: var(--cubby-card);
-    border: 1px solid var(--cubby-border);
+    border: 2px solid var(--cubby-border);
     border-radius: 14px;
     padding: 14px;
     display: flex;
@@ -1660,7 +1660,7 @@
     height: 50px;
     padding: 4px 0;
     background: none;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     color: rgba(255, 255, 255, 0.35);
     font-family: inherit;
@@ -2438,8 +2438,8 @@ textarea:hover {
     100% { transform: scale(1); filter: brightness(1); }
 }
 
-.room-card-main:active,
-.cubby-card-main:active,
+.room-card:active,
+.cubby-card:active,
 .task-card:active,
 .settings-link-btn:active,
 .add-room-btn:active,
