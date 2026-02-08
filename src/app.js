@@ -333,6 +333,14 @@ function toggleCubbyDateColorMode() {
 // ============================================
 
 function updateNavBar() {
+    // Close search modal if open
+    if (typeof closeSearchModal === 'function' && typeof searchOpen !== 'undefined' && searchOpen) {
+        closeSearchModal();
+    }
+    // Clear search tab highlight
+    var searchTab = document.querySelector('.nav-tab-search');
+    if (searchTab) searchTab.classList.remove('active');
+
     var tabs = document.querySelectorAll('.nav-tab[data-tab]');
     tabs.forEach(function(tab) {
         var tabName = tab.dataset.tab;
