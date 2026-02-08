@@ -310,6 +310,9 @@ function openNewRoomModal() {
 function closeModal() {
     var modal = document.getElementById('task-modal');
     if (modal) modal.classList.remove('active');
+    // Remove New nav button highlight
+    var addBtn = document.querySelector('.nav-tab-add');
+    if (addBtn) addBtn.classList.remove('active');
     modalSubcubbyId = null;
     modalParentTaskId = null;
     modalTags = [];
@@ -658,6 +661,11 @@ function openModalFromNavBar() {
 
     var modal = document.getElementById('task-modal');
     modal.classList.add('active');
+
+    // Highlight the New nav button
+    var addBtn = document.querySelector('.nav-tab-add');
+    if (addBtn) addBtn.classList.add('active');
+
     var input = document.getElementById('task-input');
     input.value = '';
     setTimeout(function() { input.focus(); }, 100);

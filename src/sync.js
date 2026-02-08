@@ -117,11 +117,13 @@ async function loadFromSupabase() {
         // Step 5: Build appData
         appData = {
             rooms: workspaces.map(function(w) {
-                return {
+                var room = {
                     id: w.id,
                     name: w.name,
                     cubbies: cubbiesByWorkspace[w.id] || []
                 };
+                if (w.color) room.color = w.color;
+                return room;
             }),
             cubbies: {}
         };

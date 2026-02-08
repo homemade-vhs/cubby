@@ -821,6 +821,7 @@ function setRoomColor(colorName) {
             delete room.color;
         }
         saveData();
+        syncUpdateWorkspace(roomId, { color: colorName || null });
         // Update the card in place instead of re-rendering all cards
         var card = document.querySelector('.room-card[data-room-id="' + roomId + '"]');
         if (card) {
