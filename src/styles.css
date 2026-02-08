@@ -851,16 +851,12 @@
 
 /* Cubby card press */
 .cubby-card:active {
-    transform: scale(0.97);
-    filter: brightness(0.9);
-    transition: transform 0.08s ease, filter 0.08s ease;
+    animation: clickPop 0.2s ease;
 }
 
 /* Room card press */
 .room-card:active {
-    transform: scale(0.97);
-    filter: brightness(0.9);
-    transition: transform 0.08s ease, filter 0.08s ease;
+    animation: clickPop 0.2s ease;
 }
 
 /* Task press effect */
