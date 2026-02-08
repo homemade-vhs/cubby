@@ -8,15 +8,27 @@
 
 var viewGroups = [
     { key: 'overdue',   label: 'Overdue',   color: '#ff6b6b' },
-    { key: 'today',     label: 'Today',     color: '#ffb347' },
+    { key: 'today',     label: 'Today',     color: '#ffffff' },
     { key: 'tomorrow',  label: 'Tomorrow',  color: '#feca57' },
     { key: 'this-week', label: 'This Week', color: '#5B8EFF' },
-    { key: 'next-week', label: 'Next Week', color: '#5AF0E0' },
+    { key: 'next-week', label: 'Next Week', color: 'rgba(255,255,255,0.5)' },
     { key: 'later',     label: 'Later',     color: 'rgba(255,255,255,0.5)' },
     { key: 'no-date',   label: 'No Date',   color: 'rgba(255,255,255,0.3)' }
 ];
 
 var activeViewFilter = 'all'; // 'all' or one of the viewGroup keys
+var viewColorMode = 'cubby'; // 'cubby' or 'due-date'
+
+// Due-date-based color themes (used when viewColorMode === 'due-date')
+var dueDateColorThemes = {
+    'overdue':   { primary: '#ff6b6b', bg: '#0a0a0f', card: 'rgba(255,107,107,0.08)', cardHover: 'rgba(255,107,107,0.12)', border: 'rgba(255,107,107,0.2)', text: '#ffffff', textMuted: 'rgba(255,255,255,0.5)', glow: 'rgba(255,107,107,0.4)' },
+    'today':     { primary: '#ffffff', bg: '#0a0a0f', card: 'rgba(255,255,255,0.06)', cardHover: 'rgba(255,255,255,0.1)', border: 'rgba(255,255,255,0.15)', text: '#ffffff', textMuted: 'rgba(255,255,255,0.5)', glow: 'rgba(255,255,255,0.15)' },
+    'tomorrow':  { primary: '#feca57', bg: '#0a0a0f', card: 'rgba(254,202,87,0.06)', cardHover: 'rgba(254,202,87,0.1)', border: 'rgba(254,202,87,0.18)', text: '#ffffff', textMuted: 'rgba(255,255,255,0.5)', glow: 'rgba(254,202,87,0.3)' },
+    'this-week': { primary: '#5B8EFF', bg: '#0a0a0f', card: 'rgba(91,142,255,0.06)', cardHover: 'rgba(91,142,255,0.1)', border: 'rgba(91,142,255,0.18)', text: '#ffffff', textMuted: 'rgba(255,255,255,0.5)', glow: 'rgba(91,142,255,0.3)' },
+    'next-week': { primary: 'rgba(255,255,255,0.5)', bg: '#0a0a0f', card: 'rgba(255,255,255,0.04)', cardHover: 'rgba(255,255,255,0.07)', border: 'rgba(255,255,255,0.1)', text: '#ffffff', textMuted: 'rgba(255,255,255,0.4)', glow: 'rgba(255,255,255,0.1)' },
+    'later':     { primary: 'rgba(255,255,255,0.5)', bg: '#0a0a0f', card: 'rgba(255,255,255,0.04)', cardHover: 'rgba(255,255,255,0.07)', border: 'rgba(255,255,255,0.1)', text: '#ffffff', textMuted: 'rgba(255,255,255,0.4)', glow: 'rgba(255,255,255,0.1)' },
+    'no-date':   { primary: 'rgba(255,255,255,0.3)', bg: '#0a0a0f', card: 'rgba(255,255,255,0.03)', cardHover: 'rgba(255,255,255,0.06)', border: 'rgba(255,255,255,0.08)', text: '#ffffff', textMuted: 'rgba(255,255,255,0.35)', glow: 'rgba(255,255,255,0.05)' }
+};
 
 // ============================================
 // CLASSIFY TASK BY DUE DATE
@@ -105,7 +117,8 @@ function renderViews() {
     });
 
     // Build filter buttons
-    var html = '<div class="view-filters">';
+    var html = '<div class="view-controls">';
+    html += '<div class="view-filters">';
     html += '<button class="view-filter-btn' + (activeViewFilter === 'all' ? ' active' : '') + '" onclick="setViewFilter(\'all\')">All</button>';
     viewGroups.forEach(function(group) {
         var count = grouped[group.key].length;
@@ -113,6 +126,13 @@ function renderViews() {
         var isActive = activeViewFilter === group.key;
         html += '<button class="view-filter-btn' + (isActive ? ' active' : '') + '" style="--filter-color:' + group.color + '" onclick="setViewFilter(\'' + group.key + '\')">' + group.label + '</button>';
     });
+    html += '</div>';
+
+    // Color mode toggle
+    var isDueDate = viewColorMode === 'due-date';
+    html += '<button class="view-color-toggle' + (isDueDate ? ' active' : '') + '" onclick="toggleViewColorMode()" title="Color by due date">';
+    html += '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+    html += '</button>';
     html += '</div>';
 
     // Build task groups
@@ -157,7 +177,14 @@ function renderViews() {
 
 function renderViewTask(item, group) {
     var task = item.task;
-    var theme = colorThemes[item.cubbyColor] || colorThemes.purple;
+
+    // Pick theme based on color mode
+    var theme;
+    if (viewColorMode === 'due-date') {
+        theme = dueDateColorThemes[group.key] || dueDateColorThemes['no-date'];
+    } else {
+        theme = colorThemes[item.cubbyColor] || colorThemes.purple;
+    }
 
     // Inline CSS variables so .task styles work outside #cubby-screen
     var inlineVars = '--cubby-primary:' + theme.primary +
@@ -170,8 +197,11 @@ function renderViewTask(item, group) {
 
     var html = '<div class="view-task-card" style="' + inlineVars + '" data-view-task-id="' + task.id + '">';
 
+    // Check if overdue for red border
+    var isOverdue = group.key === 'overdue';
+
     // Task card — reuses .task class structure
-    html += '<div class="task" onclick="navigateToTask(\'' + item.roomId + '\', \'' + item.cubbyId + '\', \'' + item.subcubbyId + '\', \'' + task.id + '\')">';
+    html += '<div class="task' + (isOverdue ? ' task-overdue' : '') + '" onclick="navigateToTask(\'' + item.roomId + '\', \'' + item.cubbyId + '\', \'' + item.subcubbyId + '\', \'' + task.id + '\')">';
 
     // Checkbox
     html += '<div class="checkbox" onclick="event.stopPropagation(); toggleViewTask(\'' + task.id + '\')">' +
@@ -332,5 +362,14 @@ function toggleViewGroup(groupKey) {
 
 function setViewFilter(filterKey) {
     activeViewFilter = filterKey;
+    renderViews();
+}
+
+// ============================================
+// TOGGLE VIEW COLOR MODE
+// ============================================
+
+function toggleViewColorMode() {
+    viewColorMode = viewColorMode === 'cubby' ? 'due-date' : 'cubby';
     renderViews();
 }

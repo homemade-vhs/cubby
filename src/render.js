@@ -108,7 +108,14 @@ function renderCubby(cubby) {
 function renderTask(task) {
     var hasSubtasks = task.subtasks && task.subtasks.length > 0;
     var theme = colorThemes[currentCubby.color];
-    var html = '<div class="task ' + (task.expanded ? 'expanded' : '') + (task.completed ? ' completed-task' : '') + (hasSubtasks ? ' has-subtasks' : '') + '" data-task-id="' + task.id + '">' +
+    var isOverdue = false;
+    if (task.dueDate && !task.completed) {
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+        var due = new Date(task.dueDate + 'T00:00:00');
+        isOverdue = due < today;
+    }
+    var html = '<div class="task ' + (task.expanded ? 'expanded' : '') + (task.completed ? ' completed-task' : '') + (hasSubtasks ? ' has-subtasks' : '') + (isOverdue ? ' task-overdue' : '') + '" data-task-id="' + task.id + '">' +
         '<div class="checkbox ' + (task.completed ? 'checked' : '') + '" onclick="toggleTask(\'' + task.id + '\')">' +
         '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8L7 12L13 4" stroke="' + theme.bg + '" stroke-width="2.5" stroke-linecap="round"/></svg></div>' +
         '<span class="task-text ' + (task.completed ? 'completed' : '') + '">' + task.text + '</span>';
@@ -184,6 +191,13 @@ function renderSubtask(st, parentTaskId, theme) {
     var subtaskMetaHtml = '';
     var stHasTags = st.tags && st.tags.length > 0;
     var stHasDueDate = st.dueDate;
+    var stIsOverdue = false;
+    if (st.dueDate && !st.completed) {
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+        var due = new Date(st.dueDate + 'T00:00:00');
+        stIsOverdue = due < today;
+    }
     if (stHasTags || stHasDueDate) {
         subtaskMetaHtml += '<div class="task-meta">';
         if (stHasTags) {
@@ -200,7 +214,7 @@ function renderSubtask(st, parentTaskId, theme) {
         subtaskMetaHtml += '</div>';
     }
     
-    return '<div class="task subtask ' + (st.completed ? 'completed-task' : '') + '" data-task-id="' + st.id + '" data-parent="' + parentTaskId + '">' +
+    return '<div class="task subtask ' + (st.completed ? 'completed-task' : '') + (stIsOverdue ? ' task-overdue' : '') + '" data-task-id="' + st.id + '" data-parent="' + parentTaskId + '">' +
         '<div class="checkbox small ' + (st.completed ? 'checked' : '') + '" onclick="toggleSubtask(\'' + parentTaskId + '\',\'' + st.id + '\')">' +
         '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8L7 12L13 4" stroke="' + theme.bg + '" stroke-width="2.5" stroke-linecap="round"/></svg></div>' +
         '<span class="task-text ' + (st.completed ? 'completed' : '') + '">' + st.text + '</span>' +
