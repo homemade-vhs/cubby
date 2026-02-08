@@ -2,6 +2,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     :root { --bg-dark: #0a0a0f; --safe-top: env(safe-area-inset-top, 20px); --safe-bottom: env(safe-area-inset-bottom, 20px); --nav-height: calc(60px + env(safe-area-inset-bottom, 20px)); }
     html, body { height: 100%; width: 100%; overflow: hidden; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-dark); color: #ffffff; position: fixed; text-transform: lowercase; }
+    button, select { text-transform: inherit; }
 
     /* Preserve original casing for user-created content */
     .task-text, input, textarea,
