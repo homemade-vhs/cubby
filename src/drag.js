@@ -306,18 +306,50 @@ function finishDragging() {
     // Restore body overflow
     document.body.style.overflow = '';
     
-    // Remove clone
-    if (dragState.clone && dragState.clone.parentNode) {
-        dragState.clone.parentNode.removeChild(dragState.clone);
-    }
-    
-    // Remove dragging classes
-    dragState.element.classList.remove('dragging');
-    dragState.container.classList.remove('drag-active');
-    
-    // Save the new order if it changed
-    if (dragState.currentIndex !== dragState.originalIndex) {
-        saveReorderedData();
+    // Animate clone to landing position
+    if (dragState.clone && dragState.element) {
+        var landingRect = dragState.element.getBoundingClientRect();
+        var clone = dragState.clone;
+        var element = dragState.element;
+        var container = dragState.container;
+        var currentIndex = dragState.currentIndex;
+        var originalIndex = dragState.originalIndex;
+        
+        // Transition the clone smoothly to the target spot
+        clone.style.transition = 'top 0.25s cubic-bezier(0.2, 0, 0, 1), left 0.25s cubic-bezier(0.2, 0, 0, 1), transform 0.25s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.25s ease, opacity 0.25s ease, filter 0.25s ease';
+        clone.style.top = landingRect.top + 'px';
+        clone.style.left = landingRect.left + 'px';
+        clone.style.transform = 'scale(1)';
+        clone.style.boxShadow = 'none';
+        clone.style.filter = 'brightness(1) saturate(1)';
+        clone.style.opacity = '1';
+        clone.style.backdropFilter = 'blur(0px)';
+        clone.style.webkitBackdropFilter = 'blur(0px)';
+        
+        // After animation completes, clean up
+        setTimeout(function() {
+            if (clone && clone.parentNode) {
+                clone.parentNode.removeChild(clone);
+            }
+            element.classList.remove('dragging');
+            container.classList.remove('drag-active');
+        }, 260);
+        
+        // Save the new order if it changed
+        if (currentIndex !== originalIndex) {
+            saveReorderedData();
+        }
+    } else {
+        // Fallback: just clean up immediately
+        if (dragState.clone && dragState.clone.parentNode) {
+            dragState.clone.parentNode.removeChild(dragState.clone);
+        }
+        dragState.element.classList.remove('dragging');
+        dragState.container.classList.remove('drag-active');
+        
+        if (dragState.currentIndex !== dragState.originalIndex) {
+            saveReorderedData();
+        }
     }
 }
 
