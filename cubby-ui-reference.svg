@@ -1,0 +1,507 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 2400" width="1400" height="2400">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap');
+      text, tspan { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+    </style>
+  </defs>
+
+  <!-- ========================================== -->
+  <!-- SCREEN 1: HOME SCREEN -->
+  <!-- ========================================== -->
+  <g id="home-screen">
+    <!-- Phone frame -->
+    <rect x="40" y="40" width="390" height="844" rx="40" fill="#0a0a0f" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+
+    <!-- Section label -->
+    <text x="235" y="25" fill="rgba(255,255,255,0.4)" font-size="11" font-weight="600" text-anchor="middle" text-transform="uppercase" letter-spacing="1.5">home screen</text>
+
+    <!-- Greeting -->
+    <text x="60" y="100" fill="#ffffff" font-size="32" font-weight="800">good evening, matt</text>
+    <text x="60" y="124" fill="rgba(255,255,255,0.5)" font-size="16" font-weight="500">what's on the agenda?</text>
+
+    <!-- Workspace Card 1: No color (default grey) -->
+    <rect x="60" y="160" width="350" height="80" rx="20" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.06)" stroke-width="2"/>
+    <text x="84" y="196" fill="#ffffff" font-size="24" font-weight="700">work</text>
+    <text x="84" y="218" fill="rgba(255,255,255,0.4)" font-size="14" font-weight="500">3 cubbies</text>
+    <!-- Arrow -->
+    <path d="M375 195 L385 200 L375 205" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+    <!-- Kebab -->
+    <circle cx="400" cy="190" r="1.5" fill="rgba(255,255,255,0.3)"/>
+    <circle cx="400" cy="196" r="1.5" fill="rgba(255,255,255,0.3)"/>
+    <circle cx="400" cy="202" r="1.5" fill="rgba(255,255,255,0.3)"/>
+
+    <!-- Workspace Card 2: Purple colored -->
+    <rect x="60" y="256" width="350" height="80" rx="20" fill="#180a28" stroke="rgba(199,125,255,0.45)" stroke-width="2"/>
+    <text x="84" y="292" fill="#e8c8ff" font-size="24" font-weight="700">personal</text>
+    <text x="84" y="314" fill="rgba(199,125,255,0.7)" font-size="14" font-weight="500">5 cubbies</text>
+    <path d="M375 291 L385 296 L375 301" fill="none" stroke="rgba(199,125,255,0.7)" stroke-width="2"/>
+    <circle cx="400" cy="286" r="1.5" fill="rgba(199,125,255,0.7)"/>
+    <circle cx="400" cy="292" r="1.5" fill="rgba(199,125,255,0.7)"/>
+    <circle cx="400" cy="298" r="1.5" fill="rgba(199,125,255,0.7)"/>
+
+    <!-- Workspace Card 3: Green colored -->
+    <rect x="60" y="352" width="350" height="80" rx="20" fill="#082818" stroke="rgba(107,245,160,0.45)" stroke-width="2"/>
+    <text x="84" y="388" fill="#c0ffe0" font-size="24" font-weight="700">music</text>
+    <text x="84" y="410" fill="rgba(107,245,160,0.7)" font-size="14" font-weight="500">2 cubbies</text>
+    <path d="M375 387 L385 392 L375 397" fill="none" stroke="rgba(107,245,160,0.7)" stroke-width="2"/>
+    <circle cx="400" cy="382" r="1.5" fill="rgba(107,245,160,0.7)"/>
+    <circle cx="400" cy="388" r="1.5" fill="rgba(107,245,160,0.7)"/>
+    <circle cx="400" cy="394" r="1.5" fill="rgba(107,245,160,0.7)"/>
+
+    <!-- Workspace Card 4: Orange colored -->
+    <rect x="60" y="448" width="350" height="80" rx="20" fill="#281808" stroke="rgba(255,176,90,0.45)" stroke-width="2"/>
+    <text x="84" y="484" fill="#ffe0c0" font-size="24" font-weight="700">youtube</text>
+    <text x="84" y="506" fill="rgba(255,176,90,0.7)" font-size="14" font-weight="500">4 cubbies</text>
+    <path d="M375 483 L385 488 L375 493" fill="none" stroke="rgba(255,176,90,0.7)" stroke-width="2"/>
+    <circle cx="400" cy="478" r="1.5" fill="rgba(255,176,90,0.7)"/>
+    <circle cx="400" cy="484" r="1.5" fill="rgba(255,176,90,0.7)"/>
+    <circle cx="400" cy="490" r="1.5" fill="rgba(255,176,90,0.7)"/>
+
+    <!-- Add new workspace button -->
+    <rect x="60" y="544" width="350" height="60" rx="20" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1" stroke-dasharray="6,4"/>
+    <text x="215" y="579" fill="rgba(255,255,255,0.4)" font-size="14" font-weight="500" text-anchor="middle" opacity="0.6">+ new workspace</text>
+
+    <!-- Version -->
+    <text x="235" y="650" fill="rgba(255,255,255,0.15)" font-size="12" font-weight="600" text-anchor="middle">CUBBY</text>
+    <text x="235" y="668" fill="rgba(255,255,255,0.1)" font-size="11" font-weight="500" text-anchor="middle">v1.1.1</text>
+
+    <!-- Nav Bar -->
+    <rect x="40" y="804" width="390" height="80" rx="0 0 40 40" fill="rgba(10,10,15,0.95)" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+    <!-- Tasks tab -->
+    <g>
+      <rect x="50" y="812" width="48" height="50" rx="12" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+      <text x="74" y="846" fill="rgba(255,255,255,0.35)" font-size="10" font-weight="600" text-anchor="middle">tasks</text>
+    </g>
+    <!-- Notes tab -->
+    <g>
+      <rect x="104" y="812" width="48" height="50" rx="12" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+      <text x="128" y="846" fill="rgba(255,255,255,0.35)" font-size="10" font-weight="600" text-anchor="middle">notes</text>
+    </g>
+    <!-- Cubbies tab (active - orange) -->
+    <g>
+      <rect x="158" y="812" width="48" height="50" rx="12" fill="rgba(255,176,90,0.08)" stroke="rgba(255,176,90,0.4)" stroke-width="2"/>
+      <text x="182" y="846" fill="#FFB05A" font-size="10" font-weight="600" text-anchor="middle">cubbies</text>
+    </g>
+    <!-- New tab -->
+    <g>
+      <rect x="212" y="812" width="60" height="50" rx="12" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+      <text x="242" y="846" fill="rgba(255,255,255,0.45)" font-size="10" font-weight="600" text-anchor="middle">+ new</text>
+    </g>
+    <!-- Home tab -->
+    <g>
+      <rect x="278" y="812" width="48" height="50" rx="12" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+      <text x="302" y="846" fill="rgba(255,255,255,0.35)" font-size="10" font-weight="600" text-anchor="middle">home</text>
+    </g>
+    <!-- Search tab -->
+    <g>
+      <rect x="332" y="812" width="48" height="50" rx="12" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+      <text x="356" y="846" fill="rgba(255,255,255,0.35)" font-size="10" font-weight="600" text-anchor="middle">search</text>
+    </g>
+    <!-- User tab -->
+    <g>
+      <rect x="386" y="812" width="40" height="50" rx="12" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+      <text x="406" y="846" fill="rgba(255,255,255,0.35)" font-size="10" font-weight="600" text-anchor="middle">user</text>
+    </g>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- SCREEN 2: WORKSPACE VIEW (Room) -->
+  <!-- ========================================== -->
+  <g id="workspace-view" transform="translate(480, 0)">
+    <rect x="40" y="40" width="390" height="844" rx="40" fill="#0a0a0f" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+
+    <text x="235" y="25" fill="rgba(255,255,255,0.4)" font-size="11" font-weight="600" text-anchor="middle" text-transform="uppercase" letter-spacing="1.5">workspace view</text>
+
+    <!-- Back button -->
+    <rect x="60" y="80" width="80" height="36" rx="12" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+    <text x="100" y="103" fill="rgba(255,255,255,0.6)" font-size="14" font-weight="600" text-anchor="middle">← back</text>
+
+    <!-- Room title -->
+    <text x="60" y="150" fill="#ffffff" font-size="36" font-weight="800">personal</text>
+
+    <!-- Cubby Card 1: Blue -->
+    <rect x="60" y="180" width="350" height="56" rx="16" fill="rgba(107,163,255,0.15)" stroke="rgba(107,163,255,0.45)" stroke-width="2"/>
+    <text x="84" y="214" fill="#c5dfff" font-size="20" font-weight="700">video ideas</text>
+    <path d="M375 203 L385 208 L375 213" fill="none" stroke="rgba(107,163,255,0.7)" stroke-width="2"/>
+    <circle cx="400" cy="198" r="1.5" fill="rgba(107,163,255,0.7)"/>
+    <circle cx="400" cy="204" r="1.5" fill="rgba(107,163,255,0.7)"/>
+    <circle cx="400" cy="210" r="1.5" fill="rgba(107,163,255,0.7)"/>
+
+    <!-- Cubby Card 2: Pink -->
+    <rect x="60" y="248" width="350" height="56" rx="16" fill="rgba(255,107,173,0.15)" stroke="rgba(255,107,173,0.45)" stroke-width="2"/>
+    <text x="84" y="282" fill="#ffc8e0" font-size="20" font-weight="700">health &amp; fitness</text>
+    <path d="M375 271 L385 276 L375 281" fill="none" stroke="rgba(255,107,173,0.7)" stroke-width="2"/>
+    <circle cx="400" cy="266" r="1.5" fill="rgba(255,107,173,0.7)"/>
+    <circle cx="400" cy="272" r="1.5" fill="rgba(255,107,173,0.7)"/>
+    <circle cx="400" cy="278" r="1.5" fill="rgba(255,107,173,0.7)"/>
+
+    <!-- Cubby Card 3: Teal -->
+    <rect x="60" y="316" width="350" height="56" rx="16" fill="rgba(90,240,224,0.15)" stroke="rgba(90,240,224,0.45)" stroke-width="2"/>
+    <text x="84" y="350" fill="#c0fff8" font-size="20" font-weight="700">home projects</text>
+    <path d="M375 339 L385 344 L375 349" fill="none" stroke="rgba(90,240,224,0.7)" stroke-width="2"/>
+    <circle cx="400" cy="334" r="1.5" fill="rgba(90,240,224,0.7)"/>
+    <circle cx="400" cy="340" r="1.5" fill="rgba(90,240,224,0.7)"/>
+    <circle cx="400" cy="346" r="1.5" fill="rgba(90,240,224,0.7)"/>
+
+    <!-- Cubby Card 4: Red -->
+    <rect x="60" y="384" width="350" height="56" rx="16" fill="rgba(255,107,107,0.15)" stroke="rgba(255,107,107,0.45)" stroke-width="2"/>
+    <text x="84" y="418" fill="#ffc8c8" font-size="20" font-weight="700">errands</text>
+    <path d="M375 407 L385 412 L375 417" fill="none" stroke="rgba(255,107,107,0.7)" stroke-width="2"/>
+    <circle cx="400" cy="402" r="1.5" fill="rgba(255,107,107,0.7)"/>
+    <circle cx="400" cy="408" r="1.5" fill="rgba(255,107,107,0.7)"/>
+    <circle cx="400" cy="414" r="1.5" fill="rgba(255,107,107,0.7)"/>
+
+    <!-- Cubby Card 5: Yellow -->
+    <rect x="60" y="452" width="350" height="56" rx="16" fill="rgba(255,232,90,0.15)" stroke="rgba(255,232,90,0.45)" stroke-width="2"/>
+    <text x="84" y="486" fill="#fff8c0" font-size="20" font-weight="700">shopping list</text>
+    <path d="M375 475 L385 480 L375 485" fill="none" stroke="rgba(255,232,90,0.7)" stroke-width="2"/>
+    <circle cx="400" cy="470" r="1.5" fill="rgba(255,232,90,0.7)"/>
+    <circle cx="400" cy="476" r="1.5" fill="rgba(255,232,90,0.7)"/>
+    <circle cx="400" cy="482" r="1.5" fill="rgba(255,232,90,0.7)"/>
+
+    <!-- Add cubby button -->
+    <rect x="60" y="528" width="350" height="48" rx="16" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="6,4"/>
+    <text x="235" y="557" fill="rgba(255,255,255,0.4)" font-size="14" font-weight="500" text-anchor="middle" opacity="0.6">+ new cubby</text>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- SCREEN 3: CUBBY VIEW (Tasks) -->
+  <!-- ========================================== -->
+  <g id="cubby-view" transform="translate(960, 0)">
+    <rect x="40" y="40" width="390" height="844" rx="40" fill="#0a0a0f" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+
+    <text x="235" y="25" fill="rgba(255,255,255,0.4)" font-size="11" font-weight="600" text-anchor="middle" text-transform="uppercase" letter-spacing="1.5">cubby view (blue theme)</text>
+
+    <!-- Back button -->
+    <rect x="60" y="80" width="80" height="36" rx="12" fill="rgba(107,163,255,0.15)" stroke="rgba(107,163,255,0.45)" stroke-width="1"/>
+    <text x="100" y="103" fill="#c5dfff" font-size="14" font-weight="600" text-anchor="middle">← back</text>
+
+    <!-- Cubby title -->
+    <text x="60" y="155" fill="#ffffff" font-size="36" font-weight="800">video ideas</text>
+
+    <!-- Subcubby header -->
+    <text x="60" y="190" fill="rgba(107,163,255,0.7)" font-size="14" font-weight="700" text-transform="uppercase" letter-spacing="1">general</text>
+
+    <!-- Task 1: Unchecked, with due date (today) -->
+    <rect x="60" y="205" width="350" height="48" rx="12" fill="rgba(107,163,255,0.15)" stroke="transparent" stroke-width="1"/>
+    <!-- Checkbox unchecked -->
+    <rect x="74" y="218" width="24" height="24" rx="6" fill="rgba(0,0,0,0.2)" stroke="rgba(107,163,255,0.45)" stroke-width="2"/>
+    <!-- Task text -->
+    <text x="110" y="236" fill="#c5dfff" font-size="16" font-weight="500">plan new video concept</text>
+    <!-- Due date badge: today -->
+    <rect x="305" y="220" width="44" height="20" rx="6" fill="rgba(254,202,87,0.2)"/>
+    <text x="327" y="234" fill="#feca57" font-size="11" font-weight="600" text-anchor="middle">today</text>
+    <!-- Expand arrow -->
+    <rect x="355" y="221" width="22" height="22" rx="6" fill="rgba(107,163,255,0.15)"/>
+    <path d="M362 228 L369 232 L362 236" fill="none" stroke="#c5dfff" stroke-width="2"/>
+    <!-- Kebab -->
+    <circle cx="393" cy="225" r="1.5" fill="rgba(107,163,255,0.7)"/>
+    <circle cx="393" cy="231" r="1.5" fill="rgba(107,163,255,0.7)"/>
+    <circle cx="393" cy="237" r="1.5" fill="rgba(107,163,255,0.7)"/>
+
+    <!-- Task 2: With tags + subtask progress + due date -->
+    <rect x="60" y="261" width="350" height="48" rx="12" fill="rgba(107,163,255,0.15)" stroke="transparent" stroke-width="1"/>
+    <rect x="74" y="274" width="24" height="24" rx="6" fill="rgba(0,0,0,0.2)" stroke="rgba(107,163,255,0.45)" stroke-width="2"/>
+    <text x="110" y="292" fill="#c5dfff" font-size="16" font-weight="500">edit footage</text>
+    <!-- Tag: orange -->
+    <rect x="210" y="278" width="48" height="18" rx="10" fill="rgba(255,176,90,0.3)"/>
+    <text x="234" y="291" fill="#ffb05a" font-size="10" font-weight="600" text-anchor="middle">urgent</text>
+    <!-- Progress bar -->
+    <rect x="266" y="284" width="32" height="6" rx="3" fill="rgba(255,255,255,0.08)"/>
+    <rect x="266" y="284" width="16" height="6" rx="3" fill="rgba(107,163,255,0.7)"/>
+    <!-- Counter: 2/4 -->
+    <rect x="304" y="276" width="36" height="22" rx="12" fill="rgba(107,163,255,0.15)" stroke="rgba(107,163,255,0.45)" stroke-width="1"/>
+    <text x="322" y="291" fill="rgba(107,163,255,0.7)" font-size="12" font-weight="600" text-anchor="middle">2/4</text>
+    <!-- Due date: 3 days -->
+    <rect x="346" y="276" width="44" height="20" rx="6" fill="rgba(91,142,255,0.2)"/>
+    <text x="368" y="290" fill="#5B8EFF" font-size="11" font-weight="600" text-anchor="middle">3 days</text>
+    <!-- Expand + kebab on overflow -->
+
+    <!-- Task 3: Completed task -->
+    <rect x="60" y="317" width="350" height="48" rx="12" fill="rgba(0,0,0,0.3)" opacity="0.6"/>
+    <!-- Checked checkbox -->
+    <rect x="74" y="330" width="24" height="24" rx="6" fill="#6BA3FF" stroke="#6BA3FF" stroke-width="2"/>
+    <path d="M81 342 L85 346 L91 336" fill="none" stroke="#0a1628" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Strikethrough text -->
+    <text x="110" y="348" fill="rgba(107,163,255,0.7)" font-size="16" font-weight="500" text-decoration="line-through">research competitors</text>
+
+    <!-- Task 4: Overdue -->
+    <rect x="60" y="373" width="350" height="48" rx="12" fill="rgba(107,163,255,0.15)" stroke="#ff4444" stroke-width="2"/>
+    <rect x="74" y="386" width="24" height="24" rx="6" fill="rgba(0,0,0,0.2)" stroke="rgba(107,163,255,0.45)" stroke-width="2"/>
+    <text x="110" y="404" fill="#c5dfff" font-size="16" font-weight="500">write script draft</text>
+    <!-- Due date: overdue -->
+    <rect x="305" y="388" width="54" height="20" rx="6" fill="rgba(255,107,107,0.2)"/>
+    <text x="332" y="402" fill="#ff6b6b" font-size="11" font-weight="600" text-anchor="middle">overdue</text>
+    <!-- Arrow -->
+    <rect x="365" y="389" width="22" height="22" rx="6" fill="rgba(107,163,255,0.15)"/>
+    <path d="M372 396 L379 400 L372 404" fill="none" stroke="#c5dfff" stroke-width="2"/>
+
+    <!-- Task 5: With subtasks complete -->
+    <rect x="60" y="429" width="350" height="48" rx="12" fill="rgba(107,163,255,0.15)"/>
+    <rect x="74" y="442" width="24" height="24" rx="6" fill="rgba(0,0,0,0.2)" stroke="rgba(107,163,255,0.45)" stroke-width="2"/>
+    <text x="110" y="460" fill="#c5dfff" font-size="16" font-weight="500">gather b-roll</text>
+    <!-- Progress bar: complete -->
+    <rect x="265" y="450" width="32" height="6" rx="3" fill="rgba(255,255,255,0.08)"/>
+    <rect x="265" y="450" width="32" height="6" rx="3" fill="#5AE890"/>
+    <!-- Counter: all complete -->
+    <rect x="303" y="442" width="36" height="22" rx="12" fill="rgba(90,232,144,0.15)" stroke="rgba(90,232,144,0.3)" stroke-width="1"/>
+    <text x="321" y="457" fill="#5AE890" font-size="12" font-weight="600" text-anchor="middle">3/3</text>
+    <!-- Due date: tomorrow -->
+    <rect x="345" y="443" width="54" height="20" rx="6" fill="rgba(46,213,115,0.2)"/>
+    <text x="372" y="457" fill="#2ed573" font-size="11" font-weight="600" text-anchor="middle">tomorrow</text>
+
+    <!-- Add task button -->
+    <rect x="60" y="490" width="350" height="40" rx="12" fill="none" stroke="rgba(107,163,255,0.45)" stroke-width="1" stroke-dasharray="6,4"/>
+    <text x="235" y="515" fill="rgba(107,163,255,0.7)" font-size="14" font-weight="500" text-anchor="middle">+ new task</text>
+
+    <!-- Second subcubby -->
+    <text x="60" y="560" fill="rgba(107,163,255,0.7)" font-size="14" font-weight="700" text-transform="uppercase" letter-spacing="1">research</text>
+
+    <rect x="60" y="575" width="350" height="48" rx="12" fill="rgba(107,163,255,0.15)"/>
+    <rect x="74" y="588" width="24" height="24" rx="6" fill="rgba(0,0,0,0.2)" stroke="rgba(107,163,255,0.45)" stroke-width="2"/>
+    <text x="110" y="606" fill="#c5dfff" font-size="16" font-weight="500">analyze trending topics</text>
+    <!-- Due date: 10 days -->
+    <rect x="330" y="590" width="54" height="20" rx="6" fill="rgba(165,94,234,0.2)"/>
+    <text x="357" y="604" fill="#a55eea" font-size="11" font-weight="600" text-anchor="middle">10 days</text>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- COLOR THEME SWATCHES -->
+  <!-- ========================================== -->
+  <g id="color-themes" transform="translate(40, 960)">
+    <text x="0" y="0" fill="rgba(255,255,255,0.4)" font-size="11" font-weight="600" text-transform="uppercase" letter-spacing="1.5">color themes</text>
+
+    <!-- Blue -->
+    <g transform="translate(0, 20)">
+      <rect x="0" y="0" width="160" height="100" rx="16" fill="rgba(107,163,255,0.15)" stroke="rgba(107,163,255,0.45)" stroke-width="2"/>
+      <circle cx="24" cy="24" r="10" fill="#6BA3FF"/>
+      <text x="40" y="28" fill="#c5dfff" font-size="14" font-weight="700">blue</text>
+      <text x="12" y="50" fill="#c5dfff" font-size="11" font-weight="500">primary: #6BA3FF</text>
+      <text x="12" y="66" fill="rgba(107,163,255,0.7)" font-size="11" font-weight="500">bg: #0a1628</text>
+      <text x="12" y="82" fill="rgba(107,163,255,0.7)" font-size="11" font-weight="500">text: #c5dfff</text>
+    </g>
+
+    <!-- Purple -->
+    <g transform="translate(172, 20)">
+      <rect x="0" y="0" width="160" height="100" rx="16" fill="rgba(199,125,255,0.15)" stroke="rgba(199,125,255,0.45)" stroke-width="2"/>
+      <circle cx="24" cy="24" r="10" fill="#C77DFF"/>
+      <text x="40" y="28" fill="#e8c8ff" font-size="14" font-weight="700">purple</text>
+      <text x="12" y="50" fill="#e8c8ff" font-size="11" font-weight="500">primary: #C77DFF</text>
+      <text x="12" y="66" fill="rgba(199,125,255,0.7)" font-size="11" font-weight="500">bg: #180a28</text>
+      <text x="12" y="82" fill="rgba(199,125,255,0.7)" font-size="11" font-weight="500">text: #e8c8ff</text>
+    </g>
+
+    <!-- Pink -->
+    <g transform="translate(344, 20)">
+      <rect x="0" y="0" width="160" height="100" rx="16" fill="rgba(255,107,173,0.15)" stroke="rgba(255,107,173,0.45)" stroke-width="2"/>
+      <circle cx="24" cy="24" r="10" fill="#FF6BAD"/>
+      <text x="40" y="28" fill="#ffc8e0" font-size="14" font-weight="700">pink</text>
+      <text x="12" y="50" fill="#ffc8e0" font-size="11" font-weight="500">primary: #FF6BAD</text>
+      <text x="12" y="66" fill="rgba(255,107,173,0.7)" font-size="11" font-weight="500">bg: #280a18</text>
+      <text x="12" y="82" fill="rgba(255,107,173,0.7)" font-size="11" font-weight="500">text: #ffc8e0</text>
+    </g>
+
+    <!-- Red -->
+    <g transform="translate(516, 20)">
+      <rect x="0" y="0" width="160" height="100" rx="16" fill="rgba(255,107,107,0.15)" stroke="rgba(255,107,107,0.45)" stroke-width="2"/>
+      <circle cx="24" cy="24" r="10" fill="#FF6B6B"/>
+      <text x="40" y="28" fill="#ffc8c8" font-size="14" font-weight="700">red</text>
+      <text x="12" y="50" fill="#ffc8c8" font-size="11" font-weight="500">primary: #FF6B6B</text>
+      <text x="12" y="66" fill="rgba(255,107,107,0.7)" font-size="11" font-weight="500">bg: #280a0a</text>
+      <text x="12" y="82" fill="rgba(255,107,107,0.7)" font-size="11" font-weight="500">text: #ffc8c8</text>
+    </g>
+
+    <!-- Orange -->
+    <g transform="translate(0, 132)">
+      <rect x="0" y="0" width="160" height="100" rx="16" fill="rgba(255,176,90,0.15)" stroke="rgba(255,176,90,0.45)" stroke-width="2"/>
+      <circle cx="24" cy="24" r="10" fill="#FFB05A"/>
+      <text x="40" y="28" fill="#ffe0c0" font-size="14" font-weight="700">orange</text>
+      <text x="12" y="50" fill="#ffe0c0" font-size="11" font-weight="500">primary: #FFB05A</text>
+      <text x="12" y="66" fill="rgba(255,176,90,0.7)" font-size="11" font-weight="500">bg: #281808</text>
+      <text x="12" y="82" fill="rgba(255,176,90,0.7)" font-size="11" font-weight="500">text: #ffe0c0</text>
+    </g>
+
+    <!-- Yellow -->
+    <g transform="translate(172, 132)">
+      <rect x="0" y="0" width="160" height="100" rx="16" fill="rgba(255,232,90,0.15)" stroke="rgba(255,232,90,0.45)" stroke-width="2"/>
+      <circle cx="24" cy="24" r="10" fill="#FFE85A"/>
+      <text x="40" y="28" fill="#fff8c0" font-size="14" font-weight="700">yellow</text>
+      <text x="12" y="50" fill="#fff8c0" font-size="11" font-weight="500">primary: #FFE85A</text>
+      <text x="12" y="66" fill="rgba(255,232,90,0.7)" font-size="11" font-weight="500">bg: #282408</text>
+      <text x="12" y="82" fill="rgba(255,232,90,0.7)" font-size="11" font-weight="500">text: #fff8c0</text>
+    </g>
+
+    <!-- Green -->
+    <g transform="translate(344, 132)">
+      <rect x="0" y="0" width="160" height="100" rx="16" fill="rgba(107,245,160,0.15)" stroke="rgba(107,245,160,0.45)" stroke-width="2"/>
+      <circle cx="24" cy="24" r="10" fill="#6BF5A0"/>
+      <text x="40" y="28" fill="#c0ffe0" font-size="14" font-weight="700">green</text>
+      <text x="12" y="50" fill="#c0ffe0" font-size="11" font-weight="500">primary: #6BF5A0</text>
+      <text x="12" y="66" fill="rgba(107,245,160,0.7)" font-size="11" font-weight="500">bg: #082818</text>
+      <text x="12" y="82" fill="rgba(107,245,160,0.7)" font-size="11" font-weight="500">text: #c0ffe0</text>
+    </g>
+
+    <!-- Teal -->
+    <g transform="translate(516, 132)">
+      <rect x="0" y="0" width="160" height="100" rx="16" fill="rgba(90,240,224,0.15)" stroke="rgba(90,240,224,0.45)" stroke-width="2"/>
+      <circle cx="24" cy="24" r="10" fill="#5AF0E0"/>
+      <text x="40" y="28" fill="#c0fff8" font-size="14" font-weight="700">teal</text>
+      <text x="12" y="50" fill="#c0fff8" font-size="11" font-weight="500">primary: #5AF0E0</text>
+      <text x="12" y="66" fill="rgba(90,240,224,0.7)" font-size="11" font-weight="500">bg: #082824</text>
+      <text x="12" y="82" fill="rgba(90,240,224,0.7)" font-size="11" font-weight="500">text: #c0fff8</text>
+    </g>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- DUE DATE BADGES -->
+  <!-- ========================================== -->
+  <g id="due-date-badges" transform="translate(740, 960)">
+    <text x="0" y="0" fill="rgba(255,255,255,0.4)" font-size="11" font-weight="600" text-transform="uppercase" letter-spacing="1.5">due date badges</text>
+
+    <rect x="0" y="14" width="64" height="24" rx="6" fill="rgba(255,107,107,0.2)"/>
+    <text x="32" y="30" fill="#ff6b6b" font-size="11" font-weight="600" text-anchor="middle">overdue</text>
+
+    <rect x="76" y="14" width="64" height="24" rx="6" fill="rgba(254,202,87,0.2)"/>
+    <text x="108" y="30" fill="#feca57" font-size="11" font-weight="600" text-anchor="middle">today</text>
+
+    <rect x="152" y="14" width="64" height="24" rx="6" fill="rgba(46,213,115,0.2)"/>
+    <text x="184" y="30" fill="#2ed573" font-size="11" font-weight="600" text-anchor="middle">tomorrow</text>
+
+    <rect x="228" y="14" width="64" height="24" rx="6" fill="rgba(91,142,255,0.2)"/>
+    <text x="260" y="30" fill="#5B8EFF" font-size="11" font-weight="600" text-anchor="middle">3 days</text>
+
+    <rect x="304" y="14" width="64" height="24" rx="6" fill="rgba(165,94,234,0.2)"/>
+    <text x="336" y="30" fill="#a55eea" font-size="11" font-weight="600" text-anchor="middle">10 days</text>
+
+    <rect x="380" y="14" width="64" height="24" rx="6" fill="rgba(255,255,255,0.12)"/>
+    <text x="412" y="30" fill="#ffffff" font-size="11" font-weight="600" text-anchor="middle">mar 15</text>
+
+    <rect x="456" y="14" width="64" height="24" rx="6" fill="rgba(255,255,255,0.04)"/>
+    <text x="488" y="30" fill="rgba(255,255,255,0.3)" font-size="11" font-weight="600" text-anchor="middle">no date</text>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- TAG COLORS -->
+  <!-- ========================================== -->
+  <g id="tag-colors" transform="translate(740, 1020)">
+    <text x="0" y="0" fill="rgba(255,255,255,0.4)" font-size="11" font-weight="600" text-transform="uppercase" letter-spacing="1.5">tag colors</text>
+
+    <rect x="0" y="14" width="50" height="20" rx="10" fill="rgba(255,107,107,0.3)"/>
+    <text x="25" y="28" fill="#ff6b6b" font-size="10" font-weight="600" text-anchor="middle">red</text>
+
+    <rect x="58" y="14" width="56" height="20" rx="10" fill="rgba(255,176,90,0.3)"/>
+    <text x="86" y="28" fill="#ffb05a" font-size="10" font-weight="600" text-anchor="middle">orange</text>
+
+    <rect x="122" y="14" width="56" height="20" rx="10" fill="rgba(255,232,90,0.3)"/>
+    <text x="150" y="28" fill="#ffe85a" font-size="10" font-weight="600" text-anchor="middle">yellow</text>
+
+    <rect x="186" y="14" width="54" height="20" rx="10" fill="rgba(107,245,160,0.3)"/>
+    <text x="213" y="28" fill="#6bf5a0" font-size="10" font-weight="600" text-anchor="middle">green</text>
+
+    <rect x="248" y="14" width="48" height="20" rx="10" fill="rgba(107,163,255,0.3)"/>
+    <text x="272" y="28" fill="#6ba3ff" font-size="10" font-weight="600" text-anchor="middle">blue</text>
+
+    <rect x="304" y="14" width="56" height="20" rx="10" fill="rgba(199,125,255,0.3)"/>
+    <text x="332" y="28" fill="#c77dff" font-size="10" font-weight="600" text-anchor="middle">purple</text>
+
+    <rect x="368" y="14" width="48" height="20" rx="10" fill="rgba(255,107,173,0.3)"/>
+    <text x="392" y="28" fill="#ff6bad" font-size="10" font-weight="600" text-anchor="middle">pink</text>
+
+    <rect x="424" y="14" width="48" height="20" rx="10" fill="rgba(255,255,255,0.18)"/>
+    <text x="448" y="28" fill="rgba(255,255,255,0.75)" font-size="10" font-weight="600" text-anchor="middle">gray</text>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- SPACING & SIZING REFERENCE -->
+  <!-- ========================================== -->
+  <g id="spacing-ref" transform="translate(40, 1220)">
+    <text x="0" y="0" fill="rgba(255,255,255,0.4)" font-size="11" font-weight="600" text-transform="uppercase" letter-spacing="1.5">spacing &amp; sizing reference</text>
+
+    <!-- Border radii -->
+    <g transform="translate(0, 30)">
+      <text x="0" y="0" fill="rgba(255,255,255,0.6)" font-size="13" font-weight="700">border radii</text>
+      <rect x="0" y="14" width="80" height="50" rx="20" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+      <text x="40" y="44" fill="rgba(255,255,255,0.5)" font-size="10" font-weight="600" text-anchor="middle">20px</text>
+      <text x="40" y="78" fill="rgba(255,255,255,0.35)" font-size="9" text-anchor="middle">workspace</text>
+
+      <rect x="100" y="14" width="80" height="50" rx="16" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+      <text x="140" y="44" fill="rgba(255,255,255,0.5)" font-size="10" font-weight="600" text-anchor="middle">16px</text>
+      <text x="140" y="78" fill="rgba(255,255,255,0.35)" font-size="9" text-anchor="middle">cubby</text>
+
+      <rect x="200" y="14" width="80" height="50" rx="12" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+      <text x="240" y="44" fill="rgba(255,255,255,0.5)" font-size="10" font-weight="600" text-anchor="middle">12px</text>
+      <text x="240" y="78" fill="rgba(255,255,255,0.35)" font-size="9" text-anchor="middle">task / nav / btn</text>
+
+      <rect x="300" y="14" width="50" height="50" rx="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+      <text x="325" y="44" fill="rgba(255,255,255,0.5)" font-size="10" font-weight="600" text-anchor="middle">6px</text>
+      <text x="325" y="78" fill="rgba(255,255,255,0.35)" font-size="9" text-anchor="middle">checkbox</text>
+    </g>
+
+    <!-- Font sizes -->
+    <g transform="translate(420, 30)">
+      <text x="0" y="0" fill="rgba(255,255,255,0.6)" font-size="13" font-weight="700">typography</text>
+      <text x="0" y="26" fill="#ffffff" font-size="36" font-weight="800">36px / 800</text>
+      <text x="0" y="58" fill="#ffffff" font-size="24" font-weight="700">24px / 700</text>
+      <text x="0" y="82" fill="#ffffff" font-size="20" font-weight="700">20px / 700</text>
+      <text x="0" y="104" fill="#ffffff" font-size="16" font-weight="500">16px / 500 — task text</text>
+      <text x="0" y="122" fill="#ffffff" font-size="14" font-weight="500">14px / 500 — subtask, labels</text>
+      <text x="0" y="138" fill="#ffffff" font-size="11" font-weight="600">11px / 600 — due date badges</text>
+      <text x="0" y="152" fill="#ffffff" font-size="10" font-weight="600">10px / 600 — tags, nav labels</text>
+    </g>
+
+    <!-- Key measurements -->
+    <g transform="translate(0, 140)">
+      <text x="0" y="0" fill="rgba(255,255,255,0.6)" font-size="13" font-weight="700">key measurements</text>
+      <text x="0" y="22" fill="rgba(255,255,255,0.5)" font-size="12" font-weight="500">border width: 2px (all cards, nav buttons)</text>
+      <text x="0" y="40" fill="rgba(255,255,255,0.5)" font-size="12" font-weight="500">nav bar height: 60px + safe area</text>
+      <text x="0" y="58" fill="rgba(255,255,255,0.5)" font-size="12" font-weight="500">nav button height: 50px</text>
+      <text x="0" y="76" fill="rgba(255,255,255,0.5)" font-size="12" font-weight="500">task gap: 12px (between elements)</text>
+      <text x="0" y="94" fill="rgba(255,255,255,0.5)" font-size="12" font-weight="500">card padding: 24px (workspace), 20px (cubby), 14px (task)</text>
+      <text x="0" y="112" fill="rgba(255,255,255,0.5)" font-size="12" font-weight="500">checkbox: 24px (task), 20px (subtask)</text>
+      <text x="0" y="130" fill="rgba(255,255,255,0.5)" font-size="12" font-weight="500">progress bar: 48px wide, 6px tall</text>
+      <text x="0" y="148" fill="rgba(255,255,255,0.5)" font-size="12" font-weight="500">due date badge: 64px wide</text>
+      <text x="0" y="166" fill="rgba(255,255,255,0.5)" font-size="12" font-weight="500">subtask counter: 44px wide</text>
+      <text x="0" y="184" fill="rgba(255,255,255,0.5)" font-size="12" font-weight="500">app background: #0a0a0f</text>
+    </g>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- NAV BAR COLOR STATES -->
+  <!-- ========================================== -->
+  <g id="nav-colors" transform="translate(740, 1080)">
+    <text x="0" y="0" fill="rgba(255,255,255,0.4)" font-size="11" font-weight="600" text-transform="uppercase" letter-spacing="1.5">nav tab active colors</text>
+
+    <g transform="translate(0, 16)">
+      <rect x="0" y="0" width="80" height="40" rx="12" fill="rgba(107,163,255,0.08)" stroke="rgba(107,163,255,0.4)" stroke-width="2"/>
+      <text x="40" y="24" fill="#6BA3FF" font-size="10" font-weight="600" text-anchor="middle">home</text>
+    </g>
+    <g transform="translate(88, 16)">
+      <rect x="0" y="0" width="80" height="40" rx="12" fill="rgba(90,240,224,0.08)" stroke="rgba(90,240,224,0.4)" stroke-width="2"/>
+      <text x="40" y="24" fill="#5AF0E0" font-size="10" font-weight="600" text-anchor="middle">tasks</text>
+    </g>
+    <g transform="translate(176, 16)">
+      <rect x="0" y="0" width="80" height="40" rx="12" fill="rgba(199,125,255,0.08)" stroke="rgba(199,125,255,0.4)" stroke-width="2"/>
+      <text x="40" y="24" fill="#C77DFF" font-size="10" font-weight="600" text-anchor="middle">search</text>
+    </g>
+    <g transform="translate(264, 16)">
+      <rect x="0" y="0" width="80" height="40" rx="12" fill="rgba(255,107,173,0.08)" stroke="rgba(255,107,173,0.4)" stroke-width="2"/>
+      <text x="40" y="24" fill="#FF6BAD" font-size="10" font-weight="600" text-anchor="middle">user</text>
+    </g>
+    <g transform="translate(352, 16)">
+      <rect x="0" y="0" width="80" height="40" rx="12" fill="rgba(255,176,90,0.08)" stroke="rgba(255,176,90,0.4)" stroke-width="2"/>
+      <text x="40" y="24" fill="#FFB05A" font-size="10" font-weight="600" text-anchor="middle">cubbies</text>
+    </g>
+    <g transform="translate(440, 16)">
+      <rect x="0" y="0" width="80" height="40" rx="12" fill="rgba(255,232,90,0.08)" stroke="rgba(255,232,90,0.4)" stroke-width="2"/>
+      <text x="40" y="24" fill="#FFE85A" font-size="10" font-weight="600" text-anchor="middle">notes</text>
+    </g>
+    <g transform="translate(528, 16)">
+      <rect x="0" y="0" width="80" height="40" rx="12" fill="rgba(107,245,160,0.08)" stroke="rgba(107,245,160,0.4)" stroke-width="2"/>
+      <text x="40" y="24" fill="#6BF5A0" font-size="10" font-weight="600" text-anchor="middle">+ new</text>
+    </g>
+  </g>
+
+  <!-- Full background -->
+  <rect x="0" y="0" width="1400" height="1600" rx="0" fill="#0a0a0f" style="pointer-events:none;" opacity="0" />
+</svg>
