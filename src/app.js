@@ -356,10 +356,9 @@ function updateNavBar() {
         var tabName = tab.dataset.tab;
         var isActive = false;
         if (tabName === 'cubbies') {
-            isActive = currentView === 'home' || currentView === 'room' || currentView === 'cubby';
+            isActive = currentView === 'room' || currentView === 'cubby';
         } else if (tabName === 'home') {
-            // Home tab does not highlight — Cubbies covers home/room/cubby
-            isActive = false;
+            isActive = currentView === 'home';
         } else if (tabName === 'profile') {
             isActive = currentView === 'settings' || currentView === 'archive' || currentView === 'trash';
         } else {

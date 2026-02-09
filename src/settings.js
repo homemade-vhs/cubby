@@ -203,7 +203,7 @@ function renderSettings() {
     html += '</div>';
 
     // ---- Version ----
-    html += '<div class="settings-version">CUBBY v1.1.2</div>';
+    html += '<div class="settings-version">CUBBY v1.1.3</div>';
 
     container.innerHTML = html;
 

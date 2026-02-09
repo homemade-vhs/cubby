@@ -175,11 +175,14 @@ function renderDashboardUpcoming(skipAnimation) {
         var dateTheme = dueDateColorThemes[classification] || dueDateColorThemes['no-date'];
         var cubbyTheme = colorThemes[item.cubbyColor] || colorThemes.purple;
 
-        html += '<div class="upcoming-task" onclick="navigateToTask(\'' + item.roomId + '\', \'' + item.cubbyId + '\', \'' + item.subcubbyId + '\', \'' + task.id + '\')">';
+        html += '<div class="upcoming-task" style="background:' + cubbyTheme.card + '; border-color:' + cubbyTheme.border + ';" onclick="navigateToTask(\'' + item.roomId + '\', \'' + item.cubbyId + '\', \'' + item.subcubbyId + '\', \'' + task.id + '\')">';
         // Cubby color dot
         html += '<div class="upcoming-cubby-dot" style="background:' + cubbyTheme.primary + '" title="' + item.cubbyName + '"></div>';
-        // Task text
-        html += '<span class="upcoming-task-text" style="text-transform: none;">' + task.text + '</span>';
+        // Task text + cubby name
+        html += '<div class="upcoming-task-info">';
+        html += '<span class="upcoming-task-text" style="text-transform: none; color:' + cubbyTheme.text + '">' + task.text + '</span>';
+        html += '<span class="upcoming-cubby-name" style="color:' + cubbyTheme.textMuted + '">' + item.cubbyName + '</span>';
+        html += '</div>';
         // Due date pill
         if (dueDateInfo.text) {
             html += '<span class="upcoming-due-pill" style="color:' + dateTheme.primary + '; background:' + dateTheme.card + '; border-color:' + dateTheme.border + '">' + dueDateInfo.text + '</span>';
