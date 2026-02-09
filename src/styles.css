@@ -328,11 +328,11 @@
 
 .cubby-color-row { margin-top: 12px; }
 .cubby-color-row label { display: block; font-size: 14px; color: rgba(255,255,255,0.6); font-weight: 500; margin-bottom: 8px; }
-.cubby-color-options { display: flex; gap: 8px; justify-content: space-between; }
-.cubby-color-swatch { display: flex; align-items: center; justify-content: center; position: relative; width: 40px; height: 40px; border-radius: 10px; border: 2px solid transparent; cursor: pointer; transition: all 0.15s ease; flex-shrink: 0; }
+.cubby-color-options { display: flex; gap: 6px; justify-content: space-between; }
+.cubby-color-swatch { display: flex; align-items: center; justify-content: center; position: relative; width: 32px; height: 32px; border-radius: 8px; border: 2px solid transparent; cursor: pointer; transition: all 0.15s ease; flex-shrink: 0; }
 .cubby-color-swatch:hover { transform: scale(1.08); }
 .cubby-color-swatch.selected { box-shadow: 0 0 0 2px rgba(255,255,255,0.4); }
-.cubby-color-swatch .cubby-color-dot { width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; }
+.cubby-color-swatch .cubby-color-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
 .cubby-color-swatch.none { position: relative; }
 .cubby-color-swatch.none svg { position: absolute; }
 .cubby-color-swatch.none .cubby-color-dot { opacity: 0.4; }
