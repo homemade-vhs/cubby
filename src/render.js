@@ -26,69 +26,69 @@ function renderHome(skipAnimation) {
         }
     }
 
-    // Get sections container
+    // Get sections container and apply layout customization if it exists
     var sectionsContainer = document.getElementById('home-sections-container');
-    if (!sectionsContainer) return;
+    if (sectionsContainer) {
+        // Reorder sections based on homeLayout
+        var layout = appData.settings.homeLayout || [];
+        layout.forEach(function(section) {
+            var wrapper = sectionsContainer.querySelector('[data-section-id="' + section.id + '"]');
+            if (wrapper) {
+                sectionsContainer.appendChild(wrapper);
+            }
+        });
 
-    // Reorder sections based on homeLayout
-    var layout = appData.settings.homeLayout || [];
-    layout.forEach(function(section) {
-        var wrapper = sectionsContainer.querySelector('[data-section-id="' + section.id + '"]');
-        if (wrapper) {
-            sectionsContainer.appendChild(wrapper);
-        }
-    });
+        // Apply visibility and edit mode to each section
+        layout.forEach(function(section, index) {
+            var wrapper = sectionsContainer.querySelector('[data-section-id="' + section.id + '"]');
+            if (!wrapper) return;
 
-    // Apply visibility and edit mode to each section
-    layout.forEach(function(section, index) {
-        var wrapper = sectionsContainer.querySelector('[data-section-id="' + section.id + '"]');
-        if (!wrapper) return;
-
-        // Set visibility
-        if (section.visible) {
-            wrapper.style.display = '';
-            wrapper.classList.remove('hidden');
-        } else {
-            if (homeEditMode) {
+            // Set visibility
+            if (section.visible) {
                 wrapper.style.display = '';
-                wrapper.classList.add('hidden');
+                wrapper.classList.remove('hidden');
             } else {
-                wrapper.style.display = 'none';
-            }
-        }
-
-        // Set edit mode
-        if (homeEditMode) {
-            wrapper.classList.add('editing');
-            
-            // Remove existing controls
-            var existingControls = wrapper.querySelector('.home-section-controls');
-            if (existingControls) {
-                existingControls.remove();
+                if (homeEditMode) {
+                    wrapper.style.display = '';
+                    wrapper.classList.add('hidden');
+                } else {
+                    wrapper.style.display = 'none';
+                }
             }
 
-            // Add controls
-            var controlsHtml = '<div class="home-section-controls">' +
-                '<span class="home-section-label-text">' + section.label + '</span>' +
-                '<button class="home-section-control-btn' + (index === 0 ? ' disabled' : '') + '" onclick="moveHomeSectionUp(\'' + section.id + '\')">' +
-                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg>' +
-                '</button>' +
-                '<button class="home-section-control-btn' + (index === layout.length - 1 ? ' disabled' : '') + '" onclick="moveHomeSectionDown(\'' + section.id + '\')">' +
-                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>' +
-                '</button>' +
-                '<button class="home-section-control-btn" onclick="toggleHomeSection(\'' + section.id + '\')">' +
-                (section.visible ? 'hide' : 'show') +
-                '</button>' +
-                '</div>';
-            wrapper.insertAdjacentHTML('afterbegin', controlsHtml);
-        } else {
-            wrapper.classList.remove('editing', 'hidden');
-            var existingControls = wrapper.querySelector('.home-section-controls');
-            if (existingControls) {
-                existingControls.remove();
+            // Set edit mode
+            if (homeEditMode) {
+                wrapper.classList.add('editing');
+                
+                // Remove existing controls
+                var existingControls = wrapper.querySelector('.home-section-controls');
+                if (existingControls) {
+                    existingControls.remove();
+                }
+
+                // Add controls
+                var controlsHtml = '<div class="home-section-controls">' +
+                    '<span class="home-section-label-text">' + section.label + '</span>' +
+                    '<button class="home-section-control-btn' + (index === 0 ? ' disabled' : '') + '" onclick="moveHomeSectionUp(\'' + section.id + '\')">' +
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg>' +
+                    '</button>' +
+                    '<button class="home-section-control-btn' + (index === layout.length - 1 ? ' disabled' : '') + '" onclick="moveHomeSectionDown(\'' + section.id + '\')">' +
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>' +
+                    '</button>' +
+                    '<button class="home-section-control-btn" onclick="toggleHomeSection(\'' + section.id + '\')">' +
+                    (section.visible ? 'hide' : 'show') +
+                    '</button>' +
+                    '</div>';
+                wrapper.insertAdjacentHTML('afterbegin', controlsHtml);
+            } else {
+                wrapper.classList.remove('editing', 'hidden');
+                var existingControls = wrapper.querySelector('.home-section-controls');
+                if (existingControls) {
+                    existingControls.remove();
+                }
             }
-        }
-    });
+        });
+    }
 
     // Render dashboard stats
     renderDashboardStats(skipAnimation);
