@@ -110,6 +110,7 @@ var currentView = 'home';
 var currentRoom = null;
 var currentCubby = null;
 var cubbyDateColorMode = false; // When true, tasks in cubby use due-date-based colors
+var homeEditMode = false; // When true, home is in edit/customize mode
 
 // ============================================
 // LOCALSTORAGE FUNCTIONS
@@ -149,6 +150,14 @@ function loadData() {
             }
             if (appData.settings.userName === undefined) {
                 appData.settings.userName = '';
+            }
+            if (!appData.settings.homeLayout) {
+                appData.settings.homeLayout = [
+                    { id: 'stats', visible: true, label: 'Quick Stats' },
+                    { id: 'upcoming', visible: true, label: 'Upcoming Tasks' },
+                    { id: 'quick-actions', visible: true, label: 'Quick Actions' },
+                    { id: 'workspaces', visible: true, label: 'Workspaces' }
+                ];
             }
         } catch (e) {
             console.error('Error loading data:', e);
@@ -201,7 +210,13 @@ function initializeDefaultData() {
                 customDays: 30,
                 dateChange: 'new-week',
                 weekStart: 'monday'
-            }
+            },
+            homeLayout: [
+                { id: 'stats', visible: true, label: 'Quick Stats' },
+                { id: 'upcoming', visible: true, label: 'Upcoming Tasks' },
+                { id: 'quick-actions', visible: true, label: 'Quick Actions' },
+                { id: 'workspaces', visible: true, label: 'Workspaces' }
+            ]
         }
     };
     saveData();
@@ -474,6 +489,46 @@ var dueDateColorThemes = {
     'later':     { primary: '#ffffff', bg: '#0a0a0f', card: 'rgba(255,255,255,0.05)', cardHover: 'rgba(255,255,255,0.08)', border: 'rgba(255,255,255,0.12)', text: '#ffffff', textMuted: 'rgba(255,255,255,0.5)', glow: 'rgba(255,255,255,0.1)' },
     'no-date':   { primary: 'rgba(255,255,255,0.3)', bg: '#0a0a0f', card: 'rgba(255,255,255,0.03)', cardHover: 'rgba(255,255,255,0.06)', border: 'rgba(255,255,255,0.08)', text: '#ffffff', textMuted: 'rgba(255,255,255,0.35)', glow: 'rgba(255,255,255,0.05)' }
 };
+
+// ============================================
+// HOME LAYOUT CUSTOMIZATION
+// ============================================
+
+function toggleHomeEditMode() {
+    homeEditMode = !homeEditMode;
+    renderHome();
+}
+
+function toggleHomeSection(sectionId) {
+    var section = appData.settings.homeLayout.find(function(s) { return s.id === sectionId; });
+    if (section) {
+        section.visible = !section.visible;
+        saveData();
+        renderHome();
+    }
+}
+
+function moveHomeSectionUp(sectionId) {
+    var index = appData.settings.homeLayout.findIndex(function(s) { return s.id === sectionId; });
+    if (index > 0) {
+        var temp = appData.settings.homeLayout[index];
+        appData.settings.homeLayout[index] = appData.settings.homeLayout[index - 1];
+        appData.settings.homeLayout[index - 1] = temp;
+        saveData();
+        renderHome();
+    }
+}
+
+function moveHomeSectionDown(sectionId) {
+    var index = appData.settings.homeLayout.findIndex(function(s) { return s.id === sectionId; });
+    if (index >= 0 && index < appData.settings.homeLayout.length - 1) {
+        var temp = appData.settings.homeLayout[index];
+        appData.settings.homeLayout[index] = appData.settings.homeLayout[index + 1];
+        appData.settings.homeLayout[index + 1] = temp;
+        saveData();
+        renderHome();
+    }
+}
 
 // ============================================
 // INITIALIZATION

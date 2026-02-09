@@ -35,9 +35,31 @@
     .greeting h1 { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
     .greeting p { font-size: 16px; color: rgba(255,255,255,0.5); font-weight: 500; }
     #greeting-date { font-size: 14px; color: rgba(255,255,255,0.35); font-weight: 500; margin-top: 2px; }
+    .home-header-actions { display: flex; gap: 8px; }
+    .home-edit-btn { padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; color: rgba(255,255,255,0.4); cursor: pointer; transition: all 0.2s ease; }
+    .home-edit-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); }
+    .home-edit-btn:active { transform: scale(0.95); }
+    .home-edit-btn.active { background: rgba(107, 163, 255, 0.15); border-color: rgba(107, 163, 255, 0.3); color: #6ba3ff; }
     .signout-btn { padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; color: rgba(255,255,255,0.4); cursor: pointer; transition: all 0.2s ease; }
     .signout-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); }
     .signout-btn:active { transform: scale(0.95); }
+
+    /* Home Edit Mode */
+    .home-section-wrapper { position: relative; }
+    .home-section-wrapper.editing { padding: 16px; background: rgba(255,255,255,0.02); border: 2px dashed rgba(255,255,255,0.1); border-radius: 16px; margin-bottom: 20px; }
+    .home-section-wrapper.editing.hidden { opacity: 0.4; }
+    .home-section-controls { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .home-section-label-text { flex: 1; font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.5); letter-spacing: 0.5px; }
+    .home-section-control-btn { padding: 6px 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: rgba(255,255,255,0.4); cursor: pointer; font-size: 11px; font-weight: 600; font-family: inherit; transition: all 0.2s ease; display: flex; align-items: center; gap: 4px; }
+    .home-section-control-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); }
+    .home-section-control-btn:active { transform: scale(0.92); }
+    .home-section-control-btn.disabled { opacity: 0.3; pointer-events: none; }
+    .home-section-control-btn svg { width: 14px; height: 14px; }
+    .home-edit-banner { background: rgba(107, 163, 255, 0.1); border: 1px solid rgba(107, 163, 255, 0.2); border-radius: 16px; padding: 16px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; }
+    .home-edit-banner-text { font-size: 13px; font-weight: 600; color: #6ba3ff; }
+    .home-edit-done-btn { padding: 8px 16px; background: rgba(107, 163, 255, 0.15); border: 1px solid rgba(107, 163, 255, 0.3); border-radius: 10px; color: #6ba3ff; cursor: pointer; font-size: 13px; font-weight: 700; font-family: inherit; transition: all 0.2s ease; }
+    .home-edit-done-btn:hover { background: rgba(107, 163, 255, 0.25); }
+    .home-edit-done-btn:active { transform: scale(0.92); }
 
     /* Dashboard Stats */
     .dashboard-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; }

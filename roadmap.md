@@ -18,7 +18,7 @@
 ## Phase 2: Home & UI Improvements
 
 - [x] **Dashboard Home Screen** — Quick stats (overdue/today/this week/done), upcoming tasks feed, quick action buttons, date display
-- [ ] **App Home Customization** — Let users reorder/hide dashboard sections, pin cubbies, add widgets
+- [x] **App Home Customization** — Let users reorder/hide dashboard sections, pin cubbies, add widgets
 - [ ] **Icons for Tasks / Cubbies** — Choose or upload icons to assign to tasks, cubbies, rooms, etc.
 - [ ] **Overdue styling** — More vivid red border for overdue tasks, thicker border
 
