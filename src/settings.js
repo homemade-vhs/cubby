@@ -180,19 +180,18 @@ function renderSettings() {
     html += '<div class="settings-section-header">Theme Colors</div>';
     html += '<p class="settings-description">Click a color to customize it. Changes apply to all cubbies using that color.</p>';
     html += '<div class="settings-card">';
-    html += '<div class="color-editor-grid">';
+    html += '<div class="cubby-color-options">';
     var colorNames = ['blue', 'purple', 'pink', 'red', 'orange', 'yellow', 'green', 'teal'];
     var customColors = (settings.customColors) || {};
     colorNames.forEach(function(name) {
         var currentColor = colorThemes[name].primary;
         var isCustom = customColors[name] ? true : false;
-        html += '<div class="color-editor-item">';
-        html += '<div class="color-editor-swatch" style="background: ' + currentColor + ';" onclick="document.getElementById(\'color-pick-' + name + '\').click()">';
-        if (isCustom) html += '<span class="color-custom-dot"></span>';
+        var theme = colorThemes[name];
+        html += '<div class="cubby-color-swatch' + (isCustom ? ' customized' : '') + '" style="background:' + theme.card + ';border-color:' + theme.border + '" onclick="document.getElementById(\'color-pick-' + name + '\').click()">';
+        html += '<span class="cubby-color-dot" style="background:' + currentColor + '"></span>';
+        if (isCustom) html += '<span class="color-custom-indicator"></span>';
         html += '</div>';
-        html += '<span class="color-editor-label">' + name.charAt(0).toUpperCase() + name.slice(1) + '</span>';
         html += '<input type="color" id="color-pick-' + name + '" value="' + currentColor + '" style="display:none" onchange="setCustomColor(\'' + name + '\', this.value)">';
-        html += '</div>';
     });
     html += '</div>';
     var hasCustom = Object.keys(customColors).length > 0;
@@ -200,10 +199,10 @@ function renderSettings() {
         html += '<button class="settings-action-btn" onclick="resetAllColors()" style="margin-top: 12px;">Reset All to Defaults</button>';
     }
     html += '</div>';
-    html += '</div>';
+    html += '</div>';;
 
     // ---- Version ----
-    html += '<div class="settings-version">CUBBY v1.2.2</div>';
+    html += '<div class="settings-version">CUBBY v1.2.3</div>';
 
     container.innerHTML = html;
 

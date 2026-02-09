@@ -2387,49 +2387,22 @@
 /* ============================================ */
 /* COLOR EDITOR */
 /* ============================================ */
-.color-editor-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-}
-.color-editor-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-}
-.color-editor-swatch {
-    width: 44px;
-    height: 44px;
-    border-radius: 14px;
-    cursor: pointer;
+/* Theme color customization indicator */
+.cubby-color-swatch.customized {
     position: relative;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-    border: 2px solid rgba(255, 255, 255, 0.1);
 }
-.color-editor-swatch:hover {
-    transform: scale(1.12);
-    box-shadow: 0 0 16px rgba(255, 255, 255, 0.15);
-}
-.color-editor-swatch:active {
-    transform: scale(0.95);
-}
-.color-custom-dot {
+.color-custom-indicator {
     position: absolute;
-    top: -3px;
-    right: -3px;
-    width: 10px;
-    height: 10px;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background: #fff;
-    border: 2px solid #0a0a0f;
+    border: 1.5px solid #0a0a0f;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
-.color-editor-label {
-    font-size: 11px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.4);
-    text-transform: lowercase;
-}
+
 /* ============================================ */
 /* GLOBAL HOVER & CLICK EFFECTS */
 /* ============================================ */
