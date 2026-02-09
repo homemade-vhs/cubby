@@ -4,7 +4,7 @@
 2026-02-08
 
 ## Current Status
-Dashboard home screen shipped (v1.1.2). Supabase auth works but cloud sync tables are not yet connected.
+Cubbies browse screen shipped (v1.1.4). Dashboard home screen live. Phase 1 complete. Supabase auth works but cloud sync tables are not yet connected.
 
 ## What's Done
 - App is fully functional with localStorage (rooms, cubbies, subcubbies, tasks, subtasks)
@@ -13,10 +13,13 @@ Dashboard home screen shipped (v1.1.2). Supabase auth works but cloud sync table
 - Auth screen UI exists with styling
 - Cloud task functions are stubbed out in `supabase.js` but NOT connected to the app yet
 - All actual data still lives in localStorage only
-- **Dashboard home screen** — Quick stats row, upcoming tasks feed, quick actions, date display
+- **Dashboard home screen** (v1.1.2) — Quick stats row, upcoming tasks feed, quick actions, date display
+- **Nav bar remapping** (v1.1.3) — Home highlights on dashboard, Cubbies highlights on browse/room/cubby; upcoming tasks colored by cubby with cubby names
+- **Cubbies browse screen** (v1.1.4) — Dedicated workspace/cubby list accessible from Cubbies nav tab
+- **Phase 1 complete** — All 14 items marked done
 
 ## What's Next
-1. **Phase 1 remaining items** — Views refinements, cubby creation improvements, cubby settings button, due date color mode in cubbies
+1. **Notebooks** — Phase 3 feature, contenteditable approach for MVP
 2. **Home customization** — Let users reorder/hide dashboard sections, pin cubbies, widget system
 3. **Create Supabase database tables** — design the schema to match the app's hierarchy
 4. **Hook up cloud functions** — replace/supplement localStorage calls with Supabase reads and writes

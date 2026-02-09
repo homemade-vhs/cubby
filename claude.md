@@ -67,7 +67,7 @@ There are several .md files for you to reference. Please check them at the start
 
 ## Current Features
 
-These features exist and work in the current build (v1.1.2):
+These features exist and work in the current build (v1.1.4):
 
 ### App Hierarchy
 **Workspaces > Cubbies > Subcubbies > Tasks > Subtasks**
@@ -79,20 +79,28 @@ These features exist and work in the current build (v1.1.2):
 
 ### Navigation
 - **Bottom nav bar** with 7 tabs (left to right): Tasks, Notes, Cubbies, New (+), Home, Search, Profile
-  - Cubbies tab highlights when on home, room, or cubby screens
+  - Home tab highlights on the dashboard home screen
+  - Cubbies tab highlights on cubbies browse, room, or cubby screens
   - New (+) button uses dark green theme styling
   - Notes tab is a placeholder (not yet functional)
   - Search opens a modal overlay while keeping the nav bar visible with the Search tab highlighted
 - **Three-screen navigation**: Home > Room > Cubby views with back buttons
+- **Cubbies Browse Screen**: Dedicated screen for browsing all workspaces and cubbies, accessible from Cubbies nav tab
 - **Profile tab** opens Settings screen
 
 ### Dashboard Home Screen
 - **Greeting + date**: Personalized time-based greeting with today's date (day of week, month, day)
 - **Quick Stats row**: 4 stat cards showing Overdue (red), Today (yellow), This Week (blue), Done this week (green) — tapping Overdue/Today/This Week opens Views filtered to that category
-- **Upcoming Tasks widget**: Shows next 7 upcoming tasks sorted by due date, with cubby color dot, task name, and due date pill. Tapping a task navigates to it in its cubby with highlight. "See all" button opens Views.
+- **Upcoming Tasks widget**: Shows next 7 upcoming tasks sorted by due date, with cubby color dot, cubby name label, task name, and due date pill. Tapping a task navigates to it in its cubby with highlight. "See all" button opens Views.
 - **Quick Actions row**: 4 icon buttons — New Task, New Cubby, New Workspace, All Tasks
 - **Workspaces section**: Room cards with workspace label above them
 - **Search bar**: Quick access to global search (Cmd+K)
+
+### Cubbies Browse Screen
+- **Workspace sections**: Each workspace displayed as an expandable section with name, cubby count, and arrow to navigate to workspace
+- **Cubby list items**: Each cubby shows color dot, name, active task count, and arrow to jump directly into the cubby
+- **New Workspace button**: Quick-add button at bottom of the browse list
+- **Direct navigation**: Tapping a cubby navigates directly into it; tapping workspace header goes to the room view
 
 ### User Accounts & Sync
 - **Supabase authentication**: Email/password sign-in and sign-up
