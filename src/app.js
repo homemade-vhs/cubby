@@ -158,6 +158,8 @@ function loadData() {
                     { id: 'quick-actions', visible: true, label: 'Quick Actions' },
                     { id: 'workspaces', visible: true, label: 'Workspaces' }
                 ];
+                // Save the migrated data immediately
+                saveData();
             }
         } catch (e) {
             console.error('Error loading data:', e);
