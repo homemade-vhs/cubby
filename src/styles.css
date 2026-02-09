@@ -1312,33 +1312,30 @@
 /* DRAG & DROP STYLES */
 /* ============================================ */
 
-/* Element being dragged (original position — highlighted) */
+/* Element being dragged (original position placeholder) */
 .dragging {
-    opacity: 0.5 !important;
+    opacity: 0 !important;
     pointer-events: none;
-    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.25) !important;
-    border-radius: inherit;
 }
 
-/* Drag clone (the element you see moving — frosted glass effect) */
+/* Drag clone (the element you see moving — frosted glass, highlighted) */
 .drag-clone {
-    opacity: 0.7 !important;
+    opacity: 1 !important;
     transform: scale(1.03) !important;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.15) !important;
     cursor: grabbing !important;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
     will-change: transform, top;
     backdrop-filter: blur(24px) saturate(1.4);
     -webkit-backdrop-filter: blur(24px) saturate(1.4);
-    background: rgba(20, 20, 30, 0.4) !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    filter: brightness(1.15) saturate(1.1);
 }
 
-/* Override cubby card theme for glass look during drag */
+/* Keep clone card styling visible (highlighted, not muted) */
 .drag-clone.task,
 .drag-clone.subtask {
-    background: rgba(20, 20, 30, 0.4) !important;
-    border-color: rgba(255, 255, 255, 0.15) !important;
+    background: var(--cubby-card-hover) !important;
+    border-color: var(--cubby-border) !important;
 }
 
 .drag-clone .subcubby-tasks {
