@@ -261,9 +261,20 @@ function openViews() {
     updateNavBar();
 }
 
+function openCubbiesBrowse() {
+    currentView = 'cubbies';
+    currentRoom = null;
+    currentCubby = null;
+    hideAllScreens();
+    document.getElementById('cubbies-screen').classList.add('active');
+    renderCubbiesBrowse();
+    updateNavBar();
+}
+
 function hideAllScreens() {
     document.getElementById('home-screen').classList.remove('active');
     document.getElementById('views-screen').classList.remove('active');
+    document.getElementById('cubbies-screen').classList.remove('active');
     document.getElementById('room-screen').classList.remove('active');
     document.getElementById('cubby-screen').classList.remove('active');
     document.getElementById('settings-screen').classList.remove('active');
@@ -356,7 +367,7 @@ function updateNavBar() {
         var tabName = tab.dataset.tab;
         var isActive = false;
         if (tabName === 'cubbies') {
-            isActive = currentView === 'room' || currentView === 'cubby';
+            isActive = currentView === 'cubbies' || currentView === 'room' || currentView === 'cubby';
         } else if (tabName === 'home') {
             isActive = currentView === 'home';
         } else if (tabName === 'profile') {

@@ -47,6 +47,79 @@ function renderHome(skipAnimation) {
 }
 
 // ============================================
+// CUBBIES BROWSE SCREEN
+// ============================================
+
+function renderCubbiesBrowse() {
+    var container = document.getElementById('cubbies-browse-container');
+    if (!container) return;
+
+    var html = '';
+
+    if (appData.rooms.length === 0) {
+        html += '<div class="cubbies-browse-empty">no workspaces yet — create one from the home screen!</div>';
+        container.innerHTML = html;
+        return;
+    }
+
+    appData.rooms.forEach(function(room, r) {
+        var roomColor = room.color;
+        var roomTheme = roomColor ? (colorThemes[roomColor] || colorThemes.purple) : null;
+        var animClass = ' animate-in delay-' + (r + 1);
+        var headerStyle = roomTheme ? ' style="color:' + roomTheme.text + '"' : '';
+        var countStyle = roomTheme ? ' style="color:' + roomTheme.textMuted + '"' : '';
+        var sectionBg = roomTheme ? 'background:' + roomTheme.bg + '; border-color:' + roomTheme.border + ';' : '';
+
+        html += '<div class="cubbies-browse-section' + animClass + '" style="' + sectionBg + '">';
+        html += '<div class="cubbies-browse-section-header" onclick="selectRoom(\'' + room.id + '\')">';
+        html += '<div class="cubbies-browse-section-info">';
+        html += '<h2' + headerStyle + '>' + room.name + '</h2>';
+        html += '<span class="cubbies-browse-count"' + countStyle + '>' + room.cubbies.length + ' cubbies</span>';
+        html += '</div>';
+        html += '<span class="cubbies-browse-arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="' + (roomTheme ? roomTheme.textMuted : 'rgba(255,255,255,0.3)') + '" stroke-width="2"><path d="M9 6L15 12L9 18"/></svg></span>';
+        html += '</div>';
+
+        // List cubbies in this workspace
+        if (room.cubbies.length > 0) {
+            html += '<div class="cubbies-browse-list">';
+            room.cubbies.forEach(function(cubby) {
+                var theme = colorThemes[cubby.color] || colorThemes.purple;
+                var taskCount = 0;
+                var cubbyData = appData.cubbies[cubby.id];
+                if (cubbyData) {
+                    cubbyData.subcubbies.forEach(function(sub) {
+                        taskCount += sub.tasks.filter(function(t) { return !t.completed; }).length;
+                    });
+                }
+                html += '<div class="cubbies-browse-item" onclick="event.stopPropagation(); browseSelectCubby(\'' + room.id + '\', \'' + cubby.id + '\')">';
+                html += '<div class="cubbies-browse-dot" style="background:' + theme.primary + '"></div>';
+                html += '<span class="cubbies-browse-name" style="color:' + theme.text + '">' + cubby.name + '</span>';
+                html += '<span class="cubbies-browse-task-count" style="color:' + theme.textMuted + '">' + taskCount + ' tasks</span>';
+                html += '<svg class="cubbies-browse-item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="' + theme.textMuted + '" stroke-width="2"><path d="M9 6L15 12L9 18"/></svg>';
+                html += '</div>';
+            });
+            html += '</div>';
+        }
+
+        html += '</div>';
+    });
+
+    // Add new workspace button
+    html += '<div class="cubbies-browse-add animate-in delay-' + (appData.rooms.length + 1) + '" onclick="openNewRoomModal()">';
+    html += '<span class="plus">+</span><span class="text">new workspace</span>';
+    html += '</div>';
+
+    container.innerHTML = html;
+}
+
+// Helper to navigate to a cubby from the browse screen
+function browseSelectCubby(roomId, cubbyId) {
+    currentRoom = appData.rooms.find(function(r) { return r.id === roomId; });
+    if (!currentRoom) return;
+    selectCubby(cubbyId);
+}
+
+// ============================================
 // DASHBOARD STATS
 // ============================================
 
