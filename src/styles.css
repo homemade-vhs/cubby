@@ -1346,7 +1346,7 @@
 .drag-active .cubby-card,
 .drag-active .subcubby,
 .drag-active .task {
-    transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1) !important;
+    transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1);
     pointer-events: none;
 }
 

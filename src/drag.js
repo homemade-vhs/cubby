@@ -294,6 +294,12 @@ function reorderItems(newIndex) {
             item.el.offsetHeight;
             item.el.style.transition = 'transform 0.25s cubic-bezier(0.2, 0, 0, 1)';
             item.el.style.transform = '';
+            // Clean up inline styles after animation
+            (function(el) {
+                setTimeout(function() {
+                    el.style.transition = '';
+                }, 260);
+            })(item.el);
         }
     }
     
