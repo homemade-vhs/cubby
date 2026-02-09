@@ -196,6 +196,41 @@ function updateClonePosition() {
     
     var newTop = dragState.currentY - dragState.offsetY;
     dragState.clone.style.top = newTop + 'px';
+    
+    // Update blur on overlapped items
+    updateDragBlur();
+}
+
+function updateDragBlur() {
+    if (!dragState.clone || !dragState.container) return;
+    
+    var cloneRect = dragState.clone.getBoundingClientRect();
+    
+    for (var i = 0; i < dragState.items.length; i++) {
+        var item = dragState.items[i];
+        if (item === dragState.element) continue; // skip the original placeholder
+        
+        var itemRect = item.getBoundingClientRect();
+        
+        // Check if clone vertically overlaps this item
+        var overlaps = cloneRect.bottom > itemRect.top && cloneRect.top < itemRect.bottom;
+        
+        if (overlaps) {
+            // Calculate overlap amount (0 to 1)
+            var overlapTop = Math.max(cloneRect.top, itemRect.top);
+            var overlapBottom = Math.min(cloneRect.bottom, itemRect.bottom);
+            var overlapHeight = overlapBottom - overlapTop;
+            var itemHeight = itemRect.height || 1;
+            var overlapRatio = Math.min(overlapHeight / itemHeight, 1);
+            
+            var blurAmount = Math.round(overlapRatio * 6); // max 6px blur
+            item.style.filter = 'blur(' + blurAmount + 'px)';
+            item.style.opacity = String(1 - overlapRatio * 0.15);
+        } else {
+            item.style.filter = '';
+            item.style.opacity = '';
+        }
+    }
 }
 
 function checkReorder() {
@@ -283,6 +318,12 @@ function finishDragging() {
     // Remove clone
     if (dragState.clone && dragState.clone.parentNode) {
         dragState.clone.parentNode.removeChild(dragState.clone);
+    }
+    
+    // Clear blur from all items
+    for (var i = 0; i < dragState.items.length; i++) {
+        dragState.items[i].style.filter = '';
+        dragState.items[i].style.opacity = '';
     }
     
     // Remove dragging classes

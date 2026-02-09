@@ -789,20 +789,22 @@ function editRoomColor() {
     var colorOptions = colorNames.map(function(colorName) {
         if (colorName === 'none') {
             var selected = !room.color ? ' selected' : '';
-            return '<div class="color-option' + selected + '" onclick="setRoomColor(\'\')" style="background:rgba(255,255,255,0.03);border:2px solid rgba(255,255,255,0.1);">' +
-                '<span style="color:rgba(255,255,255,0.5)">None</span></div>';
+            return '<div class="cubby-color-swatch none' + selected + '" onclick="setRoomColor(\'\')" style="background:rgba(255,255,255,0.05);border:2px solid ' + (!room.color ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.1)') + ';">' +
+                '<span class="cubby-color-dot" style="background:rgba(255,255,255,0.2)"></span>' +
+                '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linecap="round"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg>' +
+                '</div>';
         }
         var theme = colorThemes[colorName];
         var selected = room.color === colorName ? ' selected' : '';
-        return '<div class="color-option' + selected + '" onclick="setRoomColor(\'' + colorName + '\')" style="background:rgba(0,0,0,0.4);border:2px solid ' + theme.border + ';">' +
-            '<span style="color:' + theme.text + '">' + colorName.charAt(0).toUpperCase() + colorName.slice(1) + '</span></div>';
+        return '<div class="cubby-color-swatch' + selected + '" onclick="setRoomColor(\'' + colorName + '\')" style="background:' + theme.card + ';border:2px solid ' + (room.color === colorName ? theme.primary : theme.border) + ';">' +
+            '<span class="cubby-color-dot" style="background:' + theme.primary + '"></span></div>';
     }).join('');
 
     modal.innerHTML =
         '<div class="modal-backdrop" onclick="closeColorModal()"></div>' +
         '<div class="modal-content" onclick="event.stopPropagation()">' +
             '<h2>Workspace Color</h2>' +
-            '<div class="color-options">' + colorOptions + '</div>' +
+            '<div class="cubby-color-options">' + colorOptions + '</div>' +
             '<div class="modal-buttons">' +
                 '<button class="modal-btn cancel" onclick="closeColorModal()">Cancel</button>' +
             '</div>' +

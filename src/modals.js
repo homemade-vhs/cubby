@@ -347,11 +347,10 @@ function renderCubbyColorOptions() {
     colorNames.forEach(function(color) {
         var theme = colorThemes[color];
         var isSelected = color === modalSelectedCubbyColor;
-        html += '<div class="cubby-color-option' + (isSelected ? ' selected' : '') + '" ' +
-            'style="background:' + theme.card + ';border-color:' + (isSelected ? theme.primary : theme.border) + ';color:' + theme.text + '" ' +
-            'onclick="selectCubbyColor(\'' + color + '\')">' +
+        html += '<div class="cubby-color-swatch' + (isSelected ? ' selected' : '') + '" ' +
+            'style="background:' + theme.card + ';border-color:' + (isSelected ? theme.primary : theme.border) + '" ' +
+            'onclick="selectCubbyColor(\'' + color + '\')">'+
             '<span class="cubby-color-dot" style="background:' + theme.primary + '"></span>' +
-            '<span>' + color.charAt(0).toUpperCase() + color.slice(1) + '</span>' +
             '</div>';
     });
     container.innerHTML = html;
@@ -624,15 +623,15 @@ function openEditCubbyColorModal() {
     var colorOptions = Object.keys(colorThemes).map(function(colorName) {
         var theme = colorThemes[colorName];
         var selected = cubby.color === colorName ? ' selected' : '';
-        return '<div class="color-option' + selected + '" onclick="setCubbyColor(\'' + colorName + '\')" style="background:' + theme.card + ';border:2px solid ' + theme.border + ';">' +
-            '<span style="color:' + theme.text + '">' + colorName.charAt(0).toUpperCase() + colorName.slice(1) + '</span></div>';
+        return '<div class="cubby-color-swatch' + selected + '" onclick="setCubbyColor(\'' + colorName + '\')" style="background:' + theme.card + ';border:2px solid ' + (cubby.color === colorName ? theme.primary : theme.border) + ';">' +
+            '<span class="cubby-color-dot" style="background:' + theme.primary + '"></span></div>';
     }).join('');
     
     modal.innerHTML =
         '<div class="modal-backdrop" onclick="closeColorModal()"></div>' +
         '<div class="modal-content" onclick="event.stopPropagation()">' +
             '<h2>Choose Color</h2>' +
-            '<div class="color-options">' + colorOptions + '</div>' +
+            '<div class="cubby-color-options">' + colorOptions + '</div>' +
             '<div class="modal-buttons">' +
                 '<button class="modal-btn cancel" onclick="closeColorModal()">Cancel</button>' +
             '</div>' +
@@ -778,8 +777,8 @@ function insertLocationPicker() {
         '</button>' +
         '<div class="location-picker-list" id="location-picker-list"></div>';
 
-    // Insert before the task input
-    modalContent.insertBefore(picker, taskInput);
+    // Insert after the task input
+    taskInput.insertAdjacentElement('afterend', picker);
 }
 
 function toggleLocationPicker() {

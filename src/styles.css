@@ -262,11 +262,8 @@
     .add-cubby-btn .plus { color: rgba(255,255,255,0.6); font-size: 18px; font-weight: 600; }
     .add-cubby-btn .text { color: rgba(255,255,255,0.4); font-size: 15px; font-weight: 500; }
     
-    /* Color picker modal */
-    .color-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 16px 0; }
-    .color-option { padding: 16px; border-radius: 12px; cursor: pointer; text-align: center; font-weight: 600; transition: transform 0.15s ease, box-shadow 0.15s ease; }
-    .color-option:hover { transform: scale(1.02); }
-    .color-option.selected { box-shadow: 0 0 0 3px rgba(255,255,255,0.5); }
+    /* Color picker modal (legacy - kept for compatibility) */
+    .color-options { display: flex; gap: 8px; justify-content: space-between; margin: 16px 0; }
     
     /* Task layout */
     .task { display: flex; align-items: center; }
@@ -331,11 +328,14 @@
 
 .cubby-color-row { margin-top: 12px; }
 .cubby-color-row label { display: block; font-size: 14px; color: rgba(255,255,255,0.6); font-weight: 500; margin-bottom: 8px; }
-.cubby-color-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-.cubby-color-option { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 10px; border: 2px solid transparent; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.15s ease; }
-.cubby-color-option:hover { transform: scale(1.02); }
-.cubby-color-option.selected { border-color: currentColor; }
-.cubby-color-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.cubby-color-options { display: flex; gap: 8px; justify-content: space-between; }
+.cubby-color-swatch { display: flex; align-items: center; justify-content: center; position: relative; width: 40px; height: 40px; border-radius: 10px; border: 2px solid transparent; cursor: pointer; transition: all 0.15s ease; flex-shrink: 0; }
+.cubby-color-swatch:hover { transform: scale(1.08); }
+.cubby-color-swatch.selected { box-shadow: 0 0 0 2px rgba(255,255,255,0.4); }
+.cubby-color-swatch .cubby-color-dot { width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; }
+.cubby-color-swatch.none { position: relative; }
+.cubby-color-swatch.none svg { position: absolute; }
+.cubby-color-swatch.none .cubby-color-dot { opacity: 0.4; }
 
 .cubby-room-row { margin-top: 12px; }
 .cubby-room-row label { display: block; font-size: 14px; color: rgba(255,255,255,0.6); font-weight: 500; margin-bottom: 8px; }
@@ -1312,20 +1312,22 @@
 /* DRAG & DROP STYLES */
 /* ============================================ */
 
-/* Element being dragged */
+/* Element being dragged (original position placeholder) */
 .dragging {
-    opacity: 0.4 !important;
+    opacity: 0 !important;
     pointer-events: none;
 }
 
 /* Drag clone (the element you see moving) */
 .drag-clone {
-    opacity: 1 !important;
+    opacity: 0.92 !important;
     transform: scale(1.05) !important;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
     cursor: grabbing !important;
     transition: transform 0.2s ease, box-shadow 0.2s ease !important;
     will-change: transform, top;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
 }
 
 .drag-clone.task,
@@ -1343,7 +1345,7 @@
 .drag-active .cubby-card,
 .drag-active .subcubby,
 .drag-active .task {
-    transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1) !important;
+    transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1), filter 0.2s ease !important;
 }
 
 /* Preparing to drag */
@@ -1386,7 +1388,7 @@
 .drag-active .cubby-card:not(.dragging),
 .drag-active .subcubby:not(.dragging),
 .drag-active .task:not(.dragging) {
-    transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1);
+    transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1), filter 0.2s ease;
 }
 
 /* Touch feedback */
