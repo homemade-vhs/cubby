@@ -1318,34 +1318,38 @@
     pointer-events: none;
 }
 
-/* Drag clone (the element you see moving) */
+/* Drag clone (the element you see moving — frosted glass effect) */
 .drag-clone {
-    opacity: 0.92 !important;
-    transform: scale(1.05) !important;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+    opacity: 0.75 !important;
+    transform: scale(1.03) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.12) !important;
     cursor: grabbing !important;
-    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease !important;
     will-change: transform, top;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+    background: rgba(20, 20, 30, 0.55) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
 }
 
+/* Override cubby card theme for glass look during drag */
 .drag-clone.task,
 .drag-clone.subtask {
-    background: var(--cubby-card-hover) !important;
-    border-color: var(--cubby-border) !important;
+    background: rgba(20, 20, 30, 0.55) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
 .drag-clone .subcubby-tasks {
     display: none !important;
 }
 
-/* Container during drag */
+/* Container during drag — disable hover effects */
 .drag-active .room-card,
 .drag-active .cubby-card,
 .drag-active .subcubby,
 .drag-active .task {
-    transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1), filter 0.2s ease !important;
+    transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1) !important;
+    pointer-events: none;
 }
 
 /* Preparing to drag */
@@ -1388,7 +1392,7 @@
 .drag-active .cubby-card:not(.dragging),
 .drag-active .subcubby:not(.dragging),
 .drag-active .task:not(.dragging) {
-    transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1), filter 0.2s ease;
+    transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1);
 }
 
 /* Touch feedback */
