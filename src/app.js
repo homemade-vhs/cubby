@@ -498,7 +498,7 @@ var dueDateColorThemes = {
 
 function toggleHomeEditMode() {
     homeEditMode = !homeEditMode;
-    renderHome();
+    renderHome(true);
 }
 
 function toggleHomeSection(sectionId) {
@@ -506,7 +506,7 @@ function toggleHomeSection(sectionId) {
     if (section) {
         section.visible = !section.visible;
         saveData();
-        renderHome();
+        renderHome(true);
     }
 }
 
@@ -517,7 +517,7 @@ function moveHomeSectionUp(sectionId) {
         appData.settings.homeLayout[index] = appData.settings.homeLayout[index - 1];
         appData.settings.homeLayout[index - 1] = temp;
         saveData();
-        renderHome();
+        renderHome(true);
     }
 }
 
@@ -528,7 +528,7 @@ function moveHomeSectionDown(sectionId) {
         appData.settings.homeLayout[index] = appData.settings.homeLayout[index + 1];
         appData.settings.homeLayout[index + 1] = temp;
         saveData();
-        renderHome();
+        renderHome(true);
     }
 }
 
