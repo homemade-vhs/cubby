@@ -67,7 +67,7 @@ There are several .md files for you to reference. Please check them at the start
 
 ## Current Features
 
-These features exist and work in the current build (v1.1.0):
+These features exist and work in the current build (v1.1.2):
 
 ### App Hierarchy
 **Workspaces > Cubbies > Subcubbies > Tasks > Subtasks**
@@ -85,6 +85,14 @@ These features exist and work in the current build (v1.1.0):
   - Search opens a modal overlay while keeping the nav bar visible with the Search tab highlighted
 - **Three-screen navigation**: Home > Room > Cubby views with back buttons
 - **Profile tab** opens Settings screen
+
+### Dashboard Home Screen
+- **Greeting + date**: Personalized time-based greeting with today's date (day of week, month, day)
+- **Quick Stats row**: 4 stat cards showing Overdue (red), Today (yellow), This Week (blue), Done this week (green) — tapping Overdue/Today/This Week opens Views filtered to that category
+- **Upcoming Tasks widget**: Shows next 7 upcoming tasks sorted by due date, with cubby color dot, task name, and due date pill. Tapping a task navigates to it in its cubby with highlight. "See all" button opens Views.
+- **Quick Actions row**: 4 icon buttons — New Task, New Cubby, New Workspace, All Tasks
+- **Workspaces section**: Room cards with workspace label above them
+- **Search bar**: Quick access to global search (Cmd+K)
 
 ### User Accounts & Sync
 - **Supabase authentication**: Email/password sign-in and sign-up

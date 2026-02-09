@@ -1,10 +1,10 @@
 # Cubby — Session Notes
 
 ## Last Updated
-2026-02-05
+2026-02-08
 
 ## Current Status
-Setting up Supabase database tables for cloud sync.
+Dashboard home screen shipped (v1.1.2). Supabase auth works but cloud sync tables are not yet connected.
 
 ## What's Done
 - App is fully functional with localStorage (rooms, cubbies, subcubbies, tasks, subtasks)
@@ -13,19 +13,17 @@ Setting up Supabase database tables for cloud sync.
 - Auth screen UI exists with styling
 - Cloud task functions are stubbed out in `supabase.js` but NOT connected to the app yet
 - All actual data still lives in localStorage only
+- **Dashboard home screen** — Quick stats row, upcoming tasks feed, quick actions, date display
 
 ## What's Next
-1. **Create Supabase database tables** — design the schema to match the app's hierarchy (Rooms → Cubbies → Subcubbies → Tasks → Subtasks). Doing this through the Supabase dashboard so Matt can learn the process visually.
-2. **Hook up cloud functions** — replace/supplement localStorage calls with Supabase reads and writes
-3. **Set up Row Level Security (RLS)** — so each user can only see their own data
-4. **Handle sync** — make the app read/write from Supabase instead of (or in addition to) localStorage
+1. **Phase 1 remaining items** — Views refinements, cubby creation improvements, cubby settings button, due date color mode in cubbies
+2. **Home customization** — Let users reorder/hide dashboard sections, pin cubbies, widget system
+3. **Create Supabase database tables** — design the schema to match the app's hierarchy
+4. **Hook up cloud functions** — replace/supplement localStorage calls with Supabase reads and writes
+5. **Set up Row Level Security (RLS)** — so each user can only see their own data
 
 ## Important Decisions Made
 - Using Supabase for auth + database (not just auth)
 - Dashboard approach for table creation (visual, easier to learn)
 - Audio/sound effects were intentionally removed — do NOT re-add
 - App uses vanilla HTML/CSS/JS — no frameworks
-
-## Notes
-- Supabase credentials are in `src/supabase.js` (URL + anon key) — these are public/client-side keys, which is fine
-- The `SESSION.md` file was created this session so future Claude sessions can pick up where we left off
