@@ -7,6 +7,21 @@
 // ============================================
 
 function renderHome(skipAnimation) {
+    // Update date display
+    var dateEl = document.getElementById('greeting-date');
+    if (dateEl) {
+        var now = new Date();
+        var days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        var months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+        dateEl.textContent = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate();
+    }
+
+    // Render dashboard stats
+    renderDashboardStats(skipAnimation);
+
+    // Render upcoming tasks
+    renderDashboardUpcoming(skipAnimation);
+
     var html = '';
     appData.rooms.forEach(function(room, i) {
         var roomColor = room.color;
@@ -29,6 +44,152 @@ function renderHome(skipAnimation) {
     var addAnimClass = skipAnimation ? '' : ' animate-in delay-' + (appData.rooms.length + 1);
     html += '<div class="add-room-btn' + addAnimClass + '" onclick="openNewRoomModal()"><span class="plus">+</span><span class="text">new workspace</span></div>';
     document.getElementById('rooms-container').innerHTML = html;
+}
+
+// ============================================
+// DASHBOARD STATS
+// ============================================
+
+function renderDashboardStats(skipAnimation) {
+    var container = document.getElementById('dashboard-stats');
+    if (!container) return;
+
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    var overdueCount = 0;
+    var todayCount = 0;
+    var thisWeekCount = 0;
+    var completedThisWeek = 0;
+
+    // Calculate start of this week (Monday)
+    var weekStart = new Date(today);
+    var dayOfWeek = weekStart.getDay();
+    var diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    weekStart.setDate(weekStart.getDate() - diff);
+
+    appData.rooms.forEach(function(room) {
+        room.cubbies.forEach(function(cubbyRef) {
+            var cubbyData = appData.cubbies[cubbyRef.id];
+            if (!cubbyData) return;
+            cubbyData.subcubbies.forEach(function(sub) {
+                sub.tasks.forEach(function(task) {
+                    if (task.completed) {
+                        // Check if completed this week
+                        if (task.completedAt) {
+                            var completedDate = new Date(task.completedAt);
+                            if (completedDate >= weekStart) completedThisWeek++;
+                        }
+                        return;
+                    }
+                    if (!task.dueDate) return;
+                    var dueDate = new Date(task.dueDate + 'T00:00:00');
+                    var diffTime = dueDate - today;
+                    var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    if (diffDays < 0) overdueCount++;
+                    else if (diffDays === 0) todayCount++;
+                    else if (diffDays <= 7) thisWeekCount++;
+                });
+            });
+        });
+    });
+
+    var stats = [
+        { label: 'overdue', count: overdueCount, color: '#ff6b6b', bgColor: 'rgba(255, 107, 107, 0.1)', borderColor: 'rgba(255, 107, 107, 0.25)', filter: 'overdue' },
+        { label: 'today', count: todayCount, color: '#feca57', bgColor: 'rgba(254, 202, 87, 0.1)', borderColor: 'rgba(254, 202, 87, 0.25)', filter: 'today' },
+        { label: 'this week', count: thisWeekCount, color: '#5B8EFF', bgColor: 'rgba(91, 142, 255, 0.1)', borderColor: 'rgba(91, 142, 255, 0.25)', filter: 'this-week' },
+        { label: 'done', count: completedThisWeek, color: '#6bf5a0', bgColor: 'rgba(107, 245, 160, 0.1)', borderColor: 'rgba(107, 245, 160, 0.25)', filter: null }
+    ];
+
+    var html = '';
+    stats.forEach(function(stat) {
+        var onclick = stat.filter ? ' onclick="openViews(); setTimeout(function(){ setViewFilter(\'' + stat.filter + '\'); }, 50);"' : '';
+        var cursorStyle = stat.filter ? ' cursor: pointer;' : '';
+        html += '<div class="dashboard-stat-card"' + onclick + ' style="background:' + stat.bgColor + '; border-color:' + stat.borderColor + ';' + cursorStyle + '">' +
+            '<span class="stat-count" style="color:' + stat.color + '">' + stat.count + '</span>' +
+            '<span class="stat-label" style="color:' + stat.color + '">' + stat.label + '</span>' +
+            '</div>';
+    });
+
+    container.innerHTML = html;
+}
+
+// ============================================
+// DASHBOARD UPCOMING TASKS
+// ============================================
+
+function renderDashboardUpcoming(skipAnimation) {
+    var container = document.getElementById('dashboard-upcoming');
+    if (!container) return;
+
+    // Collect all incomplete tasks with due dates
+    var tasks = [];
+    appData.rooms.forEach(function(room) {
+        room.cubbies.forEach(function(cubbyRef) {
+            var cubbyData = appData.cubbies[cubbyRef.id];
+            if (!cubbyData) return;
+            cubbyData.subcubbies.forEach(function(sub) {
+                sub.tasks.forEach(function(task) {
+                    if (task.completed) return;
+                    tasks.push({
+                        task: task,
+                        roomId: room.id,
+                        cubbyId: cubbyRef.id,
+                        cubbyName: cubbyRef.name,
+                        cubbyColor: cubbyRef.color,
+                        subcubbyId: sub.id
+                    });
+                });
+            });
+        });
+    });
+
+    // Sort: tasks with due dates first (by date), then no-date tasks
+    tasks.sort(function(a, b) {
+        var aDate = a.task.dueDate;
+        var bDate = b.task.dueDate;
+        if (aDate && !bDate) return -1;
+        if (!aDate && bDate) return 1;
+        if (aDate && bDate) return aDate.localeCompare(bDate);
+        return 0;
+    });
+
+    // Take first 7
+    var upcoming = tasks.slice(0, 7);
+
+    if (upcoming.length === 0) {
+        container.innerHTML = '<div class="dashboard-upcoming-header"><span class="upcoming-title">upcoming</span></div>' +
+            '<div class="upcoming-empty">no tasks yet — create one to get started!</div>';
+        return;
+    }
+
+    var html = '<div class="dashboard-upcoming-header">' +
+        '<span class="upcoming-title">upcoming</span>' +
+        '<button class="upcoming-see-all" onclick="openViews()">see all</button>' +
+        '</div>';
+
+    upcoming.forEach(function(item) {
+        var task = item.task;
+        var dueDateInfo = formatDueDate(task.dueDate);
+        var classification = classifyDueDate(task);
+        var dateTheme = dueDateColorThemes[classification] || dueDateColorThemes['no-date'];
+        var cubbyTheme = colorThemes[item.cubbyColor] || colorThemes.purple;
+
+        html += '<div class="upcoming-task" onclick="navigateToTask(\'' + item.roomId + '\', \'' + item.cubbyId + '\', \'' + item.subcubbyId + '\', \'' + task.id + '\')">';
+        // Cubby color dot
+        html += '<div class="upcoming-cubby-dot" style="background:' + cubbyTheme.primary + '" title="' + item.cubbyName + '"></div>';
+        // Task text
+        html += '<span class="upcoming-task-text" style="text-transform: none;">' + task.text + '</span>';
+        // Due date pill
+        if (dueDateInfo.text) {
+            html += '<span class="upcoming-due-pill" style="color:' + dateTheme.primary + '; background:' + dateTheme.card + '; border-color:' + dateTheme.border + '">' + dueDateInfo.text + '</span>';
+        } else {
+            html += '<span class="upcoming-due-pill upcoming-no-date">no date</span>';
+        }
+        html += '</div>';
+    });
+
+    container.innerHTML = html;
 }
 
 // ============================================
