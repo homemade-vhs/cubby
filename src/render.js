@@ -259,9 +259,11 @@ function renderDashboardStats(skipAnimation) {
 
     var html = '';
     stats.forEach(function(stat) {
-        var onclick = stat.filter ? ' onclick="openViews(); setTimeout(function(){ setViewFilter(\'' + stat.filter + '\'); }, 50);"' : '';
-        var cursorStyle = stat.filter ? ' cursor: pointer;' : '';
-        html += '<div class="dashboard-stat-card"' + onclick + ' style="background:' + stat.bgColor + '; border-color:' + stat.borderColor + ';' + cursorStyle + '">' +
+        var isEmpty = stat.count === 0;
+        var emptyClass = isEmpty ? ' empty' : '';
+        var onclick = stat.filter && !isEmpty ? ' onclick="openViews(); setTimeout(function(){ setViewFilter(\'' + stat.filter + '\'); }, 50);"' : '';
+        var cursorStyle = stat.filter && !isEmpty ? ' cursor: pointer;' : '';
+        html += '<div class="dashboard-stat-card' + emptyClass + '"' + onclick + ' style="background:' + stat.bgColor + '; border-color:' + stat.borderColor + ';' + cursorStyle + '">' +
             '<span class="stat-count" style="color:' + stat.color + '">' + stat.count + '</span>' +
             '<span class="stat-label" style="color:' + stat.color + '">' + stat.label + '</span>' +
             '</div>';
