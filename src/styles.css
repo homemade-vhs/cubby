@@ -75,10 +75,10 @@
     /* Dashboard Upcoming */
     .dashboard-upcoming { margin-bottom: 24px; }
     .dashboard-upcoming-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    .upcoming-title { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.4); letter-spacing: 0.5px; }
+    .upcoming-title { font-size: 13px; font-weight: 800; color: rgba(255,255,255,0.4); letter-spacing: 0.5px; }
     .upcoming-see-all { background: none; border: none; color: rgba(255,255,255,0.3); font-size: 12px; font-weight: 600; cursor: pointer; padding: 4px 8px; border-radius: 8px; font-family: inherit; transition: all 0.2s ease; }
     .upcoming-see-all:hover { color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.05); }
-    .upcoming-task { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; margin-bottom: 6px; cursor: pointer; transition: all 0.2s ease; }
+    .upcoming-task { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.06); border-radius: 12px; margin-bottom: 6px; cursor: pointer; transition: all 0.2s ease; }
     .upcoming-task:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
     .upcoming-task:active { transform: scale(0.98); }
     .upcoming-cubby-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
