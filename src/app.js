@@ -99,7 +99,32 @@ var tagColorNames = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink
 
 var appData = {
     rooms: [],
-    cubbies: {}
+    cubbies: {},
+    archive: [],
+    trash: [],
+    settings: {
+        userName: '',
+        autoArchive: {
+            mode: 'duration',
+            duration: '1week',
+            customDays: 7,
+            dateChange: 'new-week',
+            weekStart: 'monday'
+        },
+        autoTrash: {
+            mode: 'duration',
+            duration: '1month',
+            customDays: 30,
+            dateChange: 'new-week',
+            weekStart: 'monday'
+        },
+        homeLayout: [
+            { id: 'stats', visible: true, label: 'Quick Stats' },
+            { id: 'upcoming', visible: true, label: 'Upcoming Tasks' },
+            { id: 'quick-actions', visible: true, label: 'Quick Actions' },
+            { id: 'workspaces', visible: true, label: 'Workspaces' }
+        ]
+    }
 };
 
 // ============================================
@@ -117,14 +142,19 @@ var homeEditMode = false; // When true, home is in edit/customize mode
 // ============================================
 
 function loadData() {
+    console.log('Loading data from localStorage...');
     var stored = localStorage.getItem('cubby_data');
     if (stored) {
         try {
             appData = JSON.parse(stored);
+            console.log('Loaded appData:', appData);
             // Migrate: ensure archive, trash, and settings exist
             if (!appData.archive) appData.archive = [];
             if (!appData.trash) appData.trash = [];
-            if (!appData.settings) appData.settings = {};
+            if (!appData.settings) {
+                console.log('Settings missing, initializing...');
+                appData.settings = {};
+            }
             if (!appData.settings.autoArchive) {
                 appData.settings.autoArchive = {
                     mode: 'duration',
@@ -152,6 +182,7 @@ function loadData() {
                 appData.settings.userName = '';
             }
             if (!appData.settings.homeLayout) {
+                console.log('homeLayout missing, initializing...');
                 appData.settings.homeLayout = [
                     { id: 'stats', visible: true, label: 'Quick Stats' },
                     { id: 'upcoming', visible: true, label: 'Upcoming Tasks' },
@@ -160,12 +191,15 @@ function loadData() {
                 ];
                 // Save the migrated data immediately
                 saveData();
+                console.log('homeLayout initialized and saved');
             }
+            console.log('Final appData.settings:', appData.settings);
         } catch (e) {
             console.error('Error loading data:', e);
             initializeDefaultData();
         }
     } else {
+        console.log('No stored data, initializing defaults');
         initializeDefaultData();
     }
 }
