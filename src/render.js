@@ -116,7 +116,7 @@ function renderHome(skipAnimation) {
         html += '<div class="' + roomClass + '" data-room-id="' + room.id + '" style="' + roomStyle + '">' +
             '<div class="room-card-main" onclick="selectRoom(\'' + room.id + '\')">' +
             '<div class="info"><h2' + nameStyle + '>' + room.name + '</h2><p' + countStyle + '>' + room.cubbies.length + ' cubbies</p></div>' +
-            '<span class="arrow"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="' + arrowColor + '" stroke-width="2"><path d="M9 6L15 12L9 18"/></svg></span></div>' +
+            '<span class="arrow"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="' + arrowColor + '" stroke-width="2.5"><path d="M9 6L15 12L9 18"/></svg></span></div>' +
             '<div class="room-more-btn"' + moreColor + ' onclick="openRoomMenu(event, \'' + room.id + '\')">' +
             '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="18" r="1.5" fill="currentColor"/></svg></div></div>';
     });
