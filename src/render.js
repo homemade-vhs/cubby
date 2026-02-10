@@ -113,9 +113,13 @@ function renderHome(skipAnimation) {
         var countStyle = roomTheme ? ' style="color:' + roomTheme.textMuted + '"' : '';
         var arrowColor = roomTheme ? roomTheme.textMuted : 'currentColor';
         var moreColor = roomTheme ? ' style="color:' + roomTheme.textMuted + '"' : '';
+        var roomIcon = '';
+        if (room.icon && iconLibrary[room.icon]) {
+            roomIcon = '<span class="room-card-icon" style="color:' + (roomTheme ? roomTheme.text : '#fff') + '">' + getIconSvg(room.icon) + '</span>';
+        }
         html += '<div class="' + roomClass + '" data-room-id="' + room.id + '" style="' + roomStyle + '">' +
             '<div class="room-card-main" onclick="selectRoom(\'' + room.id + '\')">' +
-            '<div class="info"><h2' + nameStyle + '>' + room.name + '</h2><p' + countStyle + '>' + room.cubbies.length + ' cubbies</p></div>' +
+            '<div class="info"><h2' + nameStyle + '>' + roomIcon + room.name + '</h2><p' + countStyle + '>' + room.cubbies.length + ' cubbies</p></div>' +
             '<span class="arrow"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="' + arrowColor + '" stroke-width="2.5"><path d="M9 6L15 12L9 18"/></svg></span></div>' +
             '<div class="room-more-btn"' + moreColor + ' onclick="openRoomMenu(event, \'' + room.id + '\')">' +
             '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="18" r="1.5" fill="currentColor"/></svg></div></div>';
@@ -166,7 +170,7 @@ function renderCubbiesBrowse() {
         if (room.cubbies.length > 0) {
             html += '<div class="cubbies-browse-list">';
             room.cubbies.forEach(function(cubby) {
-                var theme = colorThemes[cubby.color] || colorThemes.purple;
+                var cubbyTheme = colorThemes[cubby.color] || colorThemes.purple;
                 var taskCount = 0;
                 var cubbyData = appData.cubbies[cubby.id];
                 if (cubbyData) {
@@ -174,11 +178,19 @@ function renderCubbiesBrowse() {
                         taskCount += sub.tasks.filter(function(t) { return !t.completed; }).length;
                     });
                 }
-                html += '<div class="cubbies-browse-item" onclick="event.stopPropagation(); browseSelectCubby(\'' + room.id + '\', \'' + cubby.id + '\')">';
-                html += '<div class="cubbies-browse-dot" style="background:' + theme.primary + '"></div>';
-                html += '<span class="cubbies-browse-name" style="color:' + theme.text + '">' + cubby.name + '</span>';
-                html += '<span class="cubbies-browse-task-count" style="color:' + theme.textMuted + '">' + taskCount + ' tasks</span>';
-                html += '<svg class="cubbies-browse-item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="' + theme.textMuted + '" stroke-width="2"><path d="M9 6L15 12L9 18"/></svg>';
+                var itemBg = roomTheme ? roomTheme.card.replace(/[\d.]+\)$/, '0.08)') : 'rgba(255,255,255,0.02)';
+                var itemBorder = roomTheme ? roomTheme.border : 'rgba(255,255,255,0.06)';
+                var itemTextMuted = roomTheme ? roomTheme.textMuted : 'rgba(255,255,255,0.5)';
+                var countOpacity = taskCount === 0 ? 'opacity:0.3;' : '';
+                html += '<div class="cubbies-browse-item" style="background:' + itemBg + ';border:1px solid ' + itemBorder + ';" onclick="event.stopPropagation(); browseSelectCubby(\'' + room.id + '\', \'' + cubby.id + '\')">';
+                if (cubby.icon && iconLibrary[cubby.icon]) {
+                    html += '<div class="cubby-icon-display" style="color:' + cubbyTheme.primary + '">' + getIconSvg(cubby.icon) + '</div>';
+                } else {
+                    html += '<div class="cubbies-browse-dot" style="background:' + cubbyTheme.primary + '"></div>';
+                }
+                html += '<span class="cubbies-browse-name" style="color:' + cubbyTheme.primary + '">' + cubby.name + '</span>';
+                html += '<span class="cubbies-browse-task-count" style="color:' + itemTextMuted + ';' + countOpacity + '">' + taskCount + '</span>';
+                html += '<svg class="cubbies-browse-item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="' + itemTextMuted + '" stroke-width="2"><path d="M9 6L15 12L9 18"/></svg>';
                 html += '</div>';
             });
             html += '</div>';
@@ -215,6 +227,7 @@ function renderDashboardStats(skipAnimation) {
 
     var overdueCount = 0;
     var todayCount = 0;
+    var tomorrowCount = 0;
     var thisWeekCount = 0;
     var completedThisWeek = 0;
 
@@ -244,6 +257,7 @@ function renderDashboardStats(skipAnimation) {
                     var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                     if (diffDays < 0) overdueCount++;
                     else if (diffDays === 0) todayCount++;
+                    else if (diffDays === 1) tomorrowCount++;
                     else if (diffDays <= 7) thisWeekCount++;
                 });
             });
@@ -251,9 +265,10 @@ function renderDashboardStats(skipAnimation) {
     });
 
     var stats = [
-        { label: 'overdue', count: overdueCount, color: '#ff6b6b', bgColor: 'rgba(255, 107, 107, 0.1)', borderColor: 'rgba(255, 107, 107, 0.25)', filter: 'overdue' },
         { label: 'today', count: todayCount, color: '#feca57', bgColor: 'rgba(254, 202, 87, 0.1)', borderColor: 'rgba(254, 202, 87, 0.25)', filter: 'today' },
+        { label: 'tomorrow', count: tomorrowCount, color: '#FFB05A', bgColor: 'rgba(255, 176, 90, 0.1)', borderColor: 'rgba(255, 176, 90, 0.25)', filter: 'tomorrow' },
         { label: 'this week', count: thisWeekCount, color: '#5B8EFF', bgColor: 'rgba(91, 142, 255, 0.1)', borderColor: 'rgba(91, 142, 255, 0.25)', filter: 'this-week' },
+        { label: 'overdue', count: overdueCount, color: '#ff6b6b', bgColor: 'rgba(255, 107, 107, 0.1)', borderColor: 'rgba(255, 107, 107, 0.25)', filter: 'overdue', isOverdue: true },
         { label: 'done', count: completedThisWeek, color: '#6bf5a0', bgColor: 'rgba(107, 245, 160, 0.1)', borderColor: 'rgba(107, 245, 160, 0.25)', filter: null }
     ];
 
@@ -261,11 +276,12 @@ function renderDashboardStats(skipAnimation) {
     stats.forEach(function(stat, index) {
         var isEmpty = stat.count === 0;
         var emptyClass = isEmpty ? ' empty' : '';
-        var overdueClass = (index === 0 && !isEmpty) ? ' overdue-stat' : '';
-        var overdueCountClass = (index === 0 && !isEmpty) ? ' overdue-count' : '';
+        var overdueClass = (stat.isOverdue && !isEmpty) ? ' overdue-stat' : '';
+        var todayClass = (index === 0) ? ' today-stat' : '';
+        var overdueCountClass = (stat.isOverdue && !isEmpty) ? ' overdue-count' : '';
         var onclick = stat.filter && !isEmpty ? ' onclick="openViews(); setTimeout(function(){ setViewFilter(\'' + stat.filter + '\'); }, 50);"' : '';
         var cursorStyle = stat.filter && !isEmpty ? ' cursor: pointer;' : '';
-        html += '<div class="dashboard-stat-card' + emptyClass + overdueClass + '"' + onclick + ' style="background:' + stat.bgColor + '; border-color:' + stat.borderColor + ';' + cursorStyle + '">' +
+        html += '<div class="dashboard-stat-card' + emptyClass + overdueClass + todayClass + '"' + onclick + ' style="background:' + stat.bgColor + '; border-color:' + stat.borderColor + ';' + cursorStyle + '">' +
             '<span class="stat-count' + overdueCountClass + '" style="color:' + stat.color + '">' + stat.count + '</span>' +
             '<span class="stat-label" style="color:' + stat.color + '">' + stat.label + '</span>' +
             '</div>';
@@ -314,8 +330,8 @@ function renderDashboardUpcoming(skipAnimation) {
         return 0;
     });
 
-    // Take first 7
-    var upcoming = tasks.slice(0, 7);
+    // Take first 10
+    var upcoming = tasks.slice(0, 10);
 
     if (upcoming.length === 0) {
         container.innerHTML = '<div class="dashboard-upcoming-header"><span class="upcoming-title">upcoming</span></div>' +
@@ -328,14 +344,15 @@ function renderDashboardUpcoming(skipAnimation) {
         '<button class="upcoming-see-all" onclick="openViews()">see all</button>' +
         '</div>';
 
-    upcoming.forEach(function(item) {
+    upcoming.forEach(function(item, index) {
         var task = item.task;
+        var hiddenClass = index >= 3 ? ' upcoming-hidden' : '';
         var dueDateInfo = formatDueDate(task.dueDate);
         var classification = classifyDueDate(task);
         var dateTheme = dueDateColorThemes[classification] || dueDateColorThemes['no-date'];
         var cubbyTheme = colorThemes[item.cubbyColor] || colorThemes.purple;
 
-        html += '<div class="upcoming-task" style="background:' + cubbyTheme.card + '; border-color:' + cubbyTheme.border + ';" onclick="navigateToTask(\'' + item.roomId + '\', \'' + item.cubbyId + '\', \'' + item.subcubbyId + '\', \'' + task.id + '\')">';
+        html += '<div class="upcoming-task' + hiddenClass + '" style="background:' + cubbyTheme.card + '; border-color:' + cubbyTheme.border + ';" onclick="navigateToTask(\'' + item.roomId + '\', \'' + item.cubbyId + '\', \'' + item.subcubbyId + '\', \'' + task.id + '\')">';
         // Cubby color dot
         html += '<div class="upcoming-cubby-dot" style="background:' + cubbyTheme.primary + '" title="' + item.cubbyName + '"></div>';
         // Task text + cubby name
@@ -352,7 +369,25 @@ function renderDashboardUpcoming(skipAnimation) {
         html += '</div>';
     });
 
+    if (upcoming.length > 3) {
+        html += '<button class="upcoming-see-more" onclick="toggleUpcomingExpand(this)">see more</button>';
+    }
+
     container.innerHTML = html;
+}
+
+function toggleUpcomingExpand(btn) {
+    var hidden = document.querySelectorAll('.upcoming-hidden');
+    if (hidden.length > 0) {
+        hidden.forEach(function(el) { el.classList.remove('upcoming-hidden'); });
+        btn.textContent = 'see less';
+    } else {
+        var tasks = document.querySelectorAll('.upcoming-task');
+        tasks.forEach(function(el, i) {
+            if (i >= 3) el.classList.add('upcoming-hidden');
+        });
+        btn.textContent = 'see more';
+    }
 }
 
 // ============================================
@@ -364,9 +399,13 @@ function renderRoom(room) {
     var html = '';
     room.cubbies.forEach(function(cubby, i) {
         var theme = colorThemes[cubby.color] || colorThemes.purple;
+        var cubbyIcon = '';
+        if (cubby.icon && iconLibrary[cubby.icon]) {
+            cubbyIcon = '<span class="cubby-icon-display" style="color:' + theme.text + ';margin-right:6px;">' + getIconSvg(cubby.icon) + '</span>';
+        }
         html += '<div class="cubby-card animate-in delay-' + (i + 1) + '" data-cubby-id="' + cubby.id + '" style="background:' + theme.card + ';border:2px solid ' + theme.border + ';">' +
             '<div class="cubby-card-main" onclick="selectCubby(\'' + cubby.id + '\')">' +
-            '<span class="name" style="color:' + theme.text + '">' + cubby.name + '</span>' +
+            cubbyIcon + '<span class="name" style="color:' + theme.text + '">' + cubby.name + '</span>' +
             '<span class="arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="' + theme.textMuted + '" stroke-width="2"><path d="M9 6L15 12L9 18"/></svg></span></div>' +
             '<div class="cubby-more-btn" onclick="openCubbyMenu(event, \'' + cubby.id + '\')" style="color:' + theme.textMuted + '">' +
             '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="18" r="1.5" fill="currentColor"/></svg></div></div>';
@@ -395,7 +434,11 @@ function renderCubby(cubby) {
     } else {
         setCubbyTheme(cubby.color || 'purple');
     }
-    var titleHtml = '<h1>' + cubby.name + '</h1>';
+    var cubbyIconHtml = '';
+    if (cubby.icon && iconLibrary[cubby.icon]) {
+        cubbyIconHtml = '<span class="cubby-icon-display" style="margin-right:8px;width:28px;height:28px;">' + getIconSvg(cubby.icon) + '</span>';
+    }
+    var titleHtml = '<h1>' + cubbyIconHtml + cubby.name + '</h1>';
     if (cubby.description) {
         titleHtml += '<p class="cubby-description">' + cubby.description.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</p>';
     }

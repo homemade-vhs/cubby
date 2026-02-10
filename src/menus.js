@@ -371,6 +371,9 @@ function openCubbyMenu(event, cubbyId) {
         '<div class="task-menu-item" onclick="openEditCubbyColorModal()">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/></svg>' +
             '<span>Edit color</span></div>' +
+        '<div class="task-menu-item" onclick="editCubbyIconFromMenu()">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>' +
+            '<span>Change icon</span></div>' +
         '<div class="task-menu-item" onclick="moveCubbyToTop()">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>' +
             '<span>Move to top</span></div>' +
@@ -535,6 +538,9 @@ function openCubbySettingsMenu(event) {
         '<div class="task-menu-item" onclick="editCubbyColorFromSettings()">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/></svg>' +
             '<span>Color theme</span></div>' +
+        '<div class="task-menu-item" onclick="editCubbyIconFromSettings()">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>' +
+            '<span>Change icon</span></div>' +
         '<div class="task-menu-item" style="opacity:0.3;pointer-events:none">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>' +
             '<span>Share cubby</span></div>' +
@@ -700,6 +706,9 @@ function openRoomMenu(event, roomId) {
         '<div class="task-menu-item" onclick="editRoomColor()">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/></svg>' +
             '<span>Edit color</span></div>' +
+        '<div class="task-menu-item" onclick="editRoomIcon()">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>' +
+            '<span>Change icon</span></div>' +
         '<div class="task-menu-item" onclick="moveRoomToTop()">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>' +
             '<span>Move to top</span></div>' +
@@ -890,6 +899,98 @@ function deleteRoom() {
         appData.rooms = appData.rooms.filter(function(r) { return r.id !== roomId; });
         saveData();
         syncDeleteWorkspace(roomId);
+        renderHome(true);
+    });
+}
+
+// ============================================
+// ICON PICKER MODALS
+// ============================================
+
+function openIconPickerModal(currentIcon, onSelect) {
+    var existingModal = document.getElementById('icon-modal');
+    if (existingModal) existingModal.remove();
+
+    var modal = document.createElement('div');
+    modal.id = 'icon-modal';
+    modal.className = 'modal active';
+
+    var iconsHtml = '<div class="icon-option' + (!currentIcon ? ' selected' : '') + '" onclick="selectIconFromModal(null)"><span class="icon-option-none">—</span></div>';
+    iconNames.forEach(function(name) {
+        var isSelected = name === currentIcon;
+        iconsHtml += '<div class="icon-option' + (isSelected ? ' selected' : '') + '" onclick="selectIconFromModal(\'' + name + '\')" title="' + name + '">' + iconLibrary[name] + '</div>';
+    });
+
+    modal.innerHTML =
+        '<div class="modal-backdrop" onclick="closeIconModal()"></div>' +
+        '<div class="modal-content" onclick="event.stopPropagation()">' +
+            '<h2>Choose Icon</h2>' +
+            '<div class="cubby-icon-options">' + iconsHtml + '</div>' +
+            '<div class="modal-buttons">' +
+                '<button class="modal-btn cancel" onclick="closeIconModal()">Cancel</button>' +
+            '</div>' +
+        '</div>';
+
+    modal.dataset.onSelect = ''; // placeholder
+    window._iconPickerCallback = onSelect;
+    document.body.appendChild(modal);
+}
+
+function closeIconModal() {
+    var modal = document.getElementById('icon-modal');
+    if (modal) modal.remove();
+    window._iconPickerCallback = null;
+}
+
+function selectIconFromModal(iconName) {
+    if (window._iconPickerCallback) {
+        window._iconPickerCallback(iconName);
+    }
+    closeIconModal();
+}
+
+function editCubbyIconFromSettings() {
+    closeCubbySettingsMenu();
+    if (!currentCubby) return;
+    openIconPickerModal(currentCubby.icon || null, function(iconName) {
+        if (iconName) {
+            currentCubby.icon = iconName;
+        } else {
+            delete currentCubby.icon;
+        }
+        saveData();
+        renderCubby(currentCubby);
+    });
+}
+
+function editCubbyIconFromMenu() {
+    var cubbyId = activeCubbyId;
+    closeCubbyMenu();
+    var cubby = currentRoom.cubbies.find(function(c) { return c.id === cubbyId; });
+    if (!cubby) return;
+    openIconPickerModal(cubby.icon || null, function(iconName) {
+        if (iconName) {
+            cubby.icon = iconName;
+        } else {
+            delete cubby.icon;
+        }
+        saveData();
+        renderRoom(currentRoom);
+    });
+}
+
+function editRoomIcon() {
+    var roomId = activeRoomId;
+    closeRoomMenu();
+    var room = appData.rooms.find(function(r) { return r.id === roomId; });
+    if (!room) return;
+    openIconPickerModal(room.icon || null, function(iconName) {
+        if (iconName) {
+            room.icon = iconName;
+        } else {
+            delete room.icon;
+        }
+        saveData();
         renderHome(true);
     });
 }

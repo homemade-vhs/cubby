@@ -851,7 +851,7 @@ function saveEditedCubbyName(newName) {
     }
 }
 
-function addNewCubby(name, color, roomId, description) {
+function addNewCubby(name, color, roomId, description, icon) {
     color = color || 'purple';
     var targetRoom = roomId ? appData.rooms.find(function(r) { return r.id === roomId; }) : currentRoom;
     if (!targetRoom) targetRoom = currentRoom;
@@ -865,6 +865,7 @@ function addNewCubby(name, color, roomId, description) {
         color: color
     };
     if (description) cubbyRef.description = description;
+    if (icon) cubbyRef.icon = icon;
     targetRoom.cubbies.push(cubbyRef);
     // Initialize cubby data
     appData.cubbies[newCubbyId] = {
@@ -898,7 +899,7 @@ function saveEditedRoomName(newName) {
     }
 }
 
-function addNewRoom(name, color) {
+function addNewRoom(name, color, icon) {
     var newRoomId = generateUUID();
     var room = {
         id: newRoomId,
@@ -906,6 +907,7 @@ function addNewRoom(name, color) {
         cubbies: []
     };
     if (color) room.color = color;
+    if (icon) room.icon = icon;
     appData.rooms.push(room);
     saveData();
     // Need user ID for workspace insert
