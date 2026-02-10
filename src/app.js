@@ -142,17 +142,14 @@ var homeEditMode = false; // When true, home is in edit/customize mode
 // ============================================
 
 function loadData() {
-    console.log('Loading data from localStorage...');
     var stored = localStorage.getItem('cubby_data');
     if (stored) {
         try {
             appData = JSON.parse(stored);
-            console.log('Loaded appData:', appData);
             // Migrate: ensure archive, trash, and settings exist
             if (!appData.archive) appData.archive = [];
             if (!appData.trash) appData.trash = [];
             if (!appData.settings) {
-                console.log('Settings missing, initializing...');
                 appData.settings = {};
             }
             if (!appData.settings.autoArchive) {
@@ -182,7 +179,6 @@ function loadData() {
                 appData.settings.userName = '';
             }
             if (!appData.settings.homeLayout) {
-                console.log('homeLayout missing, initializing...');
                 appData.settings.homeLayout = [
                     { id: 'stats', visible: true, label: 'Quick Stats' },
                     { id: 'upcoming', visible: true, label: 'Upcoming Tasks' },
@@ -191,15 +187,12 @@ function loadData() {
                 ];
                 // Save the migrated data immediately
                 saveData();
-                console.log('homeLayout initialized and saved');
             }
-            console.log('Final appData.settings:', appData.settings);
         } catch (e) {
             console.error('Error loading data:', e);
             initializeDefaultData();
         }
     } else {
-        console.log('No stored data, initializing defaults');
         initializeDefaultData();
     }
 }
