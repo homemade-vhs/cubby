@@ -66,8 +66,8 @@
     .dashboard-stat-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px 8px; border-radius: 16px; border: 1px solid transparent; transition: all 0.2s ease; }
     .dashboard-stat-card:hover { filter: brightness(1.2); }
     .dashboard-stat-card:active { transform: scale(0.95); }
-    .dashboard-stat-card.empty { opacity: 0.3; cursor: default !important; pointer-events: none; }
-    .dashboard-stat-card.empty:hover { filter: none; }
+    .dashboard-stat-card.empty { opacity: 0.3; filter: saturate(0.5); cursor: default !important; pointer-events: none; }
+    .dashboard-stat-card.empty:hover { filter: saturate(0.5); }
     .dashboard-stat-card.empty:active { transform: none; }
     .stat-count { font-size: 28px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
     .stat-label { font-size: 11px; font-weight: 600; opacity: 0.8; letter-spacing: 0.3px; }
