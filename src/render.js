@@ -32,6 +32,8 @@ function renderHome(skipAnimation) {
         if (sectionsContainer && appData.settings && appData.settings.homeLayout) {
             var layout = appData.settings.homeLayout;
             
+            console.log('Edit mode:', homeEditMode, 'Layout:', layout);
+            
             // Reorder sections based on homeLayout
             layout.forEach(function(section) {
                 var wrapper = sectionsContainer.querySelector('[data-section-id="' + section.id + '"]');
@@ -43,7 +45,10 @@ function renderHome(skipAnimation) {
             // Apply visibility and edit mode to each section
             layout.forEach(function(section, index) {
                 var wrapper = sectionsContainer.querySelector('[data-section-id="' + section.id + '"]');
-                if (!wrapper) return;
+                if (!wrapper) {
+                    console.warn('No wrapper found for section:', section.id);
+                    return;
+                }
 
                 // Set visibility
                 if (section.visible) {
@@ -61,6 +66,8 @@ function renderHome(skipAnimation) {
                 // Set edit mode
                 if (homeEditMode) {
                     wrapper.classList.add('editing');
+                    
+                    console.log('Adding controls for:', section.id);
                     
                     // Remove existing controls
                     var existingControls = wrapper.querySelector('.home-section-controls');
@@ -82,6 +89,7 @@ function renderHome(skipAnimation) {
                         '</button>' +
                         '</div>';
                     wrapper.insertAdjacentHTML('afterbegin', controlsHtml);
+                    console.log('Controls added for:', section.id);
                 } else {
                     wrapper.classList.remove('editing', 'hidden');
                     var existingControls = wrapper.querySelector('.home-section-controls');
@@ -89,6 +97,12 @@ function renderHome(skipAnimation) {
                         existingControls.remove();
                     }
                 }
+            });
+        } else {
+            console.warn('Missing requirements:', {
+                sectionsContainer: !!sectionsContainer,
+                settings: !!appData.settings,
+                homeLayout: !!(appData.settings && appData.settings.homeLayout)
             });
         }
     } catch (e) {
