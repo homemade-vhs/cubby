@@ -122,6 +122,12 @@ async function loadFromSupabase() {
                 if (r.color) localRoomColors[r.id] = r.color;
             });
         }
+        
+        // Preserve existing settings, archive, and trash
+        var existingSettings = appData.settings || {};
+        var existingArchive = appData.archive || [];
+        var existingTrash = appData.trash || [];
+        
         appData = {
             rooms: workspaces.map(function(w) {
                 var room = {
@@ -136,7 +142,10 @@ async function loadFromSupabase() {
                 }
                 return room;
             }),
-            cubbies: {}
+            cubbies: {},
+            settings: existingSettings,
+            archive: existingArchive,
+            trash: existingTrash
         };
 
         // Step 6: Build cubbies lookup (task data by cubby ID)
