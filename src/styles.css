@@ -45,7 +45,7 @@
     .signout-btn:active { transform: scale(0.95); }
 
     /* Home Edit Mode */
-    .home-section-wrapper { position: relative; }
+    .home-section-wrapper { position: relative; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
     .home-section-wrapper.editing { padding: 16px; background: rgba(255,255,255,0.02); border: 2px dashed rgba(255,255,255,0.1); border-radius: 16px; margin-bottom: 20px; }
     .home-section-wrapper.editing.hidden { opacity: 0.4; }
     .home-section-controls { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }

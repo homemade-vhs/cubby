@@ -540,22 +540,28 @@ function toggleHomeSection(sectionId) {
 function moveHomeSectionUp(sectionId) {
     var index = appData.settings.homeLayout.findIndex(function(s) { return s.id === sectionId; });
     if (index > 0) {
-        var temp = appData.settings.homeLayout[index];
-        appData.settings.homeLayout[index] = appData.settings.homeLayout[index - 1];
-        appData.settings.homeLayout[index - 1] = temp;
-        saveData();
-        renderHome(true);
+        var container = document.getElementById('home-sections-container');
+        animateHomeSectionMove(container, function() {
+            var temp = appData.settings.homeLayout[index];
+            appData.settings.homeLayout[index] = appData.settings.homeLayout[index - 1];
+            appData.settings.homeLayout[index - 1] = temp;
+            saveData();
+            renderHome(true);
+        });
     }
 }
 
 function moveHomeSectionDown(sectionId) {
     var index = appData.settings.homeLayout.findIndex(function(s) { return s.id === sectionId; });
     if (index >= 0 && index < appData.settings.homeLayout.length - 1) {
-        var temp = appData.settings.homeLayout[index];
-        appData.settings.homeLayout[index] = appData.settings.homeLayout[index + 1];
-        appData.settings.homeLayout[index + 1] = temp;
-        saveData();
-        renderHome(true);
+        var container = document.getElementById('home-sections-container');
+        animateHomeSectionMove(container, function() {
+            var temp = appData.settings.homeLayout[index];
+            appData.settings.homeLayout[index] = appData.settings.homeLayout[index + 1];
+            appData.settings.homeLayout[index + 1] = temp;
+            saveData();
+            renderHome(true);
+        });
     }
 }
 
