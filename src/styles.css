@@ -71,8 +71,8 @@
     .dashboard-stat-card.empty:active { transform: none; }
     .dashboard-stat-card.overdue-stat { animation: pulseBorderRed 3s ease-in-out infinite; }
     @keyframes pulseBorderRed {
-        0%, 90% { border-color: rgba(255, 107, 107, 0.25); }
-        95% { border-color: #ff6b6b; }
+        0%, 88% { border-color: rgba(255, 107, 107, 0.25); }
+        92% { border-color: #c1121f; }
         100% { border-color: rgba(255, 107, 107, 0.25); }
     }
     .stat-count { font-size: 28px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
