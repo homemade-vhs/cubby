@@ -71,13 +71,13 @@ function renderHome(skipAnimation) {
                     // Add controls
                     var controlsHtml = '<div class="home-section-controls">' +
                         '<span class="home-section-label-text">' + section.label + '</span>' +
-                        '<button class="home-section-control-btn' + (index === 0 ? ' disabled' : '') + '" onclick="moveHomeSectionUp(\'' + section.id + '\')">' +
+                        '<button type="button" class="home-section-control-btn' + (index === 0 ? ' disabled' : '') + '" onclick="moveHomeSectionUp(\'' + section.id + '\')">' +
                         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg>' +
                         '</button>' +
-                        '<button class="home-section-control-btn' + (index === layout.length - 1 ? ' disabled' : '') + '" onclick="moveHomeSectionDown(\'' + section.id + '\')">' +
+                        '<button type="button" class="home-section-control-btn' + (index === layout.length - 1 ? ' disabled' : '') + '" onclick="moveHomeSectionDown(\'' + section.id + '\')">' +
                         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>' +
                         '</button>' +
-                        '<button class="home-section-control-btn" onclick="toggleHomeSection(\'' + section.id + '\')">' +
+                        '<button type="button" class="home-section-control-btn" onclick="toggleHomeSection(\'' + section.id + '\')">' +
                         (section.visible ? 'hide' : 'show') +
                         '</button>' +
                         '</div>';
