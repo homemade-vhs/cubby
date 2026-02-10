@@ -71,11 +71,17 @@
     .dashboard-stat-card.empty:active { transform: none; }
     .dashboard-stat-card.overdue-stat { animation: pulseBorderRed 3s ease-in-out infinite; }
     @keyframes pulseBorderRed {
-        0%, 88% { border-color: rgba(255, 107, 107, 0.25); }
-        92% { border-color: #c1121f; }
+        0%, 85% { border-color: rgba(255, 107, 107, 0.25); }
+        88% { border-color: #c1121f; }
         100% { border-color: rgba(255, 107, 107, 0.25); }
     }
     .stat-count { font-size: 28px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+    .stat-count.overdue-count { animation: pulseColorRed 3s ease-in-out infinite; }
+    @keyframes pulseColorRed {
+        0%, 85% { color: #ff6b6b; }
+        88% { color: #ff3333; }
+        100% { color: #ff6b6b; }
+    }
     .stat-label { font-size: 11px; font-weight: 600; opacity: 0.8; letter-spacing: 0.3px; }
 
     /* Dashboard Upcoming */

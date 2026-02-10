@@ -262,10 +262,11 @@ function renderDashboardStats(skipAnimation) {
         var isEmpty = stat.count === 0;
         var emptyClass = isEmpty ? ' empty' : '';
         var overdueClass = (index === 0 && !isEmpty) ? ' overdue-stat' : '';
+        var overdueCountClass = (index === 0 && !isEmpty) ? ' overdue-count' : '';
         var onclick = stat.filter && !isEmpty ? ' onclick="openViews(); setTimeout(function(){ setViewFilter(\'' + stat.filter + '\'); }, 50);"' : '';
         var cursorStyle = stat.filter && !isEmpty ? ' cursor: pointer;' : '';
         html += '<div class="dashboard-stat-card' + emptyClass + overdueClass + '"' + onclick + ' style="background:' + stat.bgColor + '; border-color:' + stat.borderColor + ';' + cursorStyle + '">' +
-            '<span class="stat-count" style="color:' + stat.color + '">' + stat.count + '</span>' +
+            '<span class="stat-count' + overdueCountClass + '" style="color:' + stat.color + '">' + stat.count + '</span>' +
             '<span class="stat-label" style="color:' + stat.color + '">' + stat.label + '</span>' +
             '</div>';
     });
