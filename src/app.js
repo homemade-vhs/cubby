@@ -511,16 +511,27 @@ function updateNavBar() {
             tab.classList.remove('active');
         }
     });
+
+    // Also update the sidebar
+    if (typeof updateSidebar === 'function') {
+        updateSidebar();
+    }
 }
 
 function showNavBar() {
     var nav = document.getElementById('bottom-nav');
     if (nav) nav.style.display = 'flex';
+    // Show sidebar on desktop
+    var sidebar = document.getElementById('app-sidebar');
+    if (sidebar) sidebar.style.display = 'flex';
 }
 
 function hideNavBar() {
     var nav = document.getElementById('bottom-nav');
     if (nav) nav.style.display = 'none';
+    // Hide sidebar (auth screen, etc.)
+    var sidebar = document.getElementById('app-sidebar');
+    if (sidebar) sidebar.style.display = 'none';
 }
 
 function updateNavUserName(name) {
@@ -529,6 +540,105 @@ function updateNavUserName(name) {
 
 function openProfileMenu() {
     openSettings();
+}
+
+// ============================================
+// SIDEBAR
+// ============================================
+
+var mobileSidebarOpen = false;
+
+function toggleMobileSidebar() {
+    if (mobileSidebarOpen) {
+        closeMobileSidebar();
+    } else {
+        openMobileSidebar();
+    }
+}
+
+function openMobileSidebar() {
+    mobileSidebarOpen = true;
+    var sidebar = document.getElementById('app-sidebar');
+    var overlay = document.getElementById('sidebar-overlay');
+    if (sidebar) sidebar.classList.add('open');
+    if (overlay) overlay.classList.add('active');
+    renderSidebarWorkspaces();
+}
+
+function closeMobileSidebar() {
+    mobileSidebarOpen = false;
+    var sidebar = document.getElementById('app-sidebar');
+    var overlay = document.getElementById('sidebar-overlay');
+    if (sidebar) sidebar.classList.remove('open');
+    if (overlay) overlay.classList.remove('active');
+}
+
+function renderSidebarWorkspaces() {
+    var container = document.getElementById('sidebar-workspaces');
+    if (!container) return;
+
+    var html = '';
+    appData.rooms.forEach(function(room) {
+        var roomColor = room.color;
+        var roomTheme = roomColor ? (colorThemes[roomColor] || colorThemes.purple) : null;
+        var dotColor = roomTheme ? roomTheme.primary : 'rgba(255,255,255,0.3)';
+        var nameColor = roomTheme ? roomTheme.text : 'rgba(255,255,255,0.6)';
+
+        html += '<div class="sidebar-workspace-item" onclick="sidebarSelectRoom(\'' + room.id + '\')">';
+        html += '<div class="sidebar-workspace-dot" style="background:' + dotColor + '"></div>';
+        html += '<span class="sidebar-workspace-name" style="color:' + nameColor + '">' + room.name + '</span>';
+        html += '<span class="sidebar-workspace-count">' + room.cubbies.length + '</span>';
+        html += '</div>';
+
+        // Show cubbies under each workspace
+        room.cubbies.forEach(function(cubby) {
+            var cubbyTheme = colorThemes[cubby.color] || colorThemes.purple;
+            html += '<div class="sidebar-cubby-item" onclick="sidebarSelectCubby(\'' + room.id + '\', \'' + cubby.id + '\')">';
+            html += '<div class="sidebar-cubby-dot" style="background:' + cubbyTheme.primary + '"></div>';
+            html += '<span class="sidebar-cubby-name" style="color:' + cubbyTheme.primary + '">' + cubby.name + '</span>';
+            html += '</div>';
+        });
+    });
+
+    container.innerHTML = html;
+}
+
+function sidebarSelectRoom(roomId) {
+    closeMobileSidebar();
+    selectRoom(roomId);
+}
+
+function sidebarSelectCubby(roomId, cubbyId) {
+    closeMobileSidebar();
+    currentRoom = appData.rooms.find(function(r) { return r.id === roomId; });
+    if (!currentRoom) return;
+    selectCubby(cubbyId);
+}
+
+function updateSidebar() {
+    // Update active states on sidebar nav items
+    var items = document.querySelectorAll('.sidebar-nav-item[data-sidebar-tab]');
+    items.forEach(function(item) {
+        var tab = item.dataset.sidebarTab;
+        var isActive = false;
+        if (tab === 'home') {
+            isActive = currentView === 'home';
+        } else if (tab === 'views') {
+            isActive = currentView === 'views';
+        } else if (tab === 'cubbies') {
+            isActive = currentView === 'cubbies' || currentView === 'room' || currentView === 'cubby';
+        } else if (tab === 'profile') {
+            isActive = currentView === 'settings' || currentView === 'archive' || currentView === 'trash';
+        }
+        if (isActive) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
+
+    // Render workspaces in sidebar
+    renderSidebarWorkspaces();
 }
 
 // ============================================

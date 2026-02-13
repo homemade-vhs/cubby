@@ -19,6 +19,7 @@
 
 - [x] **Dashboard Home Screen** — Quick stats (overdue/today/this week/done), upcoming tasks feed, quick action buttons, date display
 - [x] **App Home Customization** — Let users reorder/hide dashboard sections, pin cubbies, add widgets
+- [x] **Dual Desktop/Mobile Layout** — Permanent sidebar nav on desktop, bottom tab bar + slide-out sidebar on mobile (CSS media queries at 768px)
 - [ ] **Icons for Tasks / Cubbies** — Choose or upload icons to assign to tasks, cubbies, rooms, etc.
 - [ ] **Overdue styling** — More vivid red border for overdue tasks, thicker border
 

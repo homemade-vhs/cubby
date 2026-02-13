@@ -67,7 +67,7 @@ There are several .md files for you to reference. Please check them at the start
 
 ## Current Features
 
-These features exist and work in the current build (v1.1.4):
+These features exist and work in the current build (v1.4.0):
 
 ### App Hierarchy
 **Workspaces > Cubbies > Subcubbies > Tasks > Subtasks**
@@ -78,15 +78,13 @@ These features exist and work in the current build (v1.1.4):
 - **Subtasks**: Nested items under tasks
 
 ### Navigation
-- **Bottom nav bar** with 7 tabs (left to right): Tasks, Notes, Cubbies, New (+), Home, Search, Profile
-  - Home tab highlights on the dashboard home screen
-  - Cubbies tab highlights on cubbies browse, room, or cubby screens
-  - New (+) button uses dark green theme styling
-  - Notes tab is a placeholder (not yet functional)
-  - Search opens a modal overlay while keeping the nav bar visible with the Search tab highlighted
+- **Dual-layout system**: Separate desktop and mobile layouts using CSS media queries at 768px breakpoint
+- **Desktop (>768px)**: Permanent sidebar on the left (260px wide) with logo, nav links (Home, Tasks, Cubbies, Search), workspace/cubby tree, New Task button, and Settings. No bottom tab bar. Content area shifts right of the sidebar.
+- **Mobile (≤768px)**: Bottom tab bar with 5 tabs (Home, Tasks, New+, Cubbies, Menu). Menu button slides out the sidebar as an overlay from the left. Sidebar has close button and dark overlay behind it.
+- **Sidebar**: Shows navigation, all workspaces with nested cubbies, and highlights the active view. Renders workspace/cubby list dynamically.
 - **Three-screen navigation**: Home > Room > Cubby views with back buttons
 - **Cubbies Browse Screen**: Dedicated screen for browsing all workspaces and cubbies, accessible from Cubbies nav tab
-- **Profile tab** opens Settings screen
+- **Search**: Accessible from sidebar, home screen search bar, and Cmd+K shortcut
 
 ### Dashboard Home Screen
 - **Greeting + date**: Personalized time-based greeting with today's date (day of week, month, day)
