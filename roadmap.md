@@ -41,13 +41,13 @@ Inspired by Asana Home — 2-column widget grid.
 - [x] Upcoming tasks and quick actions as proper widget cards with headers
 - [x] Hide workspace list and search bar on desktop (sidebar already shows them)
 
-#### Stage 3: Cubby View (Inside a Cubby)
+#### Stage 3: Cubby View (Inside a Cubby) ✅ (v1.5.2)
 Inspired by Asana/Monday list views — full-width task lists.
-- [ ] Full-width task list (edge to edge within the work area)
-- [ ] Cubby title + description as a proper header bar at top
-- [ ] Collapsible subcubby sections with color-coded headers
-- [ ] Wider task rows with more breathing room on desktop
-- [ ] Consider column-style info display (due date, tags visible inline, not hidden in modal)
+- [x] Full-width task list (edge to edge within the work area)
+- [x] Cubby title + description as a proper header bar at top
+- [x] Collapsible subcubby sections with color-coded headers
+- [x] Wider task rows with more breathing room on desktop
+- [x] Due date, tags, progress visible inline on task rows
 
 #### Stage 4: Tasks Page (All Tasks View)
 Like Asana's "My Tasks" list.

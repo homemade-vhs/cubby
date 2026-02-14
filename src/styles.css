@@ -2356,8 +2356,62 @@
     .tasks-container,
     #tasks-container {
         width: 100%;
-        max-width: 900px;
+        max-width: 100%;
     }
+
+    /* --- STAGE 3: Desktop Cubby View --- */
+
+    /* Cubby header: sticky toolbar with bottom border */
+    .cubby-header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: #0a0a0f;
+        padding-bottom: 16px;
+        margin-bottom: 0;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* Cubby name inline in header on desktop */
+    .cubby-title {
+        margin-bottom: 0;
+        padding: 16px 0 20px;
+    }
+    .cubby-title h1 {
+        font-size: 24px;
+    }
+    .cubby-description {
+        font-size: 13px;
+        margin-top: 4px;
+    }
+
+    /* Wider task rows on desktop */
+    .task:not(.subtask) {
+        padding: 16px 20px;
+        gap: 16px;
+    }
+
+    /* Subcubby headers: accent left border, more weight */
+    .subcubby {
+        margin-bottom: 32px;
+    }
+    .subcubby-header {
+        padding: 10px 16px;
+        border-left: 3px solid var(--cubby-primary);
+        border-radius: 0;
+        margin-bottom: 16px;
+        background: rgba(255,255,255,0.02);
+    }
+    .subcubby-header h3 {
+        font-size: 15px;
+    }
+
+    /* Task indicators: more breathing room */
+    .task-indicators {
+        gap: 16px;
+    }
+
+    /* --- END STAGE 3 --- */
 
     .settings-title,
     .settings-container,
