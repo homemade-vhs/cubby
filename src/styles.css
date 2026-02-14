@@ -2361,15 +2361,32 @@
 
     /* --- STAGE 3: Desktop Cubby View --- */
 
-    /* Cubby header: sticky toolbar with bottom border */
-    .cubby-header {
+    /* Full-width sticky header bar */
+    .page-header-bar {
         position: sticky;
         top: 0;
         z-index: 10;
-        background: transparent;
-        padding-bottom: 16px;
-        margin-bottom: 0;
+        background: #0a0a0f;
+        align-self: stretch;
+        margin-left: -40px;
+        margin-right: -40px;
+        padding: 16px 40px 0;
         border-bottom: 1px solid rgba(255,255,255,0.06);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Headers inside the bar: remove base margin, keep full width */
+    .page-header-bar .header,
+    .page-header-bar .cubby-header {
+        margin-bottom: 0;
+    }
+
+    /* Cubby header spacing inside bar */
+    .cubby-header {
+        padding-bottom: 0;
+        margin-bottom: 0;
     }
 
     /* Cubby name inline in header on desktop */
@@ -2414,15 +2431,9 @@
 
     /* --- STAGE 4: Desktop Tasks Page --- */
 
-    /* Views header: sticky toolbar with bottom border */
-    #views-screen > .header {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        background: transparent;
-        padding-bottom: 16px;
+    /* Views header spacing inside bar */
+    #views-screen .header {
         margin-bottom: 0;
-        border-bottom: 1px solid rgba(255,255,255,0.06);
     }
 
     /* Views title: smaller on desktop */
@@ -2513,15 +2524,9 @@
 
     /* --- STAGE 5: Settings & Other Screens --- */
 
-    /* Settings: sticky header, smaller title */
-    #settings-screen > .header {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        background: transparent;
-        padding-bottom: 16px;
+    /* Settings header spacing inside bar */
+    #settings-screen .header {
         margin-bottom: 0;
-        border-bottom: 1px solid rgba(255,255,255,0.06);
     }
     .settings-title {
         margin-bottom: 0;
@@ -2567,16 +2572,10 @@
         padding-right: 0 !important;
     }
 
-    /* Archive/Trash: sticky header, smaller title */
-    #archive-screen > .header,
-    #trash-screen > .header {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        background: transparent;
-        padding-bottom: 16px;
+    /* Archive/Trash header spacing inside bar */
+    #archive-screen .header,
+    #trash-screen .header {
         margin-bottom: 0;
-        border-bottom: 1px solid rgba(255,255,255,0.06);
     }
     #archive-screen .settings-title,
     #trash-screen .settings-title {
@@ -2594,8 +2593,8 @@
     }
 
     /* Archive/Trash header max-width */
-    #archive-screen > .header,
-    #trash-screen > .header,
+    #archive-screen .header,
+    #trash-screen .header,
     #archive-screen .settings-title,
     #trash-screen .settings-title {
         width: 100%;
