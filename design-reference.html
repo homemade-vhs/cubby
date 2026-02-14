@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cubby — Design Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0a0a0f;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.6;
+    padding: 40px 20px 80px;
+  }
+  .container {
+    max-width: 880px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .subtitle {
+    font-size: 14px;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+  .quick-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 36px;
+  }
+  .quick-info-item {
+    padding: 10px 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.6);
+  }
+  .quick-info-item strong {
+    color: rgba(255,255,255,0.9);
+    font-weight: 700;
+  }
+
+  /* Collapsible sections */
+  details {
+    margin-bottom: 12px;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+  details:hover {
+    border-color: rgba(255,255,255,0.1);
+  }
+  details[open] {
+    border-color: rgba(255,255,255,0.1);
+  }
+  summary {
+    padding: 16px 20px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.02);
+    transition: background 0.15s ease;
+    user-select: none;
+  }
+  summary:hover {
+    background: rgba(255,255,255,0.04);
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::before {
+    content: '▶';
+    font-size: 10px;
+    color: rgba(255,255,255,0.3);
+    transition: transform 0.2s ease;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+  details[open] > summary::before {
+    transform: rotate(90deg);
+  }
+  summary .section-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .section-body {
+    padding: 20px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  /* Subsections */
+  h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    margin-top: 24px;
+    text-transform: uppercase;
+  }
+  h3:first-child {
+    margin-top: 0;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 13px;
+  }
+  th {
+    text-align: left;
+    padding: 10px 14px;
+    font-weight: 700;
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.02);
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: top;
+  }
+  tr:last-child td {
+    border-bottom: none;
+  }
+  tr:hover td {
+    background: rgba(255,255,255,0.02);
+  }
+  td:first-child {
+    color: rgba(255,255,255,0.9);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  code {
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 12px;
+    background: rgba(255,255,255,0.06);
+    padding: 2px 7px;
+    border-radius: 5px;
+    color: #C77DFF;
+    white-space: nowrap;
+  }
+
+  /* Color swatches */
+  .swatch {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    vertical-align: middle;
+    margin-right: 6px;
+    border: 1px solid rgba(255,255,255,0.1);
+    flex-shrink: 0;
+  }
+  .swatch-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .swatch-circle {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    vertical-align: middle;
+    margin-right: 6px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  /* Notes / callouts */
+  .note {
+    padding: 12px 16px;
+    background: rgba(107, 163, 255, 0.08);
+    border: 1px solid rgba(107, 163, 255, 0.15);
+    border-radius: 10px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+    margin-top: 12px;
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+  .note strong {
+    color: #6ba3ff;
+  }
+
+  /* Layout diagram */
+  .diagram {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 20px;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.4;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  /* List items */
+  ul {
+    padding-left: 0;
+    list-style: none;
+    margin-bottom: 8px;
+  }
+  ul li {
+    padding: 6px 0;
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+    position: relative;
+    padding-left: 16px;
+  }
+  ul li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: rgba(255,255,255,0.2);
+  }
+  ul li strong {
+    color: rgba(255,255,255,0.9);
+  }
+
+  /* Expand/collapse all */
+  .controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .control-btn {
+    padding: 8px 14px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    color: rgba(255,255,255,0.5);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s ease;
+  }
+  .control-btn:hover {
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.7);
+  }
+
+  /* Color theme cards */
+  .theme-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .theme-card {
+    border-radius: 12px;
+    padding: 14px;
+    border: 1px solid;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .theme-card-name {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: capitalize;
+  }
+  .theme-card-colors {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    font-size: 11px;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  }
+  .theme-card-colors span {
+    opacity: 0.7;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>Cubby — Design Reference</h1>
+  <p class="subtitle">Complete color, size, and spacing spec for mockups. Click sections to expand.</p>
+
+  <div class="quick-info">
+    <div class="quick-info-item"><strong>Desktop canvas:</strong>&nbsp; 1440 × 900px</div>
+    <div class="quick-info-item"><strong>Mobile canvas:</strong>&nbsp; 390 × 844px</div>
+    <div class="quick-info-item"><strong>Font:</strong>&nbsp; Plus Jakarta Sans (400–800)</div>
+    <div class="quick-info-item"><strong>Page bg:</strong>&nbsp; <span class="swatch" style="background:#0a0a0f;"></span>#0a0a0f</div>
+    <div class="quick-info-item"><strong>Sidebar bg:</strong>&nbsp; <span class="swatch" style="background:#0d0d14;"></span>#0d0d14</div>
+    <div class="quick-info-item"><strong>UI text:</strong>&nbsp; all lowercase</div>
+  </div>
+
+  <div class="controls">
+    <button class="control-btn" onclick="document.querySelectorAll('details').forEach(d=>d.open=true)">expand all</button>
+    <button class="control-btn" onclick="document.querySelectorAll('details').forEach(d=>d.open=false)">collapse all</button>
+  </div>
+
+  <!-- ==================== COLORS ==================== -->
+  <details open>
+    <summary><span class="section-icon">🎨</span> Colors</summary>
+    <div class="section-body">
+
+      <h3>Core Surfaces</h3>
+      <table>
+        <tr><th>Element</th><th>Value</th><th>Notes</th></tr>
+        <tr><td><span class="swatch" style="background:#0a0a0f"></span>Page background</td><td><code>#0a0a0f</code></td><td>Near-black, all screens</td></tr>
+        <tr><td><span class="swatch" style="background:#0d0d14"></span>Sidebar background</td><td><code>#0d0d14</code></td><td>Barely lighter than page bg</td></tr>
+        <tr><td><span class="swatch" style="background:rgba(255,255,255,0.06)"></span>Sidebar right border</td><td><code>rgba(255,255,255, 0.06)</code></td><td>1px solid</td></tr>
+        <tr><td><span class="swatch" style="background:#1a1a24"></span>Modal background</td><td><code>#1a1a24</code></td><td>Dark blue-gray</td></tr>
+        <tr><td><span class="swatch" style="background:rgba(255,255,255,0.03)"></span>Card / container bg</td><td><code>rgba(255,255,255, 0.03)</code></td><td>Nearly invisible</td></tr>
+        <tr><td><span class="swatch" style="background:rgba(255,255,255,0.06)"></span>Card border</td><td><code>rgba(255,255,255, 0.06)</code></td><td>Faint white</td></tr>
+        <tr><td><span class="swatch" style="background:rgba(255,255,255,0.05)"></span>Card hover bg</td><td><code>rgba(255,255,255, 0.05)</code></td><td>Slightly brighter</td></tr>
+        <tr><td><span class="swatch" style="background:rgba(255,255,255,0.05)"></span>Button / input bg</td><td><code>rgba(255,255,255, 0.05)</code></td><td></td></tr>
+        <tr><td><span class="swatch" style="background:rgba(255,255,255,0.08)"></span>Button border</td><td><code>rgba(255,255,255, 0.08)</code></td><td></td></tr>
+        <tr><td><span class="swatch" style="background:rgba(255,255,255,0.15)"></span>Input field border</td><td><code>rgba(255,255,255, 0.15)</code></td><td>More visible for usability</td></tr>
+        <tr><td><span class="swatch" style="background:rgba(255,255,255,0.3)"></span>Input focus border</td><td><code>rgba(255,255,255, 0.3)</code></td><td></td></tr>
+        <tr><td>Dashed placeholder border</td><td><code>rgba(255,255,255, 0.1–0.15)</code></td><td>"Add new" buttons</td></tr>
+      </table>
+
+      <h3>Text Colors</h3>
+      <table>
+        <tr><th>Element</th><th>Value</th><th>Notes</th></tr>
+        <tr><td>Primary text</td><td><code>#ffffff</code></td><td>White</td></tr>
+        <tr><td>Body text</td><td><code>rgba(255,255,255, 0.8)</code></td><td>Slightly dimmed</td></tr>
+        <tr><td>Muted text</td><td><code>rgba(255,255,255, 0.5)</code></td><td>Labels, subtitles</td></tr>
+        <tr><td>Subtle text</td><td><code>rgba(255,255,255, 0.4)</code></td><td>Section labels, counts</td></tr>
+        <tr><td>Placeholder text</td><td><code>rgba(255,255,255, 0.3)</code></td><td>Placeholders, arrows</td></tr>
+        <tr><td>Disabled / empty</td><td><code>rgba(255,255,255, 0.25)</code></td><td>Empty states</td></tr>
+        <tr><td>Version / faintest</td><td><code>rgba(255,255,255, 0.15)</code></td><td>Logo, version number</td></tr>
+      </table>
+
+      <h3>8 Cubby Theme Colors</h3>
+      <p style="font-size:13px; color:rgba(255,255,255,0.4); margin-bottom:12px;">Each cubby gets one accent color. Cards use 15% opacity, borders 45%, hover 25%, muted text 70%, glow 50%.</p>
+      <div class="theme-grid">
+        <div class="theme-card" style="background:rgba(107,163,255,0.08); border-color:rgba(107,163,255,0.25);">
+          <div class="theme-card-name" style="color:#6BA3FF;"><span class="swatch-circle" style="background:#6BA3FF; border-color:#6BA3FF;"></span>Blue</div>
+          <div class="theme-card-colors"><span>Primary: #6BA3FF</span><span>Text: #c5dfff</span></div>
+        </div>
+        <div class="theme-card" style="background:rgba(199,125,255,0.08); border-color:rgba(199,125,255,0.25);">
+          <div class="theme-card-name" style="color:#C77DFF;"><span class="swatch-circle" style="background:#C77DFF; border-color:#C77DFF;"></span>Purple</div>
+          <div class="theme-card-colors"><span>Primary: #C77DFF</span><span>Text: #e8c8ff</span></div>
+        </div>
+        <div class="theme-card" style="background:rgba(255,107,173,0.08); border-color:rgba(255,107,173,0.25);">
+          <div class="theme-card-name" style="color:#FF6BAD;"><span class="swatch-circle" style="background:#FF6BAD; border-color:#FF6BAD;"></span>Pink</div>
+          <div class="theme-card-colors"><span>Primary: #FF6BAD</span><span>Text: #ffc8e0</span></div>
+        </div>
+        <div class="theme-card" style="background:rgba(255,107,107,0.08); border-color:rgba(255,107,107,0.25);">
+          <div class="theme-card-name" style="color:#FF6B6B;"><span class="swatch-circle" style="background:#FF6B6B; border-color:#FF6B6B;"></span>Red</div>
+          <div class="theme-card-colors"><span>Primary: #FF6B6B</span><span>Text: #ffc8c8</span></div>
+        </div>
+        <div class="theme-card" style="background:rgba(255,176,90,0.08); border-color:rgba(255,176,90,0.25);">
+          <div class="theme-card-name" style="color:#FFB05A;"><span class="swatch-circle" style="background:#FFB05A; border-color:#FFB05A;"></span>Orange</div>
+          <div class="theme-card-colors"><span>Primary: #FFB05A</span><span>Text: #ffe0c0</span></div>
+        </div>
+        <div class="theme-card" style="background:rgba(255,232,90,0.08); border-color:rgba(255,232,90,0.25);">
+          <div class="theme-card-name" style="color:#FFE85A;"><span class="swatch-circle" style="background:#FFE85A; border-color:#FFE85A;"></span>Yellow</div>
+          <div class="theme-card-colors"><span>Primary: #FFE85A</span><span>Text: #fff8c0</span></div>
+        </div>
+        <div class="theme-card" style="background:rgba(107,245,160,0.08); border-color:rgba(107,245,160,0.25);">
+          <div class="theme-card-name" style="color:#6BF5A0;"><span class="swatch-circle" style="background:#6BF5A0; border-color:#6BF5A0;"></span>Green</div>
+          <div class="theme-card-colors"><span>Primary: #6BF5A0</span><span>Text: #c0ffe0</span></div>
+        </div>
+        <div class="theme-card" style="background:rgba(90,240,224,0.08); border-color:rgba(90,240,224,0.25);">
+          <div class="theme-card-name" style="color:#5AF0E0;"><span class="swatch-circle" style="background:#5AF0E0; border-color:#5AF0E0;"></span>Teal</div>
+          <div class="theme-card-colors"><span>Primary: #5AF0E0</span><span>Text: #c0fff8</span></div>
+        </div>
+      </div>
+
+      <h3>Due Date Colors</h3>
+      <table>
+        <tr><th>Status</th><th>Text Color</th><th>Background (20%)</th></tr>
+        <tr><td><span class="swatch-circle" style="background:#ff6b6b"></span>Overdue</td><td><code>#ff6b6b</code></td><td><code>rgba(255,107,107, 0.2)</code></td></tr>
+        <tr><td><span class="swatch-circle" style="background:#feca57"></span>Today</td><td><code>#feca57</code></td><td><code>rgba(254,202,87, 0.2)</code></td></tr>
+        <tr><td><span class="swatch-circle" style="background:#2ed573"></span>Tomorrow</td><td><code>#2ed573</code></td><td><code>rgba(46,213,115, 0.2)</code></td></tr>
+        <tr><td><span class="swatch-circle" style="background:#5B8EFF"></span>This week</td><td><code>#5B8EFF</code></td><td><code>rgba(91,142,255, 0.2)</code></td></tr>
+        <tr><td><span class="swatch-circle" style="background:#a55eea"></span>Next week</td><td><code>#a55eea</code></td><td><code>rgba(165,94,234, 0.2)</code></td></tr>
+        <tr><td><span class="swatch-circle" style="background:#ffffff"></span>Future</td><td><code>#ffffff</code></td><td><code>rgba(255,255,255, 0.12)</code></td></tr>
+      </table>
+
+      <h3>Tag Colors</h3>
+      <table>
+        <tr><th>Tag</th><th>Text Color</th><th>Background (25%)</th></tr>
+        <tr><td><span class="swatch-circle" style="background:#ff6b6b"></span>Red</td><td><code>#ff6b6b</code></td><td><code>rgba(255,107,107, 0.25)</code></td></tr>
+        <tr><td><span class="swatch-circle" style="background:#ff9f43"></span>Orange</td><td><code>#ff9f43</code></td><td><code>rgba(255,159,67, 0.25)</code></td></tr>
+        <tr><td><span class="swatch-circle" style="background:#feca57"></span>Yellow</td><td><code>#feca57</code></td><td><code>rgba(254,202,87, 0.25)</code></td></tr>
+        <tr><td><span class="swatch-circle" style="background:#2ed573"></span>Green</td><td><code>#2ed573</code></td><td><code>rgba(46,213,115, 0.25)</code></td></tr>
+        <tr><td><span class="swatch-circle" style="background:#5B8EFF"></span>Blue</td><td><code>#5B8EFF</code></td><td><code>rgba(91,142,255, 0.25)</code></td></tr>
+        <tr><td><span class="swatch-circle" style="background:#a55eea"></span>Purple</td><td><code>#a55eea</code></td><td><code>rgba(165,94,234, 0.25)</code></td></tr>
+        <tr><td><span class="swatch-circle" style="background:#ff6bb5"></span>Pink</td><td><code>#ff6bb5</code></td><td><code>rgba(255,107,181, 0.25)</code></td></tr>
+        <tr><td><span class="swatch-circle" style="background:rgba(255,255,255,0.7)"></span>Gray</td><td><code>rgba(255,255,255, 0.7)</code></td><td><code>rgba(255,255,255, 0.15)</code></td></tr>
+      </table>
+
+      <h3>UI Accent Colors</h3>
+      <table>
+        <tr><th>Element</th><th>Color</th></tr>
+        <tr><td><span class="swatch" style="background:#5B8EFF"></span>Confirm / primary buttons</td><td><code>#5B8EFF</code></td></tr>
+        <tr><td><span class="swatch" style="background:#4a7de8"></span>Confirm pressed</td><td><code>#4a7de8</code></td></tr>
+        <tr><td><span class="swatch" style="background:#ff4444"></span>Delete buttons</td><td><code>#ff4444</code></td></tr>
+        <tr><td><span class="swatch" style="background:#ff6b6b"></span>Delete text / icons</td><td><code>#ff6b6b</code></td></tr>
+        <tr><td><span class="swatch" style="background:rgba(255,107,107,0.1)"></span>Delete hover bg</td><td><code>rgba(255,107,107, 0.1)</code></td></tr>
+        <tr><td><span class="swatch" style="background:#6ba3ff"></span>Edit mode accent</td><td><code>#6ba3ff</code></td></tr>
+      </table>
+
+    </div>
+  </details>
+
+  <!-- ==================== BORDER RADIUS ==================== -->
+  <details>
+    <summary><span class="section-icon">◻️</span> Border Radius (Rounded Corners)</summary>
+    <div class="section-body">
+      <table>
+        <tr><th>Radius</th><th>Used On</th></tr>
+        <tr><td>20px</td><td>Room cards, cubby browse sections, modals, large containers</td></tr>
+        <tr><td>16px</td><td>Cubby cards, stat cards, quick action buttons, add-cubby buttons, section wrappers</td></tr>
+        <tr><td>14px</td><td>Quick action icon circles, cubby browse items</td></tr>
+        <tr><td>12px</td><td>Tasks, buttons (back, settings, toggle), inputs, context menus, add-task buttons</td></tr>
+        <tr><td>10px</td><td>Tag input containers, move options, smaller buttons, pills</td></tr>
+        <tr><td>8px</td><td>Small pills (due date, tag counts, control buttons), color swatches</td></tr>
+        <tr><td>6px</td><td>Checkboxes, expand buttons, due date badges</td></tr>
+        <tr><td>50% (circle)</td><td>Color dots, avatars, color picker buttons</td></tr>
+      </table>
+      <div class="note"><strong>Rule of thumb:</strong> Bigger element = bigger radius. Cards: 16–20px. Buttons: 10–12px. Small pills: 6–8px.</div>
+    </div>
+  </details>
+
+  <!-- ==================== BORDER WIDTHS ==================== -->
+  <details>
+    <summary><span class="section-icon">📏</span> Border / Stroke Widths</summary>
+    <div class="section-body">
+      <table>
+        <tr><th>Width</th><th>Used On</th></tr>
+        <tr><td>1px solid</td><td>Buttons, inputs, modals, menus, small elements</td></tr>
+        <tr><td>1px dashed</td><td>"Add new" placeholder buttons (add task, add cubby, add workspace)</td></tr>
+        <tr><td>2px solid</td><td>Room cards, stat cards, cubby browse sections, expanded task borders, checkboxes</td></tr>
+        <tr><td>2px dashed</td><td>Edit mode containers</td></tr>
+      </table>
+      <div class="note"><strong>Rule of thumb:</strong> Most borders are 1px. Larger cards (rooms, cubbies, stats) use 2px.</div>
+    </div>
+  </details>
+
+  <!-- ==================== FONT SIZES ==================== -->
+  <details>
+    <summary><span class="section-icon">🔤</span> Font Sizes</summary>
+    <div class="section-body">
+      <table>
+        <tr><th>Size</th><th>Used On</th></tr>
+        <tr><td>36px</td><td>Cubby title (inside a cubby, the big name at top)</td></tr>
+        <tr><td>28px</td><td>Dashboard stat numbers</td></tr>
+        <tr><td>24px</td><td>Greeting name ("good morning, matt")</td></tr>
+        <tr><td>20px</td><td>Modal titles, room card names</td></tr>
+        <tr><td>18px</td><td>Plus (+) signs on "add" buttons</td></tr>
+        <tr><td>16px</td><td>Task text, input fields, modal buttons, greeting subtext, room info</td></tr>
+        <tr><td>14px</td><td>Button labels, descriptions, back button text, menu items, date inputs</td></tr>
+        <tr><td>13px</td><td>Section headings ("workspaces", "upcoming"), sidebar nav items, banner text</td></tr>
+        <tr><td>12px</td><td>"See all" links, sidebar cubby names, stat card labels</td></tr>
+        <tr><td>11px</td><td>Due date pill text, stat card sublabels, small button labels, task counts</td></tr>
+        <tr><td>10px</td><td>Tag text</td></tr>
+      </table>
+    </div>
+  </details>
+
+  <!-- ==================== FONT WEIGHTS ==================== -->
+  <details>
+    <summary><span class="section-icon">🅱️</span> Font Weights</summary>
+    <div class="section-body">
+      <table>
+        <tr><th>Weight</th><th>Name</th><th>Usage</th></tr>
+        <tr><td>800</td><td>Extra Bold</td><td>Cubby title, section labels, greeting name</td></tr>
+        <tr><td>700</td><td>Bold</td><td>Modal titles, room names, stat numbers, subcubby headers</td></tr>
+        <tr><td>600</td><td>Semibold</td><td>Buttons, tags, due date pills, nav items, sidebar items</td></tr>
+        <tr><td>500</td><td>Medium</td><td>Body text, task text, descriptions, muted labels</td></tr>
+        <tr><td>400</td><td>Regular</td><td>Rarely used — most body text is 500</td></tr>
+      </table>
+    </div>
+  </details>
+
+  <!-- ==================== SPACING ==================== -->
+  <details>
+    <summary><span class="section-icon">↔️</span> Spacing & Padding</summary>
+    <div class="section-body">
+      <table>
+        <tr><th>Size</th><th>Used On</th></tr>
+        <tr><td>24px</td><td>Modal inner padding, large section spacing</td></tr>
+        <tr><td>20px</td><td>Screen padding (left/right edges), cubby card padding, room card gaps</td></tr>
+        <tr><td>16px</td><td>Task inner padding, menu item padding, card padding, section gaps</td></tr>
+        <tr><td>12px</td><td>Gap between checkbox/text/buttons in a task row, cubby browse item gap</td></tr>
+        <tr><td>8px</td><td>Small gaps (icon-to-text, tag spacing, tight margins)</td></tr>
+        <tr><td>6px</td><td>Tightest gaps (between task cards, tag pill gaps)</td></tr>
+      </table>
+    </div>
+  </details>
+
+  <!-- ==================== ELEMENT SIZES ==================== -->
+  <details>
+    <summary><span class="section-icon">📐</span> Element Sizes</summary>
+    <div class="section-body">
+      <table>
+        <tr><th>Element</th><th>Size</th></tr>
+        <tr><td>Sidebar</td><td>260px wide, full height</td></tr>
+        <tr><td>Bottom nav (mobile)</td><td>72px tall + safe area inset</td></tr>
+        <tr><td>Content max-width (desktop)</td><td>800px centered (some screens 700 or 900)</td></tr>
+        <tr><td>Modal max-width</td><td>400px</td></tr>
+        <tr><td>Checkbox</td><td>24 × 24px</td></tr>
+        <tr><td>Expand button</td><td>28 × 28px</td></tr>
+        <tr><td>Quick action icon circle</td><td>44 × 44px</td></tr>
+        <tr><td>Color swatch</td><td>32 × 32px</td></tr>
+        <tr><td>Color dot (in swatch)</td><td>14 × 14px</td></tr>
+        <tr><td>Cubby browse dot</td><td>10 × 10px</td></tr>
+        <tr><td>Upcoming task dot</td><td>8 × 8px</td></tr>
+        <tr><td>Due date badge</td><td>64px wide (fixed)</td></tr>
+        <tr><td>Tag color picker button</td><td>24 × 24px</td></tr>
+      </table>
+    </div>
+  </details>
+
+  <!-- ==================== TRANSITIONS ==================== -->
+  <details>
+    <summary><span class="section-icon">⚡</span> Transitions & Animations</summary>
+    <div class="section-body">
+      <table>
+        <tr><th>Speed</th><th>Used On</th></tr>
+        <tr><td>0.15s ease</td><td>Fast micro-interactions (hover color, tag selection)</td></tr>
+        <tr><td>0.2s ease</td><td>Standard (buttons, cards, backgrounds, borders)</td></tr>
+        <tr><td>0.3s ease</td><td>Larger animations (chevron rotation, expand/collapse)</td></tr>
+        <tr><td>0.3s cubic-bezier(0.4, 0, 0.2, 1)</td><td>Sidebar slide in/out</td></tr>
+      </table>
+    </div>
+  </details>
+
+  <!-- ==================== SHADOWS ==================== -->
+  <details>
+    <summary><span class="section-icon">🌑</span> Shadows & Effects</summary>
+    <div class="section-body">
+      <table>
+        <tr><th>Element</th><th>Value</th></tr>
+        <tr><td>Modal shadow</td><td><code>0 20px 60px rgba(0,0,0, 0.5)</code></td></tr>
+        <tr><td>Context menu shadow</td><td><code>0 10px 40px rgba(0,0,0, 0.5)</code></td></tr>
+        <tr><td>Checked checkbox glow</td><td><code>0 0 12px</code> + cubby's glow color</td></tr>
+        <tr><td>Modal backdrop blur</td><td><code>blur(4px)</code></td></tr>
+        <tr><td>Card backdrop blur</td><td><code>blur(12px)</code></td></tr>
+        <tr><td>Modal backdrop color</td><td><code>rgba(0,0,0, 0.7)</code></td></tr>
+      </table>
+    </div>
+  </details>
+
+  <!-- ==================== HOVER & CLICK ==================== -->
+  <details>
+    <summary><span class="section-icon">👆</span> Hover & Click Effects</summary>
+    <div class="section-body">
+      <ul>
+        <li><strong>Hover:</strong> Elements brighten via <code>filter: brightness(1.1) saturate(1.1)</code> or background color change</li>
+        <li><strong>Click pop:</strong> Shrink to <code>scale(0.95)</code>, darken with <code>brightness(0.9)</code>, spring back with <code>cubic-bezier(0.34, 1.56, 0.64, 1)</code></li>
+        <li><strong>Active press:</strong> Background shifts to <code>rgba(255,255,255, 0.1)</code> or <code>0.02</code></li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- ==================== LAYOUT ==================== -->
+  <details>
+    <summary><span class="section-icon">🖥️</span> Layout Reference (Desktop at 1440px)</summary>
+    <div class="section-body">
+      <div class="diagram">┌─────────────────────────────────────────────────────────┐
+│ ┌──────────┐ ┌────────────────────────────────────────┐ │
+│ │          │ │                                        │ │
+│ │ SIDEBAR  │ │         CONTENT AREA                   │ │
+│ │  260px   │ │     (centered, max 800px)              │ │
+│ │          │ │                                        │ │
+│ │          │ │   ┌──────────────────────────┐         │ │
+│ │  Nav     │ │   │   Your actual content    │         │ │
+│ │  links   │ │   │   lives in here          │         │ │
+│ │          │ │   │                          │         │ │
+│ │  ─────── │ │   └──────────────────────────┘         │ │
+│ │          │ │          ↑ 800px max ↑                  │ │
+│ │  Work-   │ │     ~190px          ~190px             │ │
+│ │  spaces  │ │     empty           empty              │ │
+│ │          │ │                                        │ │
+│ │  ─────── │ │                                        │ │
+│ │  User    │ │                                        │ │
+│ └──────────┘ └────────────────────────────────────────┘ │
+│   260px                    1180px                       │
+└─────────────────────────────────────────────────────────┘
+                         1440px</div>
+    </div>
+  </details>
+
+</div>
+</body>
+</html>
