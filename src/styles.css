@@ -2512,6 +2512,98 @@
 
     /* --- END STAGE 4 --- */
 
+    /* --- STAGE 5: Settings & Other Screens --- */
+
+    /* Settings: sticky header, smaller title */
+    #settings-screen > .header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: transparent;
+        padding-bottom: 16px;
+        margin-bottom: 0;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .settings-title {
+        margin-bottom: 0;
+        padding: 16px 0 12px;
+    }
+    .settings-title h1 {
+        font-size: 24px;
+    }
+
+    /* Settings cards: slightly wider padding on desktop */
+    .settings-card {
+        padding: 20px;
+    }
+    .settings-action-btn {
+        padding: 14px;
+    }
+    .settings-link-btn {
+        padding: 16px 4px;
+    }
+
+    /* Archive/Trash: sticky header, smaller title */
+    #archive-screen > .header,
+    #trash-screen > .header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: transparent;
+        padding-bottom: 16px;
+        margin-bottom: 0;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    #archive-screen .settings-title,
+    #trash-screen .settings-title {
+        padding: 16px 0 12px;
+        margin-bottom: 0;
+    }
+    #archive-screen .settings-title h1,
+    #trash-screen .settings-title h1 {
+        font-size: 24px;
+    }
+
+    /* Archive/Trash items: wider padding */
+    .archive-item {
+        padding: 16px 20px;
+    }
+
+    /* Archive/Trash header max-width */
+    #archive-screen > .header,
+    #trash-screen > .header,
+    #archive-screen .settings-title,
+    #trash-screen .settings-title {
+        width: 100%;
+        max-width: 700px;
+    }
+
+    /* Cubbies Browse: sticky title, refined sizing */
+    .cubbies-browse-title {
+        padding: 8px 0 12px;
+        margin-bottom: 0;
+    }
+    .cubbies-browse-title h1 {
+        font-size: 24px;
+    }
+
+    /* Cubbies Browse: grid layout for workspace sections */
+    .cubbies-browse-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        align-items: start;
+    }
+    .cubbies-browse-section {
+        margin-bottom: 0;
+    }
+    .cubbies-browse-add {
+        grid-column: 1 / -1;
+        margin-bottom: 0;
+    }
+
+    /* --- END STAGE 5 --- */
+
     .settings-title,
     .settings-container,
     #settings-container {

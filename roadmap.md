@@ -58,10 +58,10 @@ Like Asana's "My Tasks" list.
 - [x] Wider task card padding on desktop
 - [x] Polished group headers and task location labels
 
-#### Stage 5: Settings & Other Screens
-- [ ] Settings as a clean centered single-column layout
-- [ ] Archive/Trash screens refined for desktop width
-- [ ] Cubbies Browse screen — grid layout for workspace/cubby cards on desktop
+#### Stage 5: Settings & Other Screens ✅ (v1.5.4)
+- [x] Settings: sticky header toolbar, 24px title, wider card padding
+- [x] Archive/Trash: sticky headers, 24px titles, wider item padding
+- [x] Cubbies Browse: 24px title, 2-column grid layout for workspace sections
 
 #### Stage 6: Mobile Design Pass
 Dedicated pass to optimize every screen for mobile after desktop is complete.
