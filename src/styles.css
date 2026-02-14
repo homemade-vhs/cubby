@@ -2382,22 +2382,22 @@
     #cubby-screen .page-header-bar {
         background: color-mix(in srgb, var(--cubby-primary) 3%, #0a0a0f);
         border-bottom-color: var(--cubby-border);
-        flex-direction: row;
-        align-items: center;
         padding-top: 0;
         padding-bottom: 0;
-        gap: 0;
+        position: sticky;
+        top: 0;
     }
 
-    /* Back button: far left in the bar */
+    /* Back button: far left, absolutely positioned so it doesn't shift content */
     #cubby-screen .page-header-back {
-        flex-shrink: 0;
-        margin-right: 16px;
+        position: absolute;
+        left: 40px;
+        top: 50%;
+        transform: translateY(-50%);
     }
 
     /* Centered content row: aligns with the 900px work area */
     #cubby-screen .page-header-content {
-        flex: 1;
         display: flex;
         align-items: center;
         max-width: 900px;
