@@ -2298,6 +2298,9 @@
     #home-sections-container {
         width: 100%;
         max-width: 900px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
     }
 
     .header,
@@ -2362,9 +2365,9 @@
         display: none;
     }
 
-    /* Add spacing between stats and widget grid */
+    /* Remove stats margin on desktop (flex gap handles spacing) */
     .dashboard-stats {
-        margin-bottom: 32px;
+        margin-bottom: 0;
     }
 
     /* Widget grid: 2-column layout */
