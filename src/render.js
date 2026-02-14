@@ -33,12 +33,26 @@ function renderHome(skipAnimation) {
             var layout = appData.settings.homeLayout;
             
             // Reorder sections based on homeLayout
+            // The widget grid wraps upcoming + quick-actions, so we need to
+            // move the grid as a unit within the top-level container
+            var widgetGrid = sectionsContainer.querySelector('.home-widget-grid');
+            var gridMoved = false;
             layout.forEach(function(section) {
                 var wrapper = sectionsContainer.querySelector('[data-section-id="' + section.id + '"]');
                 if (wrapper) {
-                    // Keep sections inside their parent (e.g. widget grid wrapper)
                     var parent = wrapper.parentElement;
-                    parent.appendChild(wrapper);
+                    if (parent === sectionsContainer) {
+                        // Direct child (stats, workspaces) — reorder in container
+                        sectionsContainer.appendChild(wrapper);
+                    } else if (widgetGrid && parent === widgetGrid) {
+                        // Inside widget grid — move the grid to this position first time
+                        if (!gridMoved) {
+                            sectionsContainer.appendChild(widgetGrid);
+                            gridMoved = true;
+                        }
+                        // Reorder within the grid
+                        widgetGrid.appendChild(wrapper);
+                    }
                 }
             });
 
