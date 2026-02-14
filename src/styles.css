@@ -2543,6 +2543,19 @@
         padding: 16px 4px;
     }
 
+    /* Settings/Archive/Trash: make the SCREEN scroll, not the inner container */
+    #settings-screen,
+    #archive-screen,
+    #trash-screen {
+        overflow-y: auto;
+    }
+    .settings-container,
+    .archive-container,
+    .trash-container {
+        overflow-y: visible;
+        padding-right: 0;
+    }
+
     /* Archive/Trash: sticky header, smaller title */
     #archive-screen > .header,
     #trash-screen > .header {
