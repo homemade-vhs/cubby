@@ -2422,6 +2422,19 @@
         display: none;
     }
 
+    /* Cubby header action buttons: subtler on desktop */
+    #cubby-screen .header-search-btn,
+    #cubby-screen .cubby-settings-btn,
+    #cubby-screen .cubby-date-toggle {
+        opacity: 0.4;
+        transition: opacity 0.15s ease;
+    }
+    #cubby-screen .header-search-btn:hover,
+    #cubby-screen .cubby-settings-btn:hover,
+    #cubby-screen .cubby-date-toggle:hover {
+        opacity: 0.8;
+    }
+
     /* Cubby header buttons: stay right of the title */
     #cubby-screen .cubby-header {
         flex-shrink: 0;
