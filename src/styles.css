@@ -2400,7 +2400,6 @@
         border-left: 3px solid var(--cubby-primary);
         border-radius: 0;
         margin-bottom: 16px;
-        background: rgba(255,255,255,0.02);
     }
     .subcubby-header h3 {
         font-size: 15px;
@@ -2543,15 +2542,21 @@
         padding: 16px 4px;
     }
 
-    /* Settings/Archive/Trash: make the SCREEN scroll, not the inner container */
+    /* Desktop: make SCREENS scroll (browser-edge scrollbar), not inner containers */
     #settings-screen,
     #archive-screen,
-    #trash-screen {
+    #trash-screen,
+    #cubby-screen,
+    #views-screen,
+    #room-screen {
         overflow-y: auto;
     }
     .settings-container,
     .archive-container,
-    .trash-container {
+    .trash-container,
+    .tasks-container,
+    .views-container,
+    .cubbies-list {
         overflow-y: visible;
         padding-right: 0;
     }
