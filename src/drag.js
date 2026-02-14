@@ -208,6 +208,10 @@ function checkReorder() {
     // Find which item the middle of the clone is over
     var newIndex = dragState.currentIndex;
     
+    // Use a buffer zone (30% of item height) to prevent flickering
+    // The clone must pass 30% beyond the midpoint to trigger a swap
+    var buffer = cloneRect.height * 0.3;
+    
     for (var i = 0; i < dragState.items.length; i++) {
         if (i === dragState.currentIndex) continue;
         
@@ -215,10 +219,10 @@ function checkReorder() {
         var itemRect = item.getBoundingClientRect();
         var itemMiddle = itemRect.top + itemRect.height / 2;
         
-        if (i < dragState.currentIndex && cloneMiddle < itemMiddle) {
+        if (i < dragState.currentIndex && cloneMiddle < itemMiddle - buffer) {
             newIndex = i;
             break;
-        } else if (i > dragState.currentIndex && cloneMiddle > itemMiddle) {
+        } else if (i > dragState.currentIndex && cloneMiddle > itemMiddle + buffer) {
             newIndex = i;
         }
     }
