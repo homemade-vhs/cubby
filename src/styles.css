@@ -2388,12 +2388,9 @@
         top: 0;
     }
 
-    /* Back button: far left, absolutely positioned so it doesn't shift content */
+    /* Back button: hidden on desktop cubby header */
     #cubby-screen .page-header-back {
-        position: absolute;
-        left: 40px;
-        top: 50%;
-        transform: translateY(-50%);
+        display: none;
     }
 
     /* Centered content row: aligns with the 900px work area */
