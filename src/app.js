@@ -535,7 +535,10 @@ function hideNavBar() {
 }
 
 function updateNavUserName(name) {
-    // Nav tab always shows "user" — display name is used in greeting only
+    // Update sidebar user info
+    if (typeof updateSidebarUserInfo === 'function') {
+        updateSidebarUserInfo();
+    }
 }
 
 function openProfileMenu() {
@@ -547,6 +550,7 @@ function openProfileMenu() {
 // ============================================
 
 var mobileSidebarOpen = false;
+var sidebarExpandedWorkspaces = {}; // Track which workspaces are expanded in sidebar
 
 function toggleMobileSidebar() {
     if (mobileSidebarOpen) {
@@ -583,24 +587,41 @@ function renderSidebarWorkspaces() {
         var roomTheme = roomColor ? (colorThemes[roomColor] || colorThemes.purple) : null;
         var dotColor = roomTheme ? roomTheme.primary : 'rgba(255,255,255,0.3)';
         var nameColor = roomTheme ? roomTheme.text : 'rgba(255,255,255,0.6)';
+        var isExpanded = sidebarExpandedWorkspaces[room.id] !== false; // default expanded
+        var isActiveRoom = currentRoom && currentRoom.id === room.id;
+        var activeClass = (isActiveRoom && currentView === 'room') ? ' active' : '';
 
-        html += '<div class="sidebar-workspace-item" onclick="sidebarSelectRoom(\'' + room.id + '\')">';
+        html += '<div class="sidebar-workspace-item' + activeClass + '" onclick="sidebarToggleWorkspace(\'' + room.id + '\')" oncontextmenu="event.preventDefault(); sidebarSelectRoom(\'' + room.id + '\')">';
+        html += '<div class="sidebar-workspace-chevron' + (isExpanded ? ' expanded' : '') + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6L15 12L9 18"/></svg></div>';
         html += '<div class="sidebar-workspace-dot" style="background:' + dotColor + '"></div>';
         html += '<span class="sidebar-workspace-name" style="color:' + nameColor + '">' + room.name + '</span>';
         html += '<span class="sidebar-workspace-count">' + room.cubbies.length + '</span>';
         html += '</div>';
 
-        // Show cubbies under each workspace
+        // Cubbies list (collapsible)
+        html += '<div class="sidebar-cubbies-list' + (isExpanded ? ' expanded' : '') + '" data-workspace-id="' + room.id + '">';
         room.cubbies.forEach(function(cubby) {
             var cubbyTheme = colorThemes[cubby.color] || colorThemes.purple;
-            html += '<div class="sidebar-cubby-item" onclick="sidebarSelectCubby(\'' + room.id + '\', \'' + cubby.id + '\')">';
+            var isActiveCubby = currentCubby && currentCubby.id === cubby.id;
+            var cubbyActiveClass = isActiveCubby ? ' active' : '';
+            html += '<div class="sidebar-cubby-item' + cubbyActiveClass + '" onclick="sidebarSelectCubby(\'' + room.id + '\', \'' + cubby.id + '\')">';
             html += '<div class="sidebar-cubby-dot" style="background:' + cubbyTheme.primary + '"></div>';
-            html += '<span class="sidebar-cubby-name" style="color:' + cubbyTheme.primary + '">' + cubby.name + '</span>';
+            html += '<span class="sidebar-cubby-name">' + cubby.name + '</span>';
             html += '</div>';
         });
+        html += '</div>';
     });
 
     container.innerHTML = html;
+}
+
+function sidebarToggleWorkspace(roomId) {
+    if (sidebarExpandedWorkspaces[roomId] === undefined) {
+        sidebarExpandedWorkspaces[roomId] = false; // collapse (default is expanded)
+    } else {
+        sidebarExpandedWorkspaces[roomId] = !sidebarExpandedWorkspaces[roomId];
+    }
+    renderSidebarWorkspaces();
 }
 
 function sidebarSelectRoom(roomId) {
@@ -612,6 +633,8 @@ function sidebarSelectCubby(roomId, cubbyId) {
     closeMobileSidebar();
     currentRoom = appData.rooms.find(function(r) { return r.id === roomId; });
     if (!currentRoom) return;
+    // Make sure that workspace is expanded in sidebar
+    sidebarExpandedWorkspaces[roomId] = true;
     selectCubby(cubbyId);
 }
 
@@ -639,6 +662,28 @@ function updateSidebar() {
 
     // Render workspaces in sidebar
     renderSidebarWorkspaces();
+
+    // Update user info in sidebar
+    updateSidebarUserInfo();
+}
+
+function updateSidebarUserInfo() {
+    var nameEl = document.getElementById('sidebar-user-name');
+    var avatarEl = document.getElementById('sidebar-user-avatar');
+    if (!nameEl || !avatarEl) return;
+
+    var name = '';
+    if (appData.settings && appData.settings.userName) {
+        name = appData.settings.userName;
+    }
+
+    if (name) {
+        nameEl.textContent = name;
+        avatarEl.textContent = name.charAt(0).toUpperCase();
+    } else {
+        nameEl.textContent = 'user';
+        avatarEl.textContent = '?';
+    }
 }
 
 // ============================================
