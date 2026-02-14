@@ -4,4 +4,13 @@
 
 ---
 
-*No current notes. Previous notes (Feb 7, 2026) have been completed and archived to notes-archive.md.*
+## Current Focus: Desktop Design Pass
+
+Matt wants to build Cubby into a polished desktop browser app (+ mobile PWA), inspired by Asana and Monday.com. Reference screenshots are in `/screenshots/`. We're working through the desktop roadmap stage by stage — see `roadmap.md` for the full plan.
+
+**Next up:** Stage 1 — Sidebar Polish
+
+**Completed so far (Feb 14, 2026):**
+- [x] Dual desktop/mobile layout (sidebar + bottom tab bar)
+- [x] Center-aligned desktop content
+- [x] Simplified mobile bottom nav (5 tabs)
