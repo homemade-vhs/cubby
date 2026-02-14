@@ -2356,7 +2356,7 @@
     .tasks-container,
     #tasks-container {
         width: 100%;
-        max-width: 100%;
+        max-width: 900px;
     }
 
     /* --- STAGE 3: Desktop Cubby View --- */
@@ -2366,7 +2366,7 @@
         position: sticky;
         top: 0;
         z-index: 10;
-        background: #0a0a0f;
+        background: transparent;
         padding-bottom: 16px;
         margin-bottom: 0;
         border-bottom: 1px solid rgba(255,255,255,0.06);
