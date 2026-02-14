@@ -67,7 +67,7 @@ There are several .md files for you to reference. Please check them at the start
 
 ## Current Features
 
-These features exist and work in the current build (v1.4.1):
+These features exist and work in the current build (v1.5.0):
 
 ### App Hierarchy
 **Workspaces > Cubbies > Subcubbies > Tasks > Subtasks**

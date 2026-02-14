@@ -26,12 +26,12 @@
 
 Reference screenshots: Asana (home, list view) and Monday.com (board, notes) in `/screenshots/`
 
-#### Stage 1: Sidebar Polish
-- [ ] Refine sidebar styling (tighter spacing, better visual hierarchy like Monday.com)
-- [ ] Collapsible workspace sections (click workspace name to expand/collapse its cubbies)
-- [ ] Active cubby/workspace highlighting (show which one you're currently viewing)
-- [ ] "New Workspace" button in sidebar workspace area
-- [ ] User avatar/name at bottom of sidebar
+#### Stage 1: Sidebar Polish ✅ (v1.5.0)
+- [x] Refine sidebar styling (tighter spacing, better visual hierarchy like Monday.com)
+- [x] Collapsible workspace sections (click workspace name to expand/collapse its cubbies)
+- [x] Active cubby/workspace highlighting (show which one you're currently viewing)
+- [x] "New Workspace" button in sidebar workspace area
+- [x] User avatar/name at bottom of sidebar
 
 #### Stage 2: Home Screen (Desktop)
 Inspired by Asana Home — 2-column widget grid.
