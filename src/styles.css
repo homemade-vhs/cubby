@@ -2143,42 +2143,82 @@
         padding-bottom: 40px;
     }
 
-    /* Wider content area for desktop */
-    .dashboard-stats {
-        max-width: 800px;
+    /* Center content within the work area (sidebar → browser edge) */
+    #home-screen,
+    #views-screen,
+    #cubbies-screen,
+    #room-screen,
+    #cubby-screen,
+    #settings-screen,
+    #archive-screen,
+    #trash-screen {
+        align-items: center;
     }
-    .dashboard-upcoming {
-        max-width: 800px;
-    }
-    .dashboard-quick-actions {
-        max-width: 800px;
-    }
+
+    /* All top-level content blocks: max-width + centered */
+    .home-header,
+    .search-btn,
+    #home-sections-container,
+    .logo,
+    .dashboard-stats,
+    .dashboard-upcoming,
+    .dashboard-quick-actions,
+    .dashboard-section-label,
     #rooms-container {
+        width: 100%;
         max-width: 800px;
     }
-    .cubbies-browse-container {
-        max-width: 800px;
-    }
-    .cubbies-list {
-        max-width: 800px;
-    }
-    .tasks-container {
+
+    .header,
+    .views-title,
+    .views-container,
+    #views-container {
+        width: 100%;
         max-width: 900px;
     }
-    .views-container {
+
+    .cubbies-browse-title,
+    .cubbies-browse-container,
+    #cubbies-browse-container {
+        width: 100%;
+        max-width: 800px;
+    }
+
+    .room-title,
+    #room-title,
+    .cubbies-list,
+    #cubbies-list {
+        width: 100%;
+        max-width: 800px;
+    }
+
+    .cubby-header,
+    .cubby-title,
+    #cubby-title,
+    .tasks-container,
+    #tasks-container {
+        width: 100%;
         max-width: 900px;
     }
-    .settings-container {
-        max-width: 700px;
-    }
-    .archive-container,
-    .trash-container {
+
+    .settings-title,
+    .settings-container,
+    #settings-container {
+        width: 100%;
         max-width: 700px;
     }
 
-    /* Desktop search bar stretches wider */
+    .archive-container,
+    #archive-container,
+    .trash-container,
+    #trash-container {
+        width: 100%;
+        max-width: 700px;
+    }
+
+    /* Desktop search bar */
     .search-btn {
-        max-width: 600px;
+        max-width: 800px;
     }
 }
 
