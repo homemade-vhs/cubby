@@ -84,28 +84,52 @@ function renderHome(skipAnimation) {
                         existingControls.remove();
                     }
 
-                    // Add controls
+                    // Add controls with drag handle
                     var controlsHtml = '<div class="home-section-controls">' +
+                        '<div class="home-section-drag-handle">' +
+                        '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>' +
+                        '</div>' +
                         '<span class="home-section-label-text">' + section.label + '</span>' +
-                        '<button type="button" class="home-section-control-btn' + (index === 0 ? ' disabled' : '') + '" onclick="moveHomeSectionUp(\'' + section.id + '\')">' +
-                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg>' +
-                        '</button>' +
-                        '<button type="button" class="home-section-control-btn' + (index === layout.length - 1 ? ' disabled' : '') + '" onclick="moveHomeSectionDown(\'' + section.id + '\')">' +
-                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>' +
-                        '</button>' +
                         '<button type="button" class="home-section-control-btn" onclick="toggleHomeSection(\'' + section.id + '\')">' +
                         (section.visible ? 'hide' : 'show') +
                         '</button>' +
                         '</div>';
                     wrapper.insertAdjacentHTML('afterbegin', controlsHtml);
+
+                    // Also add editing class to widget grid if this section is inside it
+                    var widgetGridParent = wrapper.closest('.home-widget-grid');
+                    if (widgetGridParent) {
+                        widgetGridParent.classList.add('editing');
+                    }
                 } else {
                     wrapper.classList.remove('editing', 'hidden');
+                    // Remove editing from widget grid
+                    var widgetGridParent = wrapper.closest('.home-widget-grid');
+                    if (widgetGridParent) {
+                        widgetGridParent.classList.remove('editing');
+                    }
                     var existingControls = wrapper.querySelector('.home-section-controls');
                     if (existingControls) {
                         existingControls.remove();
                     }
                 }
             });
+
+            // Add/remove widget grid drag handle (for desktop — the grid is one draggable unit)
+            if (widgetGrid) {
+                var existingGridControls = widgetGrid.querySelector('.home-section-controls.widget-grid-controls');
+                if (existingGridControls) existingGridControls.remove();
+
+                if (homeEditMode) {
+                    var gridControlsHtml = '<div class="home-section-controls widget-grid-controls">' +
+                        '<div class="home-section-drag-handle">' +
+                        '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>' +
+                        '</div>' +
+                        '<span class="home-section-label-text">widgets</span>' +
+                        '</div>';
+                    widgetGrid.insertAdjacentHTML('afterbegin', gridControlsHtml);
+                }
+            }
         }
     } catch (e) {
         console.error('Error applying home layout:', e);

@@ -46,6 +46,7 @@
     /* Home Edit Mode */
     .home-section-wrapper { position: relative; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
     .home-section-wrapper.editing { padding: 16px; background: rgba(255,255,255,0.02); border: 2px dashed rgba(255,255,255,0.1); border-radius: 16px; margin-bottom: 20px; }
+    .home-widget-grid.editing { padding: 16px; background: rgba(255,255,255,0.02); border: 2px dashed rgba(255,255,255,0.1); border-radius: 16px; margin-bottom: 20px; }
     .home-section-wrapper.editing.hidden { opacity: 0.4; }
     .home-section-controls { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
     .home-section-label-text { flex: 1; font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.5); letter-spacing: 0.5px; }
@@ -54,6 +55,10 @@
     .home-section-control-btn:active { transform: scale(0.92); }
     .home-section-control-btn.disabled { opacity: 0.3; pointer-events: none; }
     .home-section-control-btn svg { width: 14px; height: 14px; }
+    .home-section-drag-handle { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; color: rgba(255,255,255,0.25); cursor: grab; border-radius: 6px; transition: all 0.2s ease; flex-shrink: 0; }
+    .home-section-drag-handle:hover { color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.05); }
+    .home-section-drag-handle:active { cursor: grabbing; }
+    .widget-grid-controls { display: none; }
     .home-edit-banner { background: rgba(107, 163, 255, 0.1); border: 1px solid rgba(107, 163, 255, 0.2); border-radius: 16px; padding: 16px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; }
     .home-edit-banner-text { font-size: 13px; font-weight: 600; color: #6ba3ff; }
     .home-edit-done-btn { padding: 8px 16px; background: rgba(107, 163, 255, 0.15); border: 1px solid rgba(107, 163, 255, 0.3); border-radius: 10px; color: #6ba3ff; cursor: pointer; font-size: 13px; font-weight: 700; font-family: inherit; transition: all 0.2s ease; }
@@ -1455,6 +1460,25 @@
     }
 }
 
+/* Home section drag styles */
+.home-section-wrapper.dragging,
+.home-widget-grid.dragging {
+    opacity: 0 !important;
+    pointer-events: none;
+}
+
+.drag-clone.home-section-wrapper,
+.drag-clone.home-widget-grid {
+    border: 2px dashed rgba(107, 163, 255, 0.4) !important;
+    background: rgba(107, 163, 255, 0.08) !important;
+    border-radius: 16px !important;
+}
+
+#home-sections-container.drag-active > .home-section-wrapper:not(.dragging),
+#home-sections-container.drag-active > .home-widget-grid:not(.dragging) {
+    transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1);
+}
+
 /* ============================================ */
 /* VIEWS STYLES */
 /* ============================================ */
@@ -2367,6 +2391,22 @@
 
     /* Remove stats margin on desktop (flex gap handles spacing) */
     .dashboard-stats {
+        margin-bottom: 0;
+    }
+
+    /* Show widget grid drag handle on desktop, hide individual section drag handles inside grid */
+    .widget-grid-controls {
+        display: flex !important;
+        grid-column: 1 / -1;
+    }
+    .home-widget-grid .home-widget-card > .home-section-controls .home-section-drag-handle {
+        display: none;
+    }
+    /* Remove individual section editing borders inside the grid on desktop */
+    .home-widget-grid .home-widget-card.editing {
+        padding: 0;
+        background: none;
+        border: none;
         margin-bottom: 0;
     }
 

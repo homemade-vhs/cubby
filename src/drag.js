@@ -48,8 +48,8 @@ function handleDragStart(e) {
     
     if (!draggable || !draggable.element) return;
     
-    // Don't start drag on interactive elements
-    if (target.closest('.checkbox, .more-btn, .expand-btn, .subcubby-more-btn, .room-more-btn, .cubby-more-btn, button, input, textarea, a')) {
+    // Don't start drag on interactive elements (except drag handles)
+    if (!target.closest('.home-section-drag-handle') && target.closest('.checkbox, .more-btn, .expand-btn, .subcubby-more-btn, .room-more-btn, .cubby-more-btn, button, input, textarea, a')) {
         return;
     }
     
@@ -57,13 +57,14 @@ function handleDragStart(e) {
     if (e.type === 'touchstart') {
         // Allow scrolling if not on a draggable area
         // For subcubbies, only the header is draggable
+        var isOnDragHandle = target.closest('.home-section-drag-handle');
         var isOnSubcubbyHeader = target.closest('.subcubby-header, .subcubby-header-left');
         var isOnTask = target.closest('.task:not(.subtask)');
         var isOnSubtask = target.closest('.task.subtask');
         var isOnRoomCard = target.closest('.room-card-main');
         var isOnCubbyCard = target.closest('.cubby-card-main');
         
-        if (!isOnSubcubbyHeader && !isOnTask && !isOnSubtask && !isOnRoomCard && !isOnCubbyCard) {
+        if (!isOnDragHandle && !isOnSubcubbyHeader && !isOnTask && !isOnSubtask && !isOnRoomCard && !isOnCubbyCard) {
             return;
         }
     }
@@ -435,6 +436,22 @@ function findDraggableElement(target) {
         return { element: cubbyCard, type: 'cubby', container: container };
     }
     
+    // Check for home section drag handle (in edit mode)
+    var dragHandle = target.closest('.home-section-drag-handle');
+    if (dragHandle) {
+        var container = document.getElementById('home-sections-container');
+        // Check if this handle belongs to the widget grid controls
+        var widgetGrid = dragHandle.closest('.home-widget-grid');
+        if (widgetGrid) {
+            return { element: widgetGrid, type: 'home-section', container: container };
+        }
+        // Otherwise, it belongs to a standalone section wrapper
+        var sectionWrapper = dragHandle.closest('.home-section-wrapper');
+        if (sectionWrapper && sectionWrapper.parentElement === container) {
+            return { element: sectionWrapper, type: 'home-section', container: container };
+        }
+    }
+
     // Check for room card
     var roomCard = target.closest('.room-card');
     if (roomCard && roomCard.hasAttribute('data-room-id')) {
@@ -449,6 +466,12 @@ function getDraggableItems(container, type) {
     var selector = '';
     
     switch (type) {
+        case 'home-section':
+            // Return direct children: .home-section-wrapper and .home-widget-grid
+            return Array.from(container.children).filter(function(child) {
+                return child.classList.contains('home-section-wrapper') ||
+                       child.classList.contains('home-widget-grid');
+            });
         case 'room':
             selector = '.room-card[data-room-id]';
             break;
@@ -471,6 +494,7 @@ function getDraggableItems(container, type) {
 
 function getScrollContainer() {
     switch (dragState.type) {
+        case 'home-section':
         case 'room':
             return document.getElementById('home-screen');
         case 'cubby':
@@ -489,6 +513,32 @@ function saveReorderedData() {
     var items = dragState.items;
 
     switch (type) {
+        case 'home-section':
+            // Map DOM order back to homeLayout
+            // items = top-level children of home-sections-container
+            var newLayout = [];
+            items.forEach(function(item) {
+                if (item.classList.contains('home-widget-grid')) {
+                    // Widget grid contains upcoming and quick-actions
+                    var gridSections = item.querySelectorAll('[data-section-id]');
+                    gridSections.forEach(function(gs) {
+                        var sectionId = gs.getAttribute('data-section-id');
+                        var existing = appData.settings.homeLayout.find(function(s) { return s.id === sectionId; });
+                        if (existing) newLayout.push(existing);
+                    });
+                } else if (item.hasAttribute('data-section-id')) {
+                    var sectionId = item.getAttribute('data-section-id');
+                    var existing = appData.settings.homeLayout.find(function(s) { return s.id === sectionId; });
+                    if (existing) newLayout.push(existing);
+                }
+            });
+            if (newLayout.length === appData.settings.homeLayout.length) {
+                appData.settings.homeLayout = newLayout;
+            }
+            // Re-render home after a short delay so the clone animation finishes first
+            setTimeout(function() { renderHome(true); }, 280);
+            break;
+
         case 'room':
             var newRooms = [];
             items.forEach(function(item) {
