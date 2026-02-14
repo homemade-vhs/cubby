@@ -2552,13 +2552,19 @@
         overflow-y: auto;
     }
     .settings-container,
+    #settings-container,
     .archive-container,
+    #archive-container,
     .trash-container,
+    #trash-container,
     .tasks-container,
+    #tasks-container,
     .views-container,
-    .cubbies-list {
-        overflow-y: visible;
-        padding-right: 0;
+    #views-container,
+    .cubbies-list,
+    #cubbies-list {
+        overflow-y: visible !important;
+        padding-right: 0 !important;
     }
 
     /* Archive/Trash: sticky header, smaller title */
