@@ -2426,7 +2426,7 @@
     #cubby-screen .header-search-btn,
     #cubby-screen .cubby-settings-btn,
     #cubby-screen .cubby-date-toggle {
-        opacity: 0.4;
+        opacity: 0.5;
         transition: opacity 0.15s ease;
     }
     #cubby-screen .header-search-btn:hover,
