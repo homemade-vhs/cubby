@@ -2413,6 +2413,105 @@
 
     /* --- END STAGE 3 --- */
 
+    /* --- STAGE 4: Desktop Tasks Page --- */
+
+    /* Views header: sticky toolbar with bottom border */
+    #views-screen > .header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: transparent;
+        padding-bottom: 16px;
+        margin-bottom: 0;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* Views title: smaller on desktop */
+    .views-title {
+        margin-bottom: 0;
+        padding: 16px 0 12px;
+    }
+    .views-title h1 {
+        font-size: 24px;
+    }
+
+    /* Filter tabs: clean horizontal toolbar */
+    .view-controls {
+        padding: 12px 0 8px;
+    }
+    .view-filters {
+        flex-wrap: nowrap;
+        gap: 6px;
+    }
+    .view-filter-btn {
+        flex: 0 0 auto;
+        min-width: auto;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        border-width: 1px;
+        border-color: rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.03);
+        transition: all 0.15s ease;
+    }
+    .view-filter-btn:hover {
+        background: rgba(255,255,255,0.06);
+        border-color: rgba(255,255,255,0.12);
+    }
+    .view-filter-btn.active {
+        border-width: 1px;
+        background: color-mix(in srgb, var(--filter-color, #fff) 12%, transparent);
+        border-color: color-mix(in srgb, var(--filter-color, #fff) 35%, transparent);
+    }
+
+    /* Color mode toggle: refined segmented control */
+    .view-mode-toggle {
+        gap: 4px;
+        background: rgba(255,255,255,0.04);
+        border-radius: 12px;
+        padding: 3px;
+        border: 1px solid rgba(255,255,255,0.06);
+    }
+    .view-mode-btn {
+        padding: 6px 14px;
+        border-radius: 9px;
+        border: 1px solid transparent;
+        background: transparent;
+        font-size: 12px;
+    }
+    .view-mode-btn:hover {
+        background: rgba(255,255,255,0.04);
+    }
+    .view-mode-btn.active {
+        background: rgba(254,202,87,0.12);
+        border-color: rgba(254,202,87,0.25);
+        color: #feca57;
+    }
+
+    /* View task cards: wider padding on desktop */
+    .view-task-card .task {
+        padding: 16px 20px;
+        gap: 16px;
+    }
+
+    /* View group headers: slightly more refined */
+    .view-group {
+        margin-bottom: 24px;
+    }
+    .view-group-header {
+        padding: 10px 4px;
+    }
+    .view-group-label {
+        font-size: 13px;
+    }
+
+    /* View task location label: slightly larger on desktop */
+    .view-task-location {
+        font-size: 10px;
+    }
+
+    /* --- END STAGE 4 --- */
+
     .settings-title,
     .settings-container,
     #settings-container {

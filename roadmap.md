@@ -49,11 +49,14 @@ Inspired by Asana/Monday list views — full-width task lists.
 - [x] Wider task rows with more breathing room on desktop
 - [x] Due date, tags, progress visible inline on task rows
 
-#### Stage 4: Tasks Page (All Tasks View)
+#### Stage 4: Tasks Page (All Tasks View) ✅ (v1.5.3)
 Like Asana's "My Tasks" list.
-- [ ] Full-width task list on desktop
-- [ ] Cleaner filter tabs as a proper toolbar
-- [ ] Color mode toggle refined for desktop (toolbar button, not mobile switch)
+- [x] Sticky header toolbar with bottom border
+- [x] Title reduced to 24px (matching cubby view)
+- [x] Cleaner filter tabs as pill-style toolbar (no-wrap, rounded)
+- [x] Color mode toggle as refined segmented control
+- [x] Wider task card padding on desktop
+- [x] Polished group headers and task location labels
 
 #### Stage 5: Settings & Other Screens
 - [ ] Settings as a clean centered single-column layout
