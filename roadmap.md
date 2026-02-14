@@ -33,13 +33,13 @@ Reference screenshots: Asana (home, list view) and Monday.com (board, notes) in 
 - [x] "New Workspace" button in sidebar workspace area
 - [x] User avatar/name at bottom of sidebar
 
-#### Stage 2: Home Screen (Desktop)
+#### Stage 2: Home Screen (Desktop) ✅ (v1.5.1)
 Inspired by Asana Home — 2-column widget grid.
-- [ ] Redesign home as a 2-column card grid (My Tasks + Projects side by side)
-- [ ] Date + greeting at top, full width
-- [ ] Stats cards as a compact row above the grid
-- [ ] Upcoming tasks and workspace list as proper widget cards with headers
-- [ ] Consider removing workspace list from home (sidebar already shows them)
+- [x] Redesign home as a 2-column card grid (Upcoming Tasks + Quick Actions side by side)
+- [x] Date + greeting at top, full width
+- [x] Stats cards as a compact row above the grid
+- [x] Upcoming tasks and quick actions as proper widget cards with headers
+- [x] Hide workspace list and search bar on desktop (sidebar already shows them)
 
 #### Stage 3: Cubby View (Inside a Cubby)
 Inspired by Asana/Monday list views — full-width task lists.

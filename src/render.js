@@ -36,7 +36,9 @@ function renderHome(skipAnimation) {
             layout.forEach(function(section) {
                 var wrapper = sectionsContainer.querySelector('[data-section-id="' + section.id + '"]');
                 if (wrapper) {
-                    sectionsContainer.appendChild(wrapper);
+                    // Keep sections inside their parent (e.g. widget grid wrapper)
+                    var parent = wrapper.parentElement;
+                    parent.appendChild(wrapper);
                 }
             });
 

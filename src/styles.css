@@ -114,6 +114,11 @@
     .upcoming-see-more:active { transform: scale(0.98); }
     .upcoming-empty { text-align: center; padding: 24px 16px; color: rgba(255,255,255,0.25); font-size: 14px; font-weight: 500; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px dashed rgba(255,255,255,0.06); }
 
+    /* Home Widget Grid & Cards */
+    .home-widget-grid { display: contents; }
+    .widget-card-header { display: none; }
+    .desktop-only { display: none; }
+
     /* Dashboard Quick Actions */
     .dashboard-quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 28px; }
     .quick-action-btn { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 18px 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; cursor: pointer; transition: all 0.2s ease; font-family: inherit; }
@@ -2283,15 +2288,16 @@
     /* All top-level content blocks: max-width + centered */
     .home-header,
     .search-btn,
-    #home-sections-container,
     .logo,
-    .dashboard-stats,
-    .dashboard-upcoming,
-    .dashboard-quick-actions,
     .dashboard-section-label,
     #rooms-container {
         width: 100%;
-        max-width: 800px;
+        max-width: 900px;
+    }
+
+    #home-sections-container {
+        width: 100%;
+        max-width: 900px;
     }
 
     .header,
@@ -2341,9 +2347,82 @@
         max-width: 700px;
     }
 
-    /* Desktop search bar */
-    .search-btn {
-        max-width: 800px;
+    /* Desktop search bar — hidden (sidebar has search) */
+    #home-screen > .search-btn {
+        display: none;
+    }
+
+    /* Hide workspaces section on desktop (sidebar shows them) */
+    .home-section-wrapper[data-section-id="workspaces"] {
+        display: none !important;
+    }
+
+    /* Hide logo on desktop */
+    #home-screen > .logo {
+        display: none;
+    }
+
+    /* Widget grid: 2-column layout */
+    .home-widget-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        width: 100%;
+        max-width: 900px;
+    }
+
+    /* Widget card styling */
+    .home-widget-card {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 16px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+    .home-widget-card:hover {
+        border-color: rgba(255,255,255,0.09);
+    }
+
+    /* Widget card header */
+    .widget-card-header {
+        display: flex !important;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .widget-card-header svg {
+        color: rgba(255,255,255,0.3);
+        flex-shrink: 0;
+    }
+    .widget-card-header span {
+        font-size: 13px;
+        font-weight: 700;
+        color: rgba(255,255,255,0.4);
+        letter-spacing: 0.3px;
+    }
+    .desktop-only {
+        display: flex !important;
+    }
+
+    /* Upcoming widget adjustments inside card */
+    .home-widget-card .dashboard-upcoming {
+        margin-bottom: 0;
+    }
+    .home-widget-card .dashboard-upcoming-header {
+        display: none;
+    }
+
+    /* Quick actions adjustments inside card */
+    .home-widget-card .dashboard-quick-actions {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 0;
+    }
+    .home-widget-card .quick-action-btn {
+        padding: 16px 12px;
     }
 }
 
