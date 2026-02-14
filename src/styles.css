@@ -2389,22 +2389,31 @@
         gap: 0;
     }
 
-    /* Cubby header buttons: no grow, stay left */
-    #cubby-screen .cubby-header {
+    /* Back button: far left in the bar */
+    #cubby-screen .page-header-back {
         flex-shrink: 0;
-        max-width: none;
-        width: auto;
-        gap: 8px;
+        margin-right: 16px;
     }
 
-    /* Cubby title: inline next to buttons */
+    /* Centered content row: aligns with the 900px work area */
+    #cubby-screen .page-header-content {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        max-width: 900px;
+        width: 100%;
+        gap: 16px;
+        min-width: 0;
+    }
+
+    /* Cubby title: left-aligned in the content row */
     #cubby-screen .cubby-title {
         flex: 1;
         min-width: 0;
         padding: 16px 0;
         max-width: none;
         width: auto;
-        margin-left: 16px;
+        margin-left: 0;
     }
     #cubby-screen .cubby-title h1 {
         font-size: 20px;
@@ -2414,6 +2423,15 @@
     }
     #cubby-screen .cubby-description {
         display: none;
+    }
+
+    /* Cubby header buttons: stay right of the title */
+    #cubby-screen .cubby-header {
+        flex-shrink: 0;
+        max-width: none;
+        width: auto;
+        gap: 8px;
+        margin-bottom: 0;
     }
 
     /* Headers inside the bar: remove base margin, keep full width */
