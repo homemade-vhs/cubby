@@ -2362,6 +2362,11 @@
         display: none;
     }
 
+    /* Add spacing between stats and widget grid */
+    .dashboard-stats {
+        margin-bottom: 32px;
+    }
+
     /* Widget grid: 2-column layout */
     .home-widget-grid {
         display: grid !important;
