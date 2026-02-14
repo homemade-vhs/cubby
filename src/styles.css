@@ -2378,10 +2378,42 @@
         align-items: center;
     }
 
-    /* Cubby screen: tint header with cubby theme color */
+    /* Cubby screen: dark theme-tinted header, single row layout */
     #cubby-screen .page-header-bar {
-        background: color-mix(in srgb, var(--cubby-primary) 6%, #0a0a0f);
+        background: color-mix(in srgb, var(--cubby-primary) 3%, #0a0a0f);
         border-bottom-color: var(--cubby-border);
+        flex-direction: row;
+        align-items: center;
+        padding-top: 0;
+        padding-bottom: 0;
+        gap: 0;
+    }
+
+    /* Cubby header buttons: no grow, stay left */
+    #cubby-screen .cubby-header {
+        flex-shrink: 0;
+        max-width: none;
+        width: auto;
+        gap: 8px;
+    }
+
+    /* Cubby title: inline next to buttons */
+    #cubby-screen .cubby-title {
+        flex: 1;
+        min-width: 0;
+        padding: 16px 0;
+        max-width: none;
+        width: auto;
+        margin-left: 16px;
+    }
+    #cubby-screen .cubby-title h1 {
+        font-size: 20px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    #cubby-screen .cubby-description {
+        display: none;
     }
 
     /* Headers inside the bar: remove base margin, keep full width */
@@ -2396,7 +2428,7 @@
         margin-bottom: 0;
     }
 
-    /* Cubby name inline in header on desktop */
+    /* Cubby title (non-cubby-screen fallback) */
     .cubby-title {
         margin-bottom: 0;
         padding: 16px 0 20px;
