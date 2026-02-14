@@ -2284,7 +2284,7 @@
         padding: calc(var(--safe-top) + 20px) 40px 40px;
     }
     #views-screen {
-        padding: calc(var(--safe-top) + 12px) 40px 40px;
+        padding: 0 40px 40px;
     }
     #cubbies-screen,
     #room-screen,
@@ -2292,6 +2292,7 @@
     #settings-screen,
     #archive-screen,
     #trash-screen {
+        padding-top: 0;
         padding-left: 40px;
         padding-right: 40px;
         padding-bottom: 40px;
@@ -2370,11 +2371,17 @@
         align-self: stretch;
         margin-left: -40px;
         margin-right: -40px;
-        padding: 16px 40px 0;
+        padding: 20px 40px 0;
         border-bottom: 1px solid rgba(255,255,255,0.06);
         display: flex;
         flex-direction: column;
         align-items: center;
+    }
+
+    /* Cubby screen: tint header with cubby theme color */
+    #cubby-screen .page-header-bar {
+        background: color-mix(in srgb, var(--cubby-primary) 6%, #0a0a0f);
+        border-bottom-color: var(--cubby-border);
     }
 
     /* Headers inside the bar: remove base margin, keep full width */
