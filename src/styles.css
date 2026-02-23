@@ -2362,11 +2362,13 @@
     flex-direction: column;
     align-items: center;
     padding: 6px 4px;
-    border-radius: 12px;
+    border-radius: 0;
     cursor: pointer;
     transition: all 0.15s ease;
     position: relative;
     gap: 4px;
+    border: 1px solid rgba(255,255,255,0.06);
+    margin: -0.5px;
 }
 .cal-cell:hover {
     background: rgba(255,255,255,0.05);
@@ -2398,7 +2400,7 @@
 
 .cal-selected {
     background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.18);
 }
 .cal-selected:hover {
     background: rgba(255,255,255,0.08);
@@ -3034,7 +3036,6 @@
     /* Bigger cells on desktop */
     .cal-cell {
         padding: 8px 6px;
-        border-radius: 12px;
     }
     .cal-date-num {
         font-size: 14px;
