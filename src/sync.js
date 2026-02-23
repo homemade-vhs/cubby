@@ -127,6 +127,7 @@ async function loadFromSupabase() {
         var existingSettings = appData.settings || {};
         var existingArchive = appData.archive || [];
         var existingTrash = appData.trash || [];
+        var existingEvents = appData.events || [];
         
         appData = {
             rooms: workspaces.map(function(w) {
@@ -145,7 +146,8 @@ async function loadFromSupabase() {
             cubbies: {},
             settings: existingSettings,
             archive: existingArchive,
-            trash: existingTrash
+            trash: existingTrash,
+            events: existingEvents
         };
 
         // Step 6: Build cubbies lookup (task data by cubby ID)

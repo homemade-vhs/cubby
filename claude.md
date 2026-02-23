@@ -68,7 +68,7 @@ There are several .md files for you to reference. Please check them at the start
 
 ## Current Features
 
-These features exist and work in the current build (v1.6.0):
+These features exist and work in the current build (v1.6.1):
 
 ### App Hierarchy
 **Workspaces > Cubbies > Subcubbies > Tasks > Subtasks**
@@ -122,6 +122,13 @@ These features exist and work in the current build (v1.6.0):
 - **Overdue highlighting**: Past dates with incomplete tasks show red date numbers
 - **Navigation to tasks**: Click any task in the day detail to navigate directly to it in its cubby with highlight
 - Accessible from sidebar nav and shows completed tasks (dimmed) alongside active ones
+- **Events**: A separate object type for meetings/appointments/deadlines that appear on the calendar
+  - Events have title, date, optional start/end time, color, and description
+  - Events show as colored labels on calendar grid cells (max 2 visible per day, +N more indicator)
+  - Events show in the day detail panel above tasks, with color bar, title, time range, and notes
+  - Add events via "+" button in calendar header or day detail panel
+  - Full CRUD: create, edit, delete events via modal dialog with color picker
+  - Event data stored in `appData.events` array
 
 ### Task Management
 - Create, edit, delete, duplicate tasks and subtasks
@@ -225,6 +232,7 @@ These have caused issues before — be aware of them:
     cubbies: {...},         // Cubby data keyed by cubby ID
     archive: [...],         // Archived tasks
     trash: [...],           // Deleted tasks (with deletedAt timestamp)
+    events: [...],          // Array of event objects { id, title, date, startTime, endTime, color, description }
     settings: {
         userName: '',       // Display name for greeting
         customColors: {},   // Custom color overrides { colorName: '#hex' }

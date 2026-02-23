@@ -235,6 +235,7 @@ function loadData() {
             // Migrate: ensure archive, trash, and settings exist
             if (!appData.archive) appData.archive = [];
             if (!appData.trash) appData.trash = [];
+            if (!appData.events) appData.events = [];
             if (!appData.settings) {
                 appData.settings = {};
             }
@@ -310,6 +311,7 @@ function initializeDefaultData() {
         },
         archive: [],
         trash: [],
+        events: [],
         settings: {
             userName: '',
             autoArchive: {
