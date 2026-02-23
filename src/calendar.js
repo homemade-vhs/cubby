@@ -472,7 +472,7 @@ function openEventModal(dateStr, editEventId) {
 
     modal.innerHTML =
         '<div class="modal-backdrop" onclick="closeEventModal()"></div>' +
-        '<div class="modal-content event-modal-content">' +
+        '<div class="event-modal-content">' +
             '<h2>' + (evt ? 'Edit Event' : 'New Event') + '</h2>' +
             '<input type="text" id="event-title-input" placeholder="Event name..." value="' + titleValue + '" autocomplete="off">' +
             '<div class="event-form-row">' +
@@ -505,6 +505,7 @@ function openEventModal(dateStr, editEventId) {
         '</div>';
 
     document.body.appendChild(modal);
+    modal.classList.add('active');
 
     // Focus title input
     setTimeout(function() {
