@@ -2310,17 +2310,19 @@
         align-items: flex-start;
     }
 
-    /* All top-level content blocks: full width, no max-width centering */
+    /* All top-level content blocks: full width with max-width cap */
     .home-header,
     .search-btn,
     .logo,
     .dashboard-section-label,
     #rooms-container {
         width: 100%;
+        max-width: 1200px;
     }
 
     #home-sections-container {
         width: 100%;
+        max-width: 1200px;
         display: flex;
         flex-direction: column;
         gap: 24px;
@@ -2331,12 +2333,14 @@
     .views-container,
     #views-container {
         width: 100%;
+        max-width: 1200px;
     }
 
     .cubbies-browse-title,
     .cubbies-browse-container,
     #cubbies-browse-container {
         width: 100%;
+        max-width: 1200px;
     }
 
     .room-title,
@@ -2344,6 +2348,7 @@
     .cubbies-list,
     #cubbies-list {
         width: 100%;
+        max-width: 1200px;
     }
 
     .cubby-header,
@@ -2352,6 +2357,7 @@
     .tasks-container,
     #tasks-container {
         width: 100%;
+        max-width: 1200px;
     }
 
     /* --- STAGE 3: Desktop Cubby View --- */
@@ -2392,6 +2398,7 @@
         display: flex;
         align-items: center;
         width: 100%;
+        max-width: 1200px;
         gap: 16px;
         min-width: 0;
     }
@@ -2658,6 +2665,7 @@
     #archive-screen .settings-title,
     #trash-screen .settings-title {
         width: 100%;
+        max-width: 1200px;
     }
 
     /* Cubbies Browse: sticky title, refined sizing */
@@ -2690,6 +2698,7 @@
     .settings-container,
     #settings-container {
         width: 100%;
+        max-width: 1200px;
     }
 
     .archive-container,
@@ -2697,6 +2706,7 @@
     .trash-container,
     #trash-container {
         width: 100%;
+        max-width: 1200px;
     }
 
     /* Desktop search bar — hidden (sidebar has search) */
@@ -2741,6 +2751,7 @@
         grid-template-columns: 1fr 1fr;
         gap: 16px;
         width: 100%;
+        max-width: 1200px;
     }
 
     /* Widget card styling */
