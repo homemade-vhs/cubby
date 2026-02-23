@@ -407,6 +407,7 @@ function hideAllScreens() {
     document.getElementById('cubbies-screen').classList.remove('active');
     document.getElementById('room-screen').classList.remove('active');
     document.getElementById('cubby-screen').classList.remove('active');
+    document.getElementById('calendar-screen').classList.remove('active');
     document.getElementById('settings-screen').classList.remove('active');
     document.getElementById('archive-screen').classList.remove('active');
     document.getElementById('trash-screen').classList.remove('active');
@@ -648,6 +649,10 @@ function updateSidebar() {
             isActive = currentView === 'home';
         } else if (tab === 'views') {
             isActive = currentView === 'views';
+        } else if (tab === 'calendar') {
+            isActive = currentView === 'calendar';
+        } else if (tab === 'calendar') {
+            isActive = currentView === 'calendar';
         } else if (tab === 'cubbies') {
             isActive = currentView === 'cubbies' || currentView === 'room' || currentView === 'cubby';
         } else if (tab === 'profile') {
@@ -804,6 +809,16 @@ function moveHomeSectionDown(sectionId) {
             renderHome(true);
         });
     }
+}
+
+// ============================================
+// UTILITY FUNCTIONS
+// ============================================
+
+function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
 }
 
 // ============================================

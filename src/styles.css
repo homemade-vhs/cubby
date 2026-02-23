@@ -2251,6 +2251,305 @@
 }
 
 /* ============================================ */
+/* CALENDAR STYLES */
+/* ============================================ */
+
+#calendar-screen {
+    padding: calc(var(--safe-top) + 0px) 20px var(--nav-height);
+    background: #0a0a0f;
+    overflow-y: auto;
+}
+
+.calendar-title {
+    margin-bottom: 0;
+    padding: 8px 0 12px;
+}
+.calendar-title h1 {
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.calendar-container {
+    padding: 0 0 40px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* Calendar header — month nav + today button */
+.cal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    max-width: 1200px;
+}
+
+.cal-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.cal-nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.6);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.cal-nav-btn:hover {
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.9);
+    border-color: rgba(255,255,255,0.15);
+}
+
+.cal-month-label {
+    font-size: 20px;
+    font-weight: 700;
+    min-width: 200px;
+    text-align: center;
+    text-transform: none;
+}
+
+.cal-today-btn {
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(254,202,87,0.3);
+    background: rgba(254,202,87,0.1);
+    color: #feca57;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: inherit;
+    text-transform: lowercase;
+}
+.cal-today-btn:hover {
+    background: rgba(254,202,87,0.18);
+    border-color: rgba(254,202,87,0.4);
+}
+
+/* Calendar grid */
+.cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    max-width: 1200px;
+}
+
+.cal-day-headers {
+    margin-bottom: 4px;
+}
+
+.cal-day-name {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.35);
+    padding: 8px 0;
+    text-transform: lowercase;
+}
+
+/* Calendar cells */
+.cal-cell {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6px 4px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+    gap: 4px;
+}
+.cal-cell:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+.cal-cell-outside {
+    opacity: 0.2;
+    pointer-events: none;
+}
+
+.cal-date-num {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+    line-height: 1;
+}
+
+.cal-today .cal-date-num {
+    background: #feca57;
+    color: #0a0a0f;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.cal-selected {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+}
+.cal-selected:hover {
+    background: rgba(255,255,255,0.08);
+}
+
+.cal-overdue .cal-date-num {
+    color: #ff6b6b;
+}
+
+/* Task dots on calendar cells */
+.cal-dots {
+    display: flex;
+    gap: 3px;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 100%;
+}
+
+.cal-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.cal-dot-more {
+    font-size: 9px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.4);
+    line-height: 6px;
+}
+
+/* Day detail panel (below calendar) */
+.cal-day-detail {
+    margin-top: 24px;
+    max-width: 1200px;
+}
+
+.cal-day-detail-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.cal-day-detail-header h2 {
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: none;
+}
+.cal-day-count {
+    font-size: 13px;
+    color: rgba(255,255,255,0.35);
+    font-weight: 500;
+}
+
+.cal-empty-day {
+    padding: 32px;
+    text-align: center;
+    color: rgba(255,255,255,0.25);
+    font-size: 14px;
+}
+
+/* Task cards in day detail */
+.cal-day-tasks {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.cal-task-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.cal-task-card:hover {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.1);
+}
+
+.cal-task-done {
+    opacity: 0.45;
+}
+
+.cal-task-check {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cal-task-done .cal-task-check {
+    background: rgba(255,255,255,0.05);
+}
+
+.cal-task-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.cal-task-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #ffffff;
+    text-transform: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cal-task-done .cal-task-name {
+    text-decoration: line-through;
+    color: rgba(255,255,255,0.5);
+}
+
+.cal-task-location {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: none;
+}
+
+.cal-task-tags {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.cal-task-tag {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    text-transform: none;
+    white-space: nowrap;
+}
+
+/* ============================================ */
 /* RESPONSIVE LAYOUT — DESKTOP (>768px) */
 /* ============================================ */
 
@@ -2289,6 +2588,7 @@
     #cubbies-screen,
     #room-screen,
     #cubby-screen,
+    #calendar-screen,
     #settings-screen,
     #archive-screen,
     #trash-screen {
@@ -2304,6 +2604,7 @@
     #cubbies-screen,
     #room-screen,
     #cubby-screen,
+    #calendar-screen,
     #settings-screen,
     #archive-screen,
     #trash-screen {
@@ -2620,7 +2921,8 @@
     #trash-screen,
     #cubby-screen,
     #views-screen,
-    #room-screen {
+    #room-screen,
+    #calendar-screen {
         overflow-y: auto;
     }
     .settings-container,
@@ -2707,6 +3009,39 @@
     #trash-container {
         width: 100%;
         max-width: 1200px;
+    }
+
+    /* Calendar desktop styles */
+    .calendar-title {
+        width: 100%;
+        max-width: 1200px;
+        padding: 16px 0 12px;
+        margin-bottom: 0;
+    }
+    .calendar-title h1 {
+        font-size: 24px;
+    }
+    .calendar-container,
+    #calendar-container {
+        width: 100%;
+        max-width: 1200px;
+        overflow-y: visible !important;
+        padding-right: 0 !important;
+    }
+    #calendar-screen .header {
+        margin-bottom: 0;
+    }
+    /* Bigger cells on desktop */
+    .cal-cell {
+        padding: 8px 6px;
+        border-radius: 12px;
+    }
+    .cal-date-num {
+        font-size: 14px;
+    }
+    .cal-dot {
+        width: 7px;
+        height: 7px;
     }
 
     /* Desktop search bar — hidden (sidebar has search) */

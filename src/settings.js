@@ -202,7 +202,7 @@ function renderSettings() {
     html += '</div>';;
 
     // ---- Version ----
-    html += '<div class="settings-version">CUBBY v1.5.6</div>';
+    html += '<div class="settings-version">CUBBY v1.6.0</div>';
 
     container.innerHTML = html;
 
@@ -483,8 +483,4 @@ function formatRelativeDate(dateString) {
     return date.toLocaleDateString('en-US', options);
 }
 
-function escapeHtml(str) {
-    var div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-}
+

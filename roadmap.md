@@ -72,7 +72,7 @@ Dedicated pass to optimize every screen for mobile after desktop is complete.
 
 ## Phase 3: Major New Features
 
-- [ ] **Calendar** — Visual calendar view for tasks, deadlines, and reminders with filtering options
+- [x] **Calendar** — Visual calendar view for tasks, deadlines, and reminders with filtering options
 - [ ] **Notebooks** — Document system with formatting, checklists, templates, sketching, and image support
 - [ ] **Advanced Themes** — Full theme presets, create and switch between complete themes
 - [ ] **Icons for Tasks / Cubbies** — Choose or upload icons to assign to tasks, cubbies, rooms, etc.

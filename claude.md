@@ -60,14 +60,15 @@ There are several .md files for you to reference. Please check them at the start
     menus.js        ← Kebab menus for tasks, subcubbies, cubbies, rooms
     search.js       ← Global search with filters (Cmd+K shortcut)
     views.js        ← Tasks page (all tasks sorted by due date with color modes)
+    calendar.js     ← Calendar view (monthly grid with task dots, day detail panel)
     settings.js     ← Settings, Archive, and Trash screen rendering and handlers
 ```
 
-> **Note**: The JS files load in a specific order defined in index.html: supabase.js > sync.js > app.js > animations.js > drag.js > render.js > tasks.js > modals.js > menus.js > search.js > views.js > settings.js
+> **Note**: The JS files load in a specific order defined in index.html: supabase.js > sync.js > app.js > animations.js > drag.js > render.js > tasks.js > modals.js > menus.js > search.js > views.js > calendar.js > settings.js
 
 ## Current Features
 
-These features exist and work in the current build (v1.5.4):
+These features exist and work in the current build (v1.6.0):
 
 ### App Hierarchy
 **Workspaces > Cubbies > Subcubbies > Tasks > Subtasks**
@@ -79,7 +80,7 @@ These features exist and work in the current build (v1.5.4):
 
 ### Navigation
 - **Dual-layout system**: Separate desktop and mobile layouts using CSS media queries at 768px breakpoint
-- **Desktop (>768px)**: Permanent sidebar on the left (260px wide) with logo, nav links (Home, Tasks, Cubbies, Search), workspace/cubby tree, New Task button, and Settings. No bottom tab bar. Content area shifts right of the sidebar.
+- **Desktop (>768px)**: Permanent sidebar on the left (260px wide) with logo, nav links (Home, Tasks, Calendar, Cubbies, Search), workspace/cubby tree, New Task button, and Settings. No bottom tab bar. Content area shifts right of the sidebar.
 - **Mobile (≤768px)**: Bottom tab bar with 5 tabs (Home, Tasks, New+, Cubbies, Menu). Menu button slides out the sidebar as an overlay from the left. Sidebar has close button and dark overlay behind it.
 - **Sidebar**: Shows navigation, all workspaces with nested cubbies, and highlights the active view. Renders workspace/cubby list dynamically.
 - **Three-screen navigation**: Home > Room > Cubby views with back buttons
@@ -111,6 +112,16 @@ These features exist and work in the current build (v1.5.4):
 - **Two color modes**: "color by due date" (default) and "color by cubby"
 - Toggle button switches between modes
 - Filter tabs: Upcoming, All, Overdue
+
+### Calendar
+- **Monthly grid view**: Traditional calendar layout showing the current month with navigation arrows
+- **Task dots**: Days with tasks show colored dots matching their cubby color (max 4 visible, +N indicator for more)
+- **Day detail panel**: Click any day to see that day's tasks listed below the calendar
+- **Task cards**: Show task name, cubby name (colored), completion status, and tags
+- **Today button**: Quick jump back to current month/today
+- **Overdue highlighting**: Past dates with incomplete tasks show red date numbers
+- **Navigation to tasks**: Click any task in the day detail to navigate directly to it in its cubby with highlight
+- Accessible from sidebar nav and shows completed tasks (dimmed) alongside active ones
 
 ### Task Management
 - Create, edit, delete, duplicate tasks and subtasks
@@ -251,6 +262,7 @@ These have caused issues before — be aware of them:
 | Change context menus (kebab/three-dot menus) | menus.js |
 | Change search functionality | search.js |
 | Change the Tasks page (all tasks by due date) | views.js |
+| Change the Calendar view | calendar.js |
 | Change Settings, Archive, or Trash screens | settings.js |
 | Change animations | animations.js |
 | Change drag-and-drop behavior | drag.js |
