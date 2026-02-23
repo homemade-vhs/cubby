@@ -2298,7 +2298,7 @@
         padding-bottom: 40px;
     }
 
-    /* Center content within the work area (sidebar → browser edge) */
+    /* Left-align content within the work area (like Asana/Monday) */
     #home-screen,
     #views-screen,
     #cubbies-screen,
@@ -2307,22 +2307,20 @@
     #settings-screen,
     #archive-screen,
     #trash-screen {
-        align-items: center;
+        align-items: flex-start;
     }
 
-    /* All top-level content blocks: max-width + centered */
+    /* All top-level content blocks: full width, no max-width centering */
     .home-header,
     .search-btn,
     .logo,
     .dashboard-section-label,
     #rooms-container {
         width: 100%;
-        max-width: 900px;
     }
 
     #home-sections-container {
         width: 100%;
-        max-width: 900px;
         display: flex;
         flex-direction: column;
         gap: 24px;
@@ -2333,14 +2331,12 @@
     .views-container,
     #views-container {
         width: 100%;
-        max-width: 900px;
     }
 
     .cubbies-browse-title,
     .cubbies-browse-container,
     #cubbies-browse-container {
         width: 100%;
-        max-width: 800px;
     }
 
     .room-title,
@@ -2348,7 +2344,6 @@
     .cubbies-list,
     #cubbies-list {
         width: 100%;
-        max-width: 800px;
     }
 
     .cubby-header,
@@ -2357,7 +2352,6 @@
     .tasks-container,
     #tasks-container {
         width: 100%;
-        max-width: 900px;
     }
 
     /* --- STAGE 3: Desktop Cubby View --- */
@@ -2375,7 +2369,7 @@
         border-bottom: 1px solid rgba(255,255,255,0.06);
         display: flex;
         flex-direction: column;
-        align-items: center;
+        align-items: flex-start;
     }
 
     /* Cubby screen: dark theme-tinted header, single row layout */
@@ -2393,11 +2387,10 @@
         display: none;
     }
 
-    /* Centered content row: aligns with the 900px work area */
+    /* Content row: left-aligned, full width */
     #cubby-screen .page-header-content {
         display: flex;
         align-items: center;
-        max-width: 900px;
         width: 100%;
         gap: 16px;
         min-width: 0;
@@ -2659,13 +2652,12 @@
         padding: 16px 20px;
     }
 
-    /* Archive/Trash header max-width */
+    /* Archive/Trash header width */
     #archive-screen .header,
     #trash-screen .header,
     #archive-screen .settings-title,
     #trash-screen .settings-title {
         width: 100%;
-        max-width: 700px;
     }
 
     /* Cubbies Browse: sticky title, refined sizing */
@@ -2698,7 +2690,6 @@
     .settings-container,
     #settings-container {
         width: 100%;
-        max-width: 700px;
     }
 
     .archive-container,
@@ -2706,7 +2697,6 @@
     .trash-container,
     #trash-container {
         width: 100%;
-        max-width: 700px;
     }
 
     /* Desktop search bar — hidden (sidebar has search) */
@@ -2751,7 +2741,6 @@
         grid-template-columns: 1fr 1fr;
         gap: 16px;
         width: 100%;
-        max-width: 900px;
     }
 
     /* Widget card styling */
